@@ -1,0 +1,10 @@
+{
+    "name": "openApi",
+    "database": {
+        "host": "100.119.118.97",
+        "type": "mysql",
+        "user": "root",
+        "password": "root",
+        "database": "api_xygeng_cn"
+    }
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ws测试</title>
+</head>
+
+<body>
+    <script>
+        var ws = new WebSocket('ws://localhost:3000/')
+        ws.onopen = function () {
+            console.log('connected')
+            ws.send('hello')
+        }
+        ws.onmessage = function (e) {
+            console.log(e.data)
+        }
+        //监听连接关闭情况
+        ws.onclose = function (e) {
+            console.log("Connection closed");
+        }
+    </script>
+</body>
+
+</html>

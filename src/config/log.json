@@ -1,0 +1,8 @@
+{
+    "enble": true,
+    "path":"./logs/",
+    "target": [
+        "local",
+        "console"
+    ]
+}
