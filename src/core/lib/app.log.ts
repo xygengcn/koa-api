@@ -1,7 +1,6 @@
-import App from '@core/type';
-import { ILog, ILogTarget, ILogType } from '@core/type/log';
-import AppLogCore from './app.logCore';
-export class AppLog extends AppLogCore implements App.AppLog {
+import { ILog, ILogTarget, ILogType } from "@core/typings/app";
+import AppLogCore from "./app.logCore";
+export class AppLog extends AppLogCore {
     constructor() {
         super();
     }
@@ -20,7 +19,7 @@ export class AppLog extends AppLogCore implements App.AppLog {
      * @param content
      * @returns boolean
      */
-    public info(content: ILog['content']): boolean {
+    public info(content: ILog["content"]): boolean {
         return this.w({
             type: ILogType.info,
             content,
@@ -31,7 +30,7 @@ export class AppLog extends AppLogCore implements App.AppLog {
      * @param content
      * @returns boolean
      */
-    public success(content: ILog['content']): boolean {
+    public success(content: ILog["content"]): boolean {
         return this.w({
             type: ILogType.success,
             content,
@@ -42,7 +41,7 @@ export class AppLog extends AppLogCore implements App.AppLog {
      * @param content
      * @returns boolean
      */
-    public error(content: ILog['content']): boolean {
+    public error(content: ILog["content"]): boolean {
         return this.w({
             type: ILogType.error,
             content,
@@ -59,7 +58,7 @@ export class AppLog extends AppLogCore implements App.AppLog {
         return this.w({
             type: ILogType.info,
             content: {
-                subType: 'sql',
+                subType: "sql",
                 content: {
                     sql,
                     timing,
@@ -74,7 +73,7 @@ export class AppLog extends AppLogCore implements App.AppLog {
      * @param type
      * @returns
      */
-    public console(str: ILog['content'], type: ILogType = ILogType.info): void {
+    public console(str: ILog["content"], type: ILogType = ILogType.info): void {
         return super.console(str, type);
     }
 

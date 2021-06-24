@@ -1,13 +1,15 @@
+import { isObject } from 'lodash';
+import { RequestExts, Context } from 'koa';
+
 /**
  * 内置错误处理中间件，和打印日志
  */
-import { ILog, ILogType } from '@core/type/log';
+import { ILog, ILogType } from '@core/typings/app';
 import Koa from 'koa';
 import Log from '@core/lib/app.log';
-import Middleware from './app.middleware';
-import { IAppControllerCoreRequestOption, IAppMiddleware } from '@core/type/controller';
+import Middleware from './app.decorator';
 @Middleware()
-export default class AppMiddlewareError implements IAppMiddleware {
+export default class AppMiddlewareError {
     /**
      * 控制器日志
      * @param ctx
@@ -18,11 +20,11 @@ export default class AppMiddlewareError implements IAppMiddleware {
      * @returns
      */
     private log(
-        ctx: Koa.Context,
+        ctx: Context,
         options: {
             code: number;
             updateTime: number;
-            content?: string;
+            error?: string;
             developMsg?: string;
         }
     ): boolean {
@@ -43,8 +45,8 @@ export default class AppMiddlewareError implements IAppMiddleware {
                 request,
                 respone: ctx.body,
                 path: ctx.url,
-                content: options.content || '内部服务器报错',
-                code: (ctx.body && ctx.body.code) || options.code || 500,
+                content: options.error || '内部服务器报错',
+                code: (isObject(ctx.body) && ctx.body.code) || options.code || 500,
                 clientIP: ctx.ip || ctx.ips,
                 referer: ctx.request.headers.origin || ctx.request.headers.referer,
             },
@@ -55,7 +57,7 @@ export default class AppMiddlewareError implements IAppMiddleware {
             content,
         };
 
-        const exts: IAppControllerCoreRequestOption = ctx.exts();
+        const exts: RequestExts = ctx.exts();
         // 错误回调
         if (log.type === ILogType.error) {
             ctx.$event.emitError(ctx, log);
@@ -74,18 +76,30 @@ export default class AppMiddlewareError implements IAppMiddleware {
             const updateTime: number = new Date().getTime(); //请求时间
             try {
                 await next();
-                if ((ctx.body && ctx.body.code === 200) || ctx.status === 200) {
-                    this.log(ctx, { code: ctx.body.code, updateTime });
-                } else if (ctx.body && ctx.body.code) {
-                    this.log(ctx, { code: ctx.body.code, updateTime, content: ctx.body.error });
+                if ((isObject(ctx.body) && ctx.body.code === 200) || ctx.status === 200) {
+                    this.log(ctx, {
+                        code: (isObject(ctx.body) && ctx.body.code) || ctx.status,
+                        error: isObject(ctx.body) && ctx.body.error,
+                        updateTime,
+                    });
+                } else if (isObject(ctx.body) && ctx.body.code) {
+                    this.log(ctx, {
+                        code: ctx.body.code,
+                        updateTime,
+                        error: ctx.body.error,
+                    });
                 } else {
-                    this.log(ctx, { code: 404, updateTime, content: 'Not Found' });
+                    this.log(ctx, {
+                        code: 404,
+                        updateTime,
+                        error: 'Not Found',
+                    });
                 }
             } catch (e) {
                 this.log(ctx, {
                     code: e && e.code,
                     updateTime,
-                    content: e && e.error,
+                    error: e && e.error,
                     developMsg: (e && e.developMsg) || `${e}`,
                 });
             }

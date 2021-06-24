@@ -1,42 +1,45 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "allowJs": true,
-    "outDir": "./build",
-    "rootDir": "./src",
-    "strict": true,
-    "watch": false,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
-    "noUnusedLocals": true,
-    "removeComments": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "src/core/type"
-    ],
-    "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "@core/*": [
-        "./src/core/*"
-      ],
-      "@util/*": [
-        "./src/core/utils/*"
-      ],
-      "@model/*": [
-        "./src/model/*"
-      ]
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "allowJs": true,
+        "outDir": "./build",
+        "rootDir": "./src",
+        "strict": true,
+        "watch": false,
+        "noImplicitAny": false,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": "./",
+        "noUnusedLocals": true,
+        "removeComments": true,
+        "experimentalDecorators": true,
+        "resolveJsonModule": true,
+        "lib": [
+            "ES2017"
+        ],
+        "types": [
+            "node"
+        ],
+        "paths": {
+            "@core/*": [
+                "./src/core/*"
+            ],
+            "@util/*": [
+                "./src/core/utils/*"
+            ],
+            "@model/*": [
+                "./src/model/*"
+            ]
+        },
     },
-  },
-  "exclude": [
-    "node_modules",
-    "build"
-  ],
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.json"
-  ]
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
+    "include": [
+        "./src/**/*.ts",
+        "./src/**/*.d.ts",
+        "./src/**/*.json"
+    ]
 }

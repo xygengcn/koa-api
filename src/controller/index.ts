@@ -15,6 +15,7 @@ export default class IndexController extends AppController {
      */
     @GET('/get')
     async index(ctx: Context, next: Next, params: Params) {
+        this.console();
         return {
             msg: '这是常规的get请求',
             className: this.name,
@@ -34,5 +35,12 @@ export default class IndexController extends AppController {
             msg: '这是常规的post请求',
             mode: process.env.NODE_ENV,
         };
+    }
+
+    /**
+     * 3. 普通函数
+     */
+    private console() {
+        console.log(this.name);
     }
 }

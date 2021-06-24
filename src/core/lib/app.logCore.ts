@@ -1,5 +1,5 @@
 import { TimeFormat } from '@util/time';
-import { ILogType, ILogTarget, ILog } from '@core/type/log';
+import { ILogType, ILogTarget, ILog } from '@core/typings/app';
 import config from '@core/lib/app.config';
 import { appendFileSync, getFilePath, readLine } from '@core/utils/file';
 

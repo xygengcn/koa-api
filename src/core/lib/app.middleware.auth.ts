@@ -2,17 +2,17 @@
  * 内置中间件，路由校验
  */
 
-import { Next, Context } from '@core/app/index';
-import { IAppMiddleware, IAppControllerCoreRequestOption, IHttpErrorResponse } from '@core/type/controller';
+import { AppMiddleware } from '@core/typings/app';
+import { ResponseError, Next, Context, RequestExts } from 'koa';
 import { isBoolean, isFunction } from 'lodash';
-import Middleware from './app.middleware';
+import Middleware from './app.decorator';
 
 @Middleware()
-export default class AppMiddlewareAuth implements IAppMiddleware {
+export default class AppMiddlewareAuth implements AppMiddleware {
     init() {
         return async (ctx: Context, next: Next) => {
-            const exts: IAppControllerCoreRequestOption = ctx.exts();
-            let errorMsg: IHttpErrorResponse = {
+            const exts: RequestExts = ctx.exts();
+            let errorMsg: ResponseError = {
                 code: 10405,
                 developMsg: '',
                 error: '验证失败',
@@ -32,7 +32,9 @@ export default class AppMiddlewareAuth implements IAppMiddleware {
                     return await next();
                 }
             }
-            return ctx.fail(errorMsg.error, errorMsg.code, { developMsg: errorMsg.developMsg });
+            return ctx.fail(errorMsg.error, errorMsg.code, {
+                developMsg: errorMsg.developMsg,
+            });
         };
     }
 }

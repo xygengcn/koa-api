@@ -2,10 +2,10 @@
  * 文件操作工具集合
  */
 
-import * as fs from 'fs';
-import { MakeDirectoryOptions } from 'node:fs';
-import * as Path from 'path';
-import readline from 'readline';
+import * as fs from "fs";
+import { MakeDirectoryOptions } from "fs";
+import * as Path from "path";
+import readline from "readline";
 
 /**
  * 返回一行一行读取数组
@@ -20,11 +20,11 @@ export function readLine(path: string): Promise<string[]> {
             input: fs.createReadStream(path),
         });
         // 一行一行地读取文件
-        readObj.on('line', function (line) {
+        readObj.on("line", function (line) {
             arr.push(line);
         });
         // 读取完成后,将arr作为参数传给回调函数
-        readObj.on('close', function () {
+        readObj.on("close", function () {
             resolve(arr);
         });
     });
@@ -35,7 +35,7 @@ export function readLine(path: string): Promise<string[]> {
  * @returns
  */
 export function getPackage(): any {
-    return readJson(getFilePath('../package.json'));
+    return readJson(getFilePath("../package.json"));
 }
 
 /**
@@ -50,7 +50,7 @@ export function getFilePath(path: string): string {
  * 获取主目录地址
  */
 export function getRootPath(): string {
-    return Path.join(__dirname, '../../');
+    return Path.join(__dirname, "../../");
 }
 
 /**
@@ -66,8 +66,8 @@ export function isFile(path: string) {
  * 判断是不是index文件
  * @param ext 后缀
  */
-export function isIndexFile(file: string, ext: string = '.json') {
-    return getFileName(file, ext).toLocaleLowerCase() === 'index';
+export function isIndexFile(file: string, ext: string = ".json") {
+    return getFileName(file, ext).toLocaleLowerCase() === "index";
 }
 
 /**
@@ -76,7 +76,7 @@ export function isIndexFile(file: string, ext: string = '.json') {
  * @returns
  */
 export function isJsonFile(file: string): boolean {
-    return Path.extname(file) === '.json';
+    return Path.extname(file) === ".json";
 }
 /**
  * 写入json，同步
@@ -85,7 +85,7 @@ export function isJsonFile(file: string): boolean {
  * @returns
  */
 export function writeJson(path: string, params: Object): void {
-    const data: string = (params && JSON.stringify(params)) || '';
+    const data: string = (params && JSON.stringify(params)) || "";
     return writeFileSync(path, data);
 }
 
@@ -187,7 +187,10 @@ export function isDirectory(path: string): boolean {
  * @param option 属性
  * @returns
  */
-export function mkdir(path: string, option: MakeDirectoryOptions & { recursive: true } = { recursive: true }) {
+export function mkdir(
+    path: string,
+    option: MakeDirectoryOptions & { recursive: true } = { recursive: true }
+) {
     return fs.mkdirSync(path, option);
 }
 

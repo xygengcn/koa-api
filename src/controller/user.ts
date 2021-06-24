@@ -2,8 +2,10 @@
  * 测试用例
  */
 
-import AppController, { AuthCallback, AuthContext, Context, Controller, GET, Next, Params } from '@core/app';
+import AppController, { Context, Controller, GET, Next, Params } from '@core/app';
+import { ResponseType } from '@core/typings/app';
 import Test from '@model/test';
+import { ResponseError } from 'koa';
 
 /**
  * 验证成功
@@ -14,7 +16,7 @@ import Test from '@model/test';
  * @param next
  * @param params
  */
-function auth(context: AuthContext): boolean {
+function auth(context: { ctx: Context; next: Next }): boolean {
     return true; //验证通过
 }
 
@@ -28,7 +30,13 @@ function auth(context: AuthContext): boolean {
  * @param next
  * @param params
  */
-function authError(context: AuthContext, callback: AuthCallback): boolean {
+function authError(
+    context: {
+        ctx: Context;
+        next: Next;
+    },
+    callback: (error: ResponseError) => any
+): boolean {
     callback({
         code: 10405,
         error: '验证失败测试用例',
@@ -105,7 +113,7 @@ export default class UserController extends AppController {
      *
      * @returns
      */
-    @GET({ url: '/user2', type: 'html' })
+    @GET({ url: '/html', type: ResponseType.html })
     user2(ctx: Context, next: Next, params: Params) {
         return '这是一条字符串';
     }

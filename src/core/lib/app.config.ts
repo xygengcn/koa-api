@@ -1,6 +1,5 @@
-import { IAppConfig } from '@core/type/controller';
-import AppConfigCore from './app.configCore';
-export class AppConfig extends AppConfigCore implements IAppConfig {
+import AppConfigCore from "./app.configCore";
+export class AppConfig extends AppConfigCore {
     constructor() {
         super();
     }

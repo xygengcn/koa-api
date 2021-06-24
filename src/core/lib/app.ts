@@ -2,10 +2,9 @@ import http from 'http';
 import Koa, { Context } from 'koa';
 import Log from './app.log';
 import debug from 'debug';
-import Router from 'koa-router';
 import AppMiddlewareCore from './app.middlewareCore';
 import appEventCore from './app.eventCore';
-import { IAppMiddlewareOptions } from '@core/type/controller';
+import { AppMiddlewareOpts } from '@core/typings/app';
 
 /**
  * 主要启动程序，继承于Koa
@@ -21,6 +20,9 @@ class App {
      */
     private koa: Koa;
 
+    /**
+     * 中间件对象
+     */
     private middleware: AppMiddlewareCore;
 
     /**
@@ -97,7 +99,7 @@ class App {
      * 插入路由前中间件
      * @param middleware 中间件
      */
-    public beforeRouteUse(middleware: Koa.Middleware | Router.IMiddleware): void {
+    public beforeRouteUse(middleware: Koa.Middleware): void {
         this.middleware.beforeRouteUse(middleware);
     }
 
@@ -105,7 +107,7 @@ class App {
      * 插入路由后中间件
      * @param middleware 中间件
      */
-    public afterRouteUse(middleware: Koa.Middleware | Router.IMiddleware): void {
+    public afterRouteUse(middleware: Koa.Middleware): void {
         this.middleware.afterRouteUse(middleware);
     }
 
@@ -120,7 +122,7 @@ class App {
     /**
      * 设置跨域配置
      */
-    public cors(options: IAppMiddlewareOptions) {
+    public cors(options: AppMiddlewareOpts) {
         this.middleware.setOptions(options);
     }
 

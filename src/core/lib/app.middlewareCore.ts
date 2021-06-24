@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa, { Middleware } from 'koa';
 import AppMiddlewareError from './app.middleware.error';
 import AppMiddlewareInit from './app.middleware.init';
 import KoaJson from 'koa-json';
@@ -66,7 +66,7 @@ export default class AppMiddlewareCore {
      * 插入路由前中间件
      * @param middleware 中间件
      */
-    public beforeRouteUse(middleware: Koa.Middleware): void {
+    public beforeRouteUse(middleware: Middleware): void {
         this.beforeRoutesMiddlewares.push(middleware);
     }
 
@@ -74,7 +74,7 @@ export default class AppMiddlewareCore {
      * 插入路由后中间件
      * @param middleware 中间件
      */
-    public afterRouteUse(middleware: Koa.Middleware): void {
+    public afterRouteUse(middleware: Middleware): void {
         this.afterRoutesMiddlewares.push(middleware);
     }
 
@@ -82,7 +82,7 @@ export default class AppMiddlewareCore {
      * 返回所有中间件
      * @returns
      */
-    public init(callback: (middlewares: Koa.Middleware[]) => void): void {
+    public init(callback: (middlewares: Middleware[]) => void): void {
         this.initMiddleware();
         const middlewares = this.beforeRoutesMiddlewares.concat([], this.afterRoutesMiddlewares);
         callback(middlewares);

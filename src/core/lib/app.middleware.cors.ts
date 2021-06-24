@@ -1,23 +1,19 @@
 /**
  * 内置中间件，处理跨域问题
  */
-import { IAppControllerCoreRequestOption, IAppMiddlewareOptions, IAppMiddleware } from '@core/type/controller';
-import Koa from 'koa';
-import Middleware from './app.middleware';
+import Koa, { RequestExts } from 'koa';
+import Middleware from './app.decorator';
 import { isArray } from 'lodash';
+import { AppMiddleware, AppMiddlewareOpts } from '@core/typings/app';
 
 @Middleware()
-export default class AppMiddlewareCors implements IAppMiddleware {
+export default class AppMiddlewareCors implements AppMiddleware {
     private allowMethods = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
-    init(options?: IAppMiddlewareOptions) {
+    init(options?: AppMiddlewareOpts) {
         return async (ctx: Koa.Context, next: Koa.Next) => {
-            console.log(options);
-            const exts: IAppControllerCoreRequestOption = ctx.exts();
+            const exts: RequestExts = ctx.exts();
             ctx.vary('Origin');
-            ctx.set(
-                'Access-Control-Allow-Headers',
-                'Content-Type, Content-Length, Authorization, Accept, X-Requested-With'
-            );
+            ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
             if (options && options.allowMethods) {
                 ctx.set('Access-Control-Allow-Methods', options.allowMethods.toString());
             } else {

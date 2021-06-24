@@ -1,19 +1,14 @@
 /**
  * 内置中间件，重写返回格式、拓展字段
  */
-import {
-    IAppControllerCoreRequestOption,
-    IAppControllerResponseOption,
-    IAppControllerResponseOptionType,
-} from '@core/type/controller';
-import Koa from 'koa';
+import Koa, { ResponseOptions } from 'koa';
 import { isArray, isObject } from 'lodash';
-import Middleware from './app.middleware';
-import { IAppMiddleware } from '../type/controller';
+import Middleware from './app.decorator';
 import appControllerCore from './app.controllerCore';
 import appEventCore from './app.eventCore';
+import { AppMiddleware, ResponseType } from '@core/typings/app';
 @Middleware()
-export default class AppMiddlewareInit implements IAppMiddleware {
+export default class AppMiddlewareInit implements AppMiddleware {
     /**
      * 成功返回
      * @param ctx
@@ -21,17 +16,9 @@ export default class AppMiddlewareInit implements IAppMiddleware {
      * @param msg
      * @param option
      */
-    private success(
-        ctx: Koa.Context,
-        data: string | number | object | undefined,
-        msg?: string | object | undefined,
-        option?: IAppControllerResponseOption
-    ): void {
-        ctx.type = (option && option.type) || IAppControllerResponseOptionType.json;
-        if (
-            ctx.type === IAppControllerResponseOptionType.json ||
-            ctx.type === IAppControllerResponseOptionType.applicationJson
-        ) {
+    private success(ctx: Koa.Context, data: string | number | object | undefined, msg?: string | object | undefined, option?: ResponseOptions): void {
+        ctx.type = (option && option.type) || ResponseType.json;
+        if (ctx.type === ResponseType.json) {
             ctx.body = {
                 code: (option && option.successCode) || 200,
                 data: data || {},
@@ -40,7 +27,7 @@ export default class AppMiddlewareInit implements IAppMiddleware {
             };
         } else {
             const text = isArray(data) || isObject(data) ? JSON.stringify(data) : data;
-            ctx.body = text;
+            ctx.body = String(text) || '';
         }
     }
 
@@ -51,14 +38,9 @@ export default class AppMiddlewareInit implements IAppMiddleware {
      * @param code 错误代码
      * @param option
      */
-    private fail(
-        ctx: Koa.Context,
-        error: string | number | object | null,
-        code: number,
-        option?: IAppControllerResponseOption
-    ) {
+    private fail(ctx: Koa.Context, error: string | number | object | null, code: number, option?: ResponseOptions) {
         // 处理返回数据
-        ctx.type = (option && option.type) || IAppControllerResponseOptionType.json;
+        ctx.type = (option && option.type) || ResponseType.json;
         ctx.body = {
             code: code || (option && option.failCode) || 404,
             error: error || (option && option.successMsg) || 'fail',
@@ -73,21 +55,13 @@ export default class AppMiddlewareInit implements IAppMiddleware {
      */
     public init() {
         return async (ctx: Koa.Context, next: Koa.Next) => {
-            ctx.success = (
-                data: string | number | object | undefined,
-                msg?: string | object | undefined,
-                option?: IAppControllerResponseOption
-            ) => {
+            ctx.success = (data, msg?, option?) => {
                 this.success(ctx, data, msg, option);
             };
-            ctx.fail = (
-                error: string | number | object | null,
-                code: number,
-                option?: IAppControllerResponseOption
-            ): void => {
+            ctx.fail = (error, code, option?): void => {
                 this.fail(ctx, error, code, option);
             };
-            ctx.exts = (): IAppControllerCoreRequestOption => {
+            ctx.exts = () => {
                 const matched = appControllerCore.instance.match(ctx.path, ctx.method);
                 if (matched && matched.route) {
                     const method = matched.path[0];

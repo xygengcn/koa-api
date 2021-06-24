@@ -1,10 +1,9 @@
 /**
  * 事件监听
  */
-
-import { ILog } from '@core/type/log';
-import { EventEmitter } from 'events';
-import { Context } from 'koa';
+import { ILog } from "@core/typings/app";
+import { EventEmitter } from "events";
+import { Context } from "koa";
 export class AppEventCore {
     private event: EventEmitter;
 
@@ -17,8 +16,8 @@ export class AppEventCore {
      * @param callback
      */
     public onError(callback: Function) {
-        if (this.event.listeners('http-error').length < 10) {
-            this.event.on('http-error', (ctx: Context, log: ILog) => {
+        if (this.event.listeners("http-error").length < 10) {
+            this.event.on("http-error", (ctx: Context, log: ILog) => {
                 callback(ctx, log);
             });
         }
@@ -28,7 +27,7 @@ export class AppEventCore {
      * 触发报错
      */
     public emitError(ctx: Context, log: ILog) {
-        this.event.emit('http-error', ctx, log);
+        this.event.emit("http-error", ctx, log);
     }
 }
 

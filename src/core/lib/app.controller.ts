@@ -1,7 +1,6 @@
-import KoaRouter, { ILayerOptions } from 'koa-router';
-import { Context, DefaultState } from 'koa';
-import { IAppControllerExts } from '@core/type/controller';
-import { AppControllerExts } from './app.controllerExts';
+import KoaRouter, { ILayerOptions } from "koa-router";
+import { Context, DefaultState } from "koa";
+import { AppControllerExts } from "./app.controllerExts";
 
 export default class AppController extends KoaRouter<DefaultState, Context> {
     name: string;
@@ -11,11 +10,11 @@ export default class AppController extends KoaRouter<DefaultState, Context> {
     /**
      * 用户配置
      */
-    exts: IAppControllerExts;
+    exts: AppControllerExts;
 
     constructor() {
         super();
-        this.name = '';
+        this.name = "";
         this.exts = new AppControllerExts();
     }
 
@@ -23,6 +22,6 @@ export default class AppController extends KoaRouter<DefaultState, Context> {
      * 判断是不是控制器
      */
     public isController(): boolean {
-        return this.hasOwnProperty('stack');
+        return this.hasOwnProperty("stack");
     }
 }
