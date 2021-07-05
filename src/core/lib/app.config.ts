@@ -1,4 +1,4 @@
-import AppConfigCore from "./app.configCore";
+import AppConfigCore from './app.core.config';
 export class AppConfig extends AppConfigCore {
     constructor() {
         super();

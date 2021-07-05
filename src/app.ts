@@ -3,8 +3,13 @@ import 'module-alias/register';
 import app from '@core/lib/app';
 
 // 请求报错回调
-// app.onError((ctx,log)=>{
-//     console.log(ctx,log)
+// app.onError((content, ctx) => {
+//     console.log('错误回调', content);
+// });
+
+// 请求回调
+// app.onHttp((ctx, content) => {
+//     console.log('请求回调', ctx);
 // });
 
 // 跨域设置

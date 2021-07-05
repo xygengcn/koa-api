@@ -26,7 +26,10 @@ export default class AppMiddlewareAuth implements AppMiddleware {
             }
             if (isFunction(exts.auth)) {
                 const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
-                    errorMsg = err;
+                    errorMsg = {
+                        ...errorMsg,
+                        ...err,
+                    };
                 });
                 if (auth) {
                     return await next();

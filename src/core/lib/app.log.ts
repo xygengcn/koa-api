@@ -1,5 +1,6 @@
-import { ILog, ILogTarget, ILogType } from "@core/typings/app";
-import AppLogCore from "./app.logCore";
+import { ILogTarget, IResponse, IResponseContent } from '@core/typings/app';
+import { isString } from 'lodash';
+import AppLogCore from './app.core.log';
 export class AppLog extends AppLogCore {
     constructor() {
         super();
@@ -10,7 +11,7 @@ export class AppLog extends AppLogCore {
      * @param log 日志内容
      * @returns
      */
-    public w(log: ILog, target?: ILogTarget[]): boolean {
+    public w(log: IResponse, target?: ILogTarget[]): boolean {
         return super.w(log, target);
     }
 
@@ -19,10 +20,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public info(content: ILog["content"]): boolean {
+    public info(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
         return this.w({
-            type: ILogType.info,
-            content,
+            type: 'info',
+            content: isString(content) ? { type, content } : content,
         });
     }
     /**
@@ -30,10 +31,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public success(content: ILog["content"]): boolean {
+    public success(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
         return this.w({
-            type: ILogType.success,
-            content,
+            type: 'success',
+            content: isString(content) ? { type, content } : content,
         });
     }
     /**
@@ -41,10 +42,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public error(content: ILog["content"]): boolean {
+    public error(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
         return this.w({
-            type: ILogType.error,
-            content,
+            type: 'error',
+            content: isString(content) ? { type, content } : content,
         });
     }
 
@@ -56,9 +57,9 @@ export class AppLog extends AppLogCore {
      */
     public sql(sql: string, timing?: number | undefined) {
         return this.w({
-            type: ILogType.info,
+            type: 'info',
             content: {
-                subType: "sql",
+                type: 'sql',
                 content: {
                     sql,
                     timing,
@@ -73,8 +74,8 @@ export class AppLog extends AppLogCore {
      * @param type
      * @returns
      */
-    public console(str: ILog["content"], type: ILogType = ILogType.info): void {
-        return super.console(str, type);
+    public console(content: IResponseContent | string, type: IResponse['type'] = 'info'): void {
+        return super.console(isString(content) ? { type: 'log', content } : content, type);
     }
 
     /**

@@ -1,10 +1,10 @@
 import http from 'http';
-import Koa, { Context } from 'koa';
-import Log from './app.log';
+import Koa, { Context, RequestExts } from 'koa';
 import debug from 'debug';
-import AppMiddlewareCore from './app.middlewareCore';
-import appEventCore from './app.eventCore';
-import { AppMiddlewareOpts } from '@core/typings/app';
+import AppMiddlewareCore from './app.core.middleware';
+import appEventCore from './app.core.event';
+import { AppMiddlewareOpts, IResponse, IResponseContent } from '@core/typings/app';
+import { Log } from '@core/app';
 
 /**
  * 主要启动程序，继承于Koa
@@ -57,10 +57,10 @@ class App {
         // handle specific listen errors with friendly messages
         switch (error.code) {
             case 'EACCES':
-                Log.error(`Port: ${this.port}: requires elevated privileges`);
+                appEventCore.emitError({ type: 'system', content: `Port: ${this.port}: requires elevated privileges` });
                 process.exit(1);
             case 'EADDRINUSE':
-                Log.error(`${this.port}: is already in use`);
+                appEventCore.emitError({ type: 'system', content: `${this.port}: is already in use` });
                 process.exit(1);
             default:
                 throw error;
@@ -85,6 +85,15 @@ class App {
         this.server.listen(this.port);
         this.server.on('error', this.onServerError);
         this.server.on('listening', this.onListening);
+    }
+
+    /**
+     * 监听请求返回
+     */
+    public onHttp(callback: (ctx: Context, content: IResponse) => any): void {
+        return appEventCore.onHttp((ctx, content) => {
+            callback(ctx, content);
+        });
     }
 
     /**
@@ -115,15 +124,17 @@ class App {
      * 请求预警回调
      * @param callback
      */
-    public onError(callback: (ctx: Context, content: any) => any): void {
-        appEventCore.onError(callback);
+    public onError(callback: (content: IResponseContent, ctx?: Context) => void): void {
+        return appEventCore.onError((content, ctx) => {
+            callback(content, ctx);
+        });
     }
 
     /**
      * 设置跨域配置
      */
     public cors(options: AppMiddlewareOpts) {
-        this.middleware.setOptions(options);
+        this.middleware.option(options);
     }
 
     /**
@@ -134,6 +145,11 @@ class App {
         this.port = port;
         this.initMiddleware();
         this.createServer();
+        // 内置日志系统
+        this.onHttp((ctx, content) => {
+            const exts: RequestExts = ctx.exts();
+            Log.w(content, exts.log);
+        });
     }
 }
 export default new App();

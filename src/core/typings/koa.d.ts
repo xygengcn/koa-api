@@ -1,10 +1,10 @@
-import { AppEventCore, ILogTarget, ResponseType } from "./app";
-declare module "koa" {
+import { AppEventCore, ILogTarget, ResponseType } from './app';
+declare module 'koa' {
     interface ResponseOptions {
         type?: ResponseType;
         successCode?: number;
         failCode?: number;
-        successMsg?: string;
+        error?: string;
         developMsg?: string | undefined | null;
     }
 
@@ -39,16 +39,8 @@ declare module "koa" {
                   data?: any;
                   msg?: any;
               };
-        success: (
-            data: string | number | object | undefined,
-            msg?: string | object | undefined,
-            option?: ResponseOptions
-        ) => any;
-        fail: (
-            error: string | number | object | null,
-            code: number,
-            option?: ResponseOptions
-        ) => any;
+        success: (data: string | number | object | undefined, option?: ResponseOptions) => any;
+        fail: (error: string | number | object | null, code: number, option?: ResponseOptions) => any;
         exts: () => RequestExts;
         $event: AppEventCore;
     }

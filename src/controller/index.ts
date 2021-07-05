@@ -28,7 +28,7 @@ export default class IndexController extends AppController {
      * @param ctx
      * @returns
      */
-    @POST('/ok')
+    @POST('/post')
     async hello(ctx: Context, next: Next, params: Params) {
         console.log(this.name);
         return {

@@ -20,6 +20,7 @@ export function ControllerDecorator(prefix: string = '/'): (target?: any) => any
             if (methodName !== 'constructor') {
                 const controller: PropertyDescriptor = controllerMethod[methodName];
                 const type = Object.getOwnPropertyDescriptor(controller.value, 'type');
+                // 判断是不是路由方法
                 if (type && type.value === 'controllerMethod') {
                     if (controller.value.options && controller.value.options.url) {
                         router.exts[methodName] = controller.value.options;
@@ -59,16 +60,18 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
             router[method || RequestType.GET](routerName, path, async (ctx, next) => {
                 const params = ctx.params === {} ? ctx.request.body : ctx.params; //请求数据
                 const res = await controllerMethod.call(this, ctx, next, params); //获取返回值
-                ctx.success(res, '', opts);
+                ctx.success(res, opts);
                 return res;
             });
         };
+        // 标识此方法是路由方法
         Object.defineProperty(descriptor.value, 'type', {
             value: 'controllerMethod',
             writable: false,
             configurable: false,
             enumerable: true,
         });
+        // 把配置挂载装饰器返回值
         Object.defineProperty(descriptor.value, 'options', {
             value: opts,
             writable: false,

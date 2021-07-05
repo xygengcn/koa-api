@@ -1,11 +1,10 @@
 import Koa, { Middleware } from 'koa';
-import AppMiddlewareError from './app.middleware.error';
 import AppMiddlewareInit from './app.middleware.init';
 import KoaJson from 'koa-json';
 import KoaBodyParser from 'koa-bodyparser';
 import AppMiddlewareAuth from './app.middleware.auth';
 import AppMiddlewareCors from './app.middleware.cors';
-import appControllerCore from './app.controllerCore';
+import appControllerCore from './app.core.controller';
 
 export default class AppMiddlewareCore {
     /**
@@ -29,7 +28,7 @@ export default class AppMiddlewareCore {
      * @param params
      * @returns
      */
-    private useMiddleware(middleware: any): Koa.Middleware {
+    private useMiddleware<T>(middleware): Koa.Middleware {
         return middleware.call(middleware, this.middlewareOptions);
     }
 
@@ -44,7 +43,6 @@ export default class AppMiddlewareCore {
         );
         this.beforeRouteUse(KoaJson());
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareInit));
-        this.beforeRouteUse(this.useMiddleware(AppMiddlewareError));
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareCors));
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareAuth));
         this.afterRouteUse(appControllerCore.instance.routes() as Koa.Middleware);
@@ -55,7 +53,7 @@ export default class AppMiddlewareCore {
      * @param name
      * @param options
      */
-    public setOptions(options: any) {
+    public option(options: any) {
         this.middlewareOptions = {
             ...this.middlewareOptions,
             ...options,

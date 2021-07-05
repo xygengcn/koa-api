@@ -10,4 +10,6 @@ spawnSync('cp',['-r','package.json','www']);
 
 spawnSync('rm',['-rf','www/build/logs']);
 
-console.log('打包完成')
+console.log('\033[32m 打包成功 \033[0m')
+
+

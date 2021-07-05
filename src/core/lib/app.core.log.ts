@@ -1,5 +1,5 @@
 import { TimeFormat } from '@util/time';
-import { ILogType, ILogTarget, ILog } from '@core/typings/app';
+import { ILogTarget, IResponse, IResponseContent } from '@core/typings/app';
 import config from '@core/lib/app.config';
 import { appendFileSync, getFilePath, readLine } from '@core/utils/file';
 
@@ -40,7 +40,7 @@ export default class AppLogCore {
      * @param target 日志记录方式
      * @returns
      */
-    protected w(log: ILog, target: ILogTarget[] = [ILogTarget.local, ILogTarget.console]): boolean {
+    protected w(log: IResponse, target: ILogTarget[] = [ILogTarget.local, ILogTarget.console]): boolean {
         // 配置关闭则不写日志
         if (!log || !this.logEnble) return false;
 
@@ -53,7 +53,6 @@ export default class AppLogCore {
         if (target.includes(ILogTarget.local) && this.logTarget.includes(ILogTarget.local)) {
             const content = {
                 time: TimeFormat(new Date().getTime()),
-                type: log.type,
                 content: log,
             };
             const str: string = JSON.stringify(content);
@@ -67,16 +66,24 @@ export default class AppLogCore {
      * @param args
      * @returns
      */
-    protected console(str: ILog['content'], type: ILogType = ILogType.info): void {
-        const typeStr = {
-            success: `\u001b[32m[Success]:\u001b[0m `,
-            error: `\u001b[31m[Error]:\u001b[0m `,
-            info: `\u001b[2m[Info]:\u001b[0m `,
-        };
-        return console.log(typeStr[type], str);
+    protected console(content: IResponseContent, type: IResponse['type'] = 'info'): void {
+        if (process.env.NODE_ENV === 'development') {
+            const typeStr = {
+                success: `\u001b[32m[Success]:\u001b[0m `,
+                error: `\u001b[31m[Error]:\u001b[0m `,
+                info: `\u001b[2m[Info]:\u001b[0m `,
+            };
+            return console.log(typeStr[type], content);
+        }
     }
 
-    protected async readLog(time: Date = new Date(), format: string = 'yyyy-MM-dd.log'): Promise<ILog[]> {
+    /**
+     * 读取日志
+     * @param time
+     * @param format
+     * @returns
+     */
+    protected async readLog(time: Date = new Date(), format: string = 'yyyy-MM-dd.log'): Promise<IResponse[]> {
         const fileName = getFilePath(this.logPath + TimeFormat(time, format));
         return readLine(fileName).then((strArr) => {
             return strArr.map((item) => {
