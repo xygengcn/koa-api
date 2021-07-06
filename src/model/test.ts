@@ -1,5 +1,5 @@
-import { AppModel, Log } from "@core/app/index";
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import { AppModel, Log } from '@core/app/index';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 /**
  * 模版测试类
@@ -13,10 +13,7 @@ interface TestTable {
     date: Date;
 }
 
-export class Test
-    extends Model<TestTable, Optional<TestTable, "id">>
-    implements TestTable
-{
+export class Test extends Model<TestTable, Optional<TestTable, 'id'>> implements TestTable {
     public id!: number;
     public apiName!: string;
     public type!: string;
@@ -29,11 +26,11 @@ export class Test
      */
     public static getOne() {
         // 打印日志
-        Log.info("查询数据库");
+        Log.info('查询数据库');
 
         // 随机查询一条消息
         return Test.findOne({
-            order: [Sequelize.literal("rand()")],
+            order: [Sequelize.literal('rand()')],
         }).then((res) => res && res.toJSON());
     }
 
@@ -56,7 +53,7 @@ Test.init(
         },
         apiName: {
             type: DataTypes.STRING, // 指定值的类型
-            field: "api_name", // 指定存储在表中的键名称
+            field: 'api_name', // 指定存储在表中的键名称
         },
         type: {
             type: DataTypes.STRING,
@@ -72,7 +69,7 @@ Test.init(
         // 【重要】挂载实例，这一步重点
         sequelize: AppModel,
         // 表名
-        tableName: "data",
+        tableName: 'data',
     }
 );
 
