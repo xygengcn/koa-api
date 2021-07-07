@@ -22,31 +22,31 @@
 -   安装依赖
 
 ```
-npm install
+yarn
 ```
 
 -   开发运行项目
 
 ```
-npm run dev
+yarn run dev
 ```
 
 -   打包命令
 
 ```
-npm run build
+yarn run build
 ```
 
 -   生产环境运行命令
 
 ```
-npm run prd
+yarn run prd
 ```
 
 -   测试环境运行命令
 
 ```
-npm run sit
+yarn run sit
 ```
 
 ## 框架结构
