@@ -65,7 +65,9 @@ class AppDatabaseCore {
                 // sequelize默认会自动为其添加 createdAt 和updatedAt
                 timestamps: false,
             },
-            logging: AppLog.sql.bind(AppLog),
+            logging: (sql, timing) => {
+                AppLog.sql(sql);
+            },
         });
     }
 }
