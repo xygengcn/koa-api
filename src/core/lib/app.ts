@@ -1,3 +1,5 @@
+import Cluster from 'cluster';
+import OS from 'os';
 import http from 'http';
 import Koa, { Context, RequestExts } from 'koa';
 import debug from 'debug';
@@ -13,6 +15,7 @@ class App {
     constructor() {
         this.koa = new Koa();
         this.middleware = new AppMiddlewareCore();
+        this.initMiddleware();
     }
 
     /**
@@ -86,9 +89,10 @@ class App {
         this.server.on('error', this.onServerError);
         this.server.on('listening', this.onListening);
     }
-
     /**
      * 监听请求返回
+     * @param callback
+     * @returns
      */
     public onHttp(callback: (ctx: Context, content: IResponse) => any): void {
         return appEventCore.onHttp((ctx, content) => {
@@ -139,16 +143,83 @@ class App {
 
     /**
      * 启动程序
-     * @param port 端口
      */
-    public start(port: number = 3000): void {
-        this.port = port;
-        this.initMiddleware();
+    private startApp(): void {
         this.createServer();
         // 内置日志系统
         this.onHttp((ctx, content) => {
+            if (process.env.NODE_ENV === 'development') {
+                console.error('日志系统', ctx);
+            }
             const exts: RequestExts = ctx.exts();
             Log.w(content, exts.log);
+        });
+    }
+    /**
+     * 集群
+     * @param enable 是否开启
+     * @param callback
+     * @returns
+     */
+    private cluster(enable: boolean = false, callback: Function) {
+        if (process.env.NODE_ENV === 'development' || !enable) {
+            return callback();
+        }
+        if (Cluster.isMaster) {
+            const numCPUs = OS.cpus().length;
+            for (let i = 0; i < numCPUs; i++) {
+                Cluster.fork();
+            }
+            // 监听worker
+            Cluster.on('listening', function (worker, address) {
+                Log.w({
+                    type: 'info',
+                    content: {
+                        type: 'system',
+                        content: {
+                            controller: 'system',
+                            content: {
+                                workerId: worker.process.pid,
+                                address: address,
+                            },
+                            developMsg: '监听worker',
+                            updateTime: new Date().getTime(),
+                        },
+                    },
+                });
+            });
+            // 监听worker退出事件，code进程非正常退出的错误code，signal导致进程被杀死的信号名称
+            Cluster.on('exit', function (worker, code, signal) {
+                Log.w({
+                    type: 'error',
+                    content: {
+                        type: 'system',
+                        content: {
+                            controller: 'system',
+                            content: {
+                                workerId: worker.process.pid,
+                                signal,
+                                code,
+                            },
+                            error: '进程异常退出',
+                            updateTime: new Date().getTime(),
+                        },
+                    },
+                });
+                Cluster.fork();
+            });
+        } else {
+            callback();
+        }
+    }
+    /**
+     * 启动程序
+     * @param port 端口
+     */
+    public start(port: number = 3000, configs?: { cluster?: boolean }): void {
+        this.port = port;
+        this.cluster(configs?.cluster, () => {
+            this.startApp();
         });
     }
 }
