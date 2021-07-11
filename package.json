@@ -1,13 +1,13 @@
 {
   "name": "koa-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "license": "MIT",
   "scripts": {
     "dev:tsc": "tsc -w",
     "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect build/app.js",
     "dev": "tsc && concurrently npm:dev:*",
-    "sit": "cross-env NODE_ENV=sit node build/app",
+    "sit": "cross-env NODE_ENV=production pm2 start www/build/app.js",
     "prd": "cross-env NODE_ENV=production pm2 start build/app.js",
     "build": "tsc && node build.js",
     "lint": "prettier ./src"

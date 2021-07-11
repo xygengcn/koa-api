@@ -12,9 +12,8 @@ import AppController from './app.controller';
  * @returns
  */
 export function ControllerDecorator(prefix: string = '/'): (target?: any) => any {
-    const router = new AppController();
-    prefix && router.prefix(prefix);
     return (target): AppController => {
+        const router = new AppController(target.name, prefix);
         const controllerMethod = Object.getOwnPropertyDescriptors(target.prototype);
         Object.getOwnPropertyNames(controllerMethod).forEach((methodName) => {
             if (methodName !== 'constructor') {
@@ -30,7 +29,6 @@ export function ControllerDecorator(prefix: string = '/'): (target?: any) => any
                 }
             }
         });
-        router.name = target.name;
         return router;
     };
 }

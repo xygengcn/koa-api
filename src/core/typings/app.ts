@@ -54,6 +54,7 @@ export interface ISystemContent {
     error?: Error | string;
     content?: any;
     developMsg?: string; // 开发信息
+    updateTime?: number; // 请求时间
 }
 
 export interface ISqlContent {

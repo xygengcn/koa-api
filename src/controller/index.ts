@@ -8,6 +8,9 @@ import AppController, { Context, Controller, GET, Next, Params, POST } from '@co
 export default class IndexController extends AppController {
     /**
      * 1、常规get请求测试用例
+     *
+     * /get
+     *
      * @param ctx
      * @param next
      * @param params
@@ -25,6 +28,9 @@ export default class IndexController extends AppController {
 
     /**
      * 2、常规post请求测试用例
+     *
+     * /post
+     *
      * @param ctx
      * @returns
      */

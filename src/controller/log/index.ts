@@ -2,12 +2,12 @@
  * 测试用例
  */
 
-import AppController, { Context, Controller, GET, Next, Params, POST } from '@core/app';
+import AppController, { Context, Controller, GET, Next, Params } from '@core/app';
 
 /**
- * 可以自定义前缀 为/log，默认为文件夹名字
+ * 如果设置前缀默认继承文件夹，/文件夹名/前缀/方法
  */
-@Controller('/log')
+@Controller('/')
 export default class LogController extends AppController {
     /**
      * 1、自定义路由地址用例
@@ -27,10 +27,13 @@ export default class LogController extends AppController {
 
     /**
      * 2、增加日志测试用例
+     *
+     * /log/log2
+     *
      * @param ctx
      * @returns
      */
-    @POST('/log2')
+    @GET()
     async log2(ctx: Context, next: Next, params: Params) {
         this.$log.success('34567890');
         return {
@@ -42,6 +45,8 @@ export default class LogController extends AppController {
      * 3、获取日志用例
      *
      * log：local｜console  默认两个都有，空数据组则此请求不进入日志系统
+     *
+     * /log/read
      *
      * @param ctx
      * @param next

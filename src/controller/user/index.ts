@@ -43,7 +43,7 @@ function authError(
     });
     return false; //验证通过
 }
-@Controller('/user')
+@Controller()
 export default class UserController extends AppController {
     /**
      * 1、跨域测试用例
@@ -51,6 +51,8 @@ export default class UserController extends AppController {
      * origin：允许的域名数组，请携带http或者https，后缀请不要带/
      *
      * 协议://域名:端口
+     *
+     * /user/
      *
      * @returns
      */
@@ -66,6 +68,8 @@ export default class UserController extends AppController {
 
     /**
      * 2、配置文件测试用例：读取配置和写入配置
+     *
+     * /user/config
      *
      * @param ctx
      * @param next
@@ -89,6 +93,7 @@ export default class UserController extends AppController {
     /**
      * 3、数据库测试用例
      *
+     * /user/get
      *
      * @param ctx
      * @returns
@@ -110,6 +115,8 @@ export default class UserController extends AppController {
      * 默认返回json
      *
      * type 返回类型：json｜html
+     *
+     * /user/html
      *
      * @returns
      */
@@ -134,6 +141,8 @@ export default class UserController extends AppController {
      *
      * auth返回false将不会执行下面的操作
      *
+     * /user/auth
+     *
      * @returns
      */
     @GET({ url: '/auth', auth: auth })
@@ -146,8 +155,10 @@ export default class UserController extends AppController {
 
     /**
      * 6、验证失败测试用例
+     *
+     * /user/autherror
      */
-    @GET({ url: '/authError', auth: authError })
+    @GET({ url: '/autherror', auth: authError })
     userauthError(ctx: Context, next: Next, params: Params) {
         return {
             name: this.name,
