@@ -4,9 +4,9 @@ import http from 'http';
 import Koa, { Context, RequestExts } from 'koa';
 import debug from 'debug';
 import AppMiddlewareCore from './app.core.middleware';
-import appEventCore from './app.core.event';
+import appEventBus from './app.event';
 import { AppMiddlewareOpts, IResponse, IResponseContent } from '@core/typings/app';
-import { Log } from '@core/app';
+import AppLog from '@core/lib/app.log';
 
 /**
  * 主要启动程序，继承于Koa
@@ -60,10 +60,12 @@ class App {
         // handle specific listen errors with friendly messages
         switch (error.code) {
             case 'EACCES':
-                appEventCore.emitError({ type: 'system', content: `Port: ${this.port}: requires elevated privileges` });
+                appEventBus.emitError({ type: 'system', content: `Port: ${this.port}: requires elevated privileges` });
+                this.server = null;
                 process.exit(1);
             case 'EADDRINUSE':
-                appEventCore.emitError({ type: 'system', content: `${this.port}: is already in use` });
+                appEventBus.emitError({ type: 'system', content: `${this.port}: is already in use` });
+                this.server = null;
                 process.exit(1);
             default:
                 throw error;
@@ -77,17 +79,28 @@ class App {
     private onListening() {
         if (!this.server) return null;
         debug(`Listening on Port: ${this.port}, Addr: ${this.server.address()}`);
+        appEventBus.emitError({ type: 'system', content: `Listening on Port: ${this.port}, Addr: ${this.server.address()}` });
     }
 
     /**
      * 创建http服务
      * Create HTTP server.
      */
-    private createServer() {
-        this.server = http.createServer(this.koa.callback());
-        this.server.listen(this.port);
-        this.server.on('error', this.onServerError);
-        this.server.on('listening', this.onListening);
+    private createServer(): http.Server {
+        const server = http.createServer(this.koa.callback());
+        server.on('error', this.onServerError);
+        server.on('listening', this.onListening);
+        return server;
+    }
+
+    /**
+     * 启动http服务
+     */
+    private startServer() {
+        if (!this.server) {
+            this.server = this.createServer();
+        }
+        this.server && this.server.listen(this.port);
     }
     /**
      * 监听请求返回
@@ -95,7 +108,7 @@ class App {
      * @returns
      */
     public onHttp(callback: (ctx: Context, content: IResponse) => any): void {
-        return appEventCore.onHttp((ctx, content) => {
+        return appEventBus.onHttp((ctx, content) => {
             callback(ctx, content);
         });
     }
@@ -129,7 +142,7 @@ class App {
      * @param callback
      */
     public onError(callback: (content: IResponseContent, ctx?: Context) => void): void {
-        return appEventCore.onError((content, ctx) => {
+        return appEventBus.onError((content, ctx) => {
             callback(content, ctx);
         });
     }
@@ -145,14 +158,14 @@ class App {
      * 启动程序
      */
     private startApp(): void {
-        this.createServer();
+        this.startServer();
         // 内置日志系统
         this.onHttp((ctx, content) => {
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development' && content.type === 'error') {
                 console.error('日志系统', ctx);
             }
-            const exts: RequestExts = ctx.exts();
-            Log.w(content, exts.log);
+            const exts: RequestExts = ctx.exts;
+            AppLog.w(content, exts.log);
         });
     }
     /**
@@ -172,7 +185,7 @@ class App {
             }
             // 监听worker
             Cluster.on('listening', function (worker, address) {
-                Log.w({
+                appEventBus.emitLog({
                     type: 'info',
                     content: {
                         type: 'system',
@@ -190,34 +203,46 @@ class App {
             });
             // 监听worker退出事件，code进程非正常退出的错误code，signal导致进程被杀死的信号名称
             Cluster.on('exit', function (worker, code, signal) {
-                Log.w({
-                    type: 'error',
+                const content: IResponseContent = {
+                    type: 'system',
                     content: {
-                        type: 'system',
+                        controller: 'system',
                         content: {
-                            controller: 'system',
-                            content: {
-                                workerId: worker.process.pid,
-                                signal,
-                                code,
-                            },
-                            error: '进程异常退出',
-                            updateTime: new Date().getTime(),
+                            workerId: worker.process.pid,
+                            signal,
+                            code,
                         },
+                        error: '进程异常退出',
+                        updateTime: new Date().getTime(),
                     },
-                });
+                };
+                appEventBus.emitError(content);
                 Cluster.fork();
             });
         } else {
-            callback();
+            return callback();
         }
     }
+
+    /**
+     * 创建服务周期
+     *
+     * 请在start之前使用
+     */
+    public create(callback?: (server: http.Server) => any): http.Server {
+        if (!this.server) {
+            this.server = this.createServer();
+        }
+        callback && callback(this.server);
+        return this.server;
+    }
+
     /**
      * 启动程序
      * @param port 端口
      */
     public start(port: number = 3000, configs?: { cluster?: boolean }): void {
-        this.port = port;
+        this.port = port || 3000;
         this.cluster(configs?.cluster, () => {
             this.startApp();
         });

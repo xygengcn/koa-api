@@ -1,4 +1,4 @@
-import { AppEventCore, ILogTarget, ResponseType } from './app';
+import { appEventBus, ResponseType } from './app';
 declare module 'koa' {
     interface ResponseOptions {
         type?: ResponseType;
@@ -6,6 +6,9 @@ declare module 'koa' {
         failCode?: number;
         error?: string;
         developMsg?: string | undefined | null;
+        headers?: {
+            [key: string]: string | string[];
+        };
     }
 
     interface ResponseError {
@@ -23,9 +26,9 @@ declare module 'koa' {
             },
             callback: (error: ResponseError) => any
         ) => boolean | Promise<boolean>;
-        log?: ILogTarget[];
         origin?: string[];
         content?: any;
+        [key: string]: any;
     }
 
     interface DefaultContext extends ParameterizedContext<any, any> {
@@ -41,7 +44,7 @@ declare module 'koa' {
               };
         success: (data: string | number | object | undefined, option?: ResponseOptions) => any;
         fail: (error: string | number | object | null, code: number, option?: ResponseOptions) => any;
-        exts: () => RequestExts;
-        $event: AppEventCore;
+        exts: RequestExts;
+        $event: appEventBus;
     }
 }

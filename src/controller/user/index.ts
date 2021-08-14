@@ -158,7 +158,7 @@ export default class UserController extends AppController {
      *
      * /user/autherror
      */
-    @GET({ url: '/autherror', auth: authError })
+    @GET({ url: '/authError', auth: authError })
     userauthError(ctx: Context, next: Next, params: Params) {
         return {
             name: this.name,

@@ -1,3 +1,4 @@
+import { IncomingHttpHeaders } from 'http';
 import { Context, Next, RequestExts } from 'koa';
 
 export enum RequestType {
@@ -9,6 +10,14 @@ export enum RequestType {
 export enum ResponseType {
     html = 'text/html',
     json = 'application/json',
+}
+
+/**
+ * 通用主体类型
+ */
+export interface ICustomContent {
+    type: string;
+    content: any;
 }
 
 /**
@@ -35,8 +44,8 @@ export interface IHttpContent {
     code: number; // 代码
     status: string | number;
     time: number; // 耗时
-    request: Object; // 请求参数
-    respone: Object; // 返回数据
+    request: { params: any; header: IncomingHttpHeaders; query: any }; // 请求参数
+    response: Object; // 返回数据
     path: string; // 路由
     clientIP: string | string[]; // 客户端ip
     updateTime: number; // 请求时间
@@ -65,15 +74,6 @@ export interface ISqlContent {
 }
 
 /**
- * 日志输出类型
- */
-export enum ILogTarget {
-    console = 'console', //console输入
-    web = 'web', //在线即时看日志
-    local = 'local', //日志文件
-}
-
-/**
  * 中间件传参
  */
 export interface AppMiddlewareOpts {
@@ -84,11 +84,13 @@ export interface AppMiddlewareOpts {
 /**
  * 事件类
  */
-export interface AppEventCore {
+export interface appEventBus {
     onHttp: (cb: (ctx: Context, content: IResponse) => void) => void;
     emitHttp: (ctx: Context, content: IResponse) => void;
     onError: (cb: (content: IResponseContent, ctx?: Context) => void) => void;
     emitError: (content: IResponseContent, ctx?: Context) => void;
+    emitLog: (content: ICustomContent) => void;
+    onLog: (cb: (ICustomContent) => void) => void;
 }
 
 /**
@@ -100,7 +102,7 @@ export interface AppLog {
     success(content: IResponseContent['content']): boolean;
     error(content: IResponseContent['content']): boolean;
     console(str: IResponseContent): void;
-    read(time?: Date): Promise<IResponseContent[]>;
+    read(time?: Date, type?: string): Promise<IResponseContent[]>;
 }
 /**
  * 中间件

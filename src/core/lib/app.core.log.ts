@@ -1,7 +1,7 @@
 import { TimeFormat } from '@util/time';
-import { ILogTarget, IResponse, IResponseContent } from '@core/typings/app';
 import config from '@core/lib/app.config';
 import { appendFileSync, getFilePath, readLine } from '@core/utils/file';
+import { ICustomContent } from '@core/typings/app';
 
 /**
  * 日志系统
@@ -22,7 +22,7 @@ export default class AppLogCore {
     /**
      * 保存和显示对象
      */
-    private logTarget: ILogTarget[] = [ILogTarget.console, ILogTarget.local];
+    private logTarget: Array<'console' | 'web' | 'local'> = ['console', 'local'];
 
     /**
      * 初始化
@@ -40,23 +40,29 @@ export default class AppLogCore {
      * @param target 日志记录方式
      * @returns
      */
-    protected w(log: IResponse, target: ILogTarget[] = [ILogTarget.local, ILogTarget.console]): boolean {
+    protected w(
+        log: {
+            type: 'info' | 'success' | 'error' | 'warn';
+            content: ICustomContent;
+        },
+        target: Array<'console' | 'web' | 'local'> = ['local', 'console']
+    ): boolean {
         // 配置关闭则不写日志
         if (!log || !this.logEnble) return false;
 
         //console输出
-        if (target.includes(ILogTarget.console) && this.logTarget.includes(ILogTarget.console)) {
+        if (target.includes('console') && this.logTarget.includes('console')) {
             this.console(log.content, log.type);
         }
 
         //写入文件日志
-        if (target.includes(ILogTarget.local) && this.logTarget.includes(ILogTarget.local)) {
+        if (target.includes('local') && this.logTarget.includes('local')) {
             const content = {
-                time: TimeFormat(new Date().getTime()),
-                content: log,
+                time: new Date().getTime(),
+                ...log,
             };
             const str: string = JSON.stringify(content);
-            this.logToFile(str);
+            this.logToFile(str, log.type);
         }
         return true;
     }
@@ -66,14 +72,14 @@ export default class AppLogCore {
      * @param args
      * @returns
      */
-    protected console(content: IResponseContent, type: IResponse['type'] = 'info'): void {
+    protected console(content: any, type: string = 'info'): void {
         if (process.env.NODE_ENV === 'development') {
             const typeStr = {
                 success: `\u001b[32m[Success]:\u001b[0m `,
                 error: `\u001b[31m[Error]:\u001b[0m `,
                 info: `\u001b[2m[Info]:\u001b[0m `,
             };
-            return console.log(typeStr[type], content);
+            return console.log(typeStr[type] || typeStr.info, content);
         }
     }
 
@@ -83,8 +89,8 @@ export default class AppLogCore {
      * @param format
      * @returns
      */
-    protected async readLog(time: Date = new Date(), format: string = 'yyyy-MM-dd.log'): Promise<IResponse[]> {
-        const fileName = getFilePath(this.logPath + TimeFormat(time, format));
+    protected async readLog<T>(time: Date = new Date(), type: string = 'info', format: string = 'yyyy-MM-dd.log'): Promise<T[]> {
+        const fileName = getFilePath(this.logPath, type, TimeFormat(time, format));
         return readLine(fileName).then((strArr) => {
             return strArr.map((item) => {
                 return JSON.parse(item);
@@ -99,8 +105,8 @@ export default class AppLogCore {
      * @param fileName 文件名+目录
      * @param str 追加字符串
      */
-    private logToFile(str: string, format: string = 'yyyy-MM-dd.log'): void {
-        const fileName = getFilePath(this.logPath + TimeFormat(new Date().getTime(), format));
+    private logToFile(str: string, type: string = 'info', format: string = 'yyyy-MM-dd.log'): void {
+        const fileName = getFilePath(this.logPath, type, TimeFormat(new Date().getTime(), format));
         return appendFileSync(fileName, str + '\n');
     }
 }

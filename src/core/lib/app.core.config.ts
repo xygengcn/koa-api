@@ -2,16 +2,7 @@
  * 自动加载配置
  */
 
-import {
-    getFileName,
-    getFilePath,
-    getPackage,
-    isDirectory,
-    isJsonFile,
-    readDirSync,
-    readJson,
-    writeJson,
-} from '@core/utils/file';
+import { getFileName, getFilePath, getPackage, isDirectory, isJsonFile, readDirSync, readJson, writeJson } from '@core/utils/file';
 import * as path from 'path';
 import * as lodash from 'lodash';
 const DEFAULT_CONFIG_FILE_NAME = 'index.json';
@@ -96,10 +87,7 @@ export default class AppConfigCore {
                     if (this.configFileNames.includes(prop)) {
                         return config;
                     }
-                    return Object.assign(
-                        config,
-                        Object.defineProperty({}, prop, { value: this.configs[prop], enumerable: true })
-                    );
+                    return Object.assign(config, Object.defineProperty({}, prop, { value: this.configs[prop], enumerable: true }));
                 }, {});
                 writeJson(this.configDefaultFile, config);
                 return true;
@@ -142,5 +130,6 @@ export default class AppConfigCore {
         const packageJson: any = getPackage();
         lodash.set(this.configs, 'mode', this.env);
         lodash.set(this.configs, 'version', packageJson.version);
+        lodash.set(this.configs, 'author', packageJson.author);
     }
 }

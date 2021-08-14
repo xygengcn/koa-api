@@ -3,6 +3,7 @@
  */
 
 import { AppMiddleware } from '@core/typings/app';
+import { isPromise } from '@core/utils/object';
 import { ResponseError, Next, Context, RequestExts } from 'koa';
 import { isBoolean, isFunction } from 'lodash';
 import Middleware from './app.decorator';
@@ -11,7 +12,7 @@ import Middleware from './app.decorator';
 export default class AppMiddlewareAuth implements AppMiddleware {
     init() {
         return async (ctx: Context, next: Next) => {
-            const exts: RequestExts = ctx.exts();
+            const exts: RequestExts = ctx.exts;
             let errorMsg: ResponseError = {
                 code: 10405,
                 developMsg: '',
@@ -25,14 +26,26 @@ export default class AppMiddlewareAuth implements AppMiddleware {
                 return await next();
             }
             if (isFunction(exts.auth)) {
-                const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
-                    errorMsg = {
-                        ...errorMsg,
-                        ...err,
-                    };
-                });
-                if (auth) {
-                    return await next();
+                if (isPromise(exts.auth)) {
+                    const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
+                        errorMsg = {
+                            ...errorMsg,
+                            ...err,
+                        };
+                    });
+                    if (auth) {
+                        return await next();
+                    }
+                } else {
+                    const auth = exts.auth.call(exts.auth, { ctx, next }, (err) => {
+                        errorMsg = {
+                            ...errorMsg,
+                            ...err,
+                        };
+                    });
+                    if (auth) {
+                        return await next();
+                    }
                 }
             }
             return ctx.fail(errorMsg.error, errorMsg.code, {

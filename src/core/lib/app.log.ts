@@ -1,5 +1,5 @@
-import { ILogTarget, IResponse, IResponseContent } from '@core/typings/app';
-import { isString } from 'lodash';
+import { ICustomContent } from '@core/typings/app';
+import { isString, isObject } from 'lodash';
 import AppLogCore from './app.core.log';
 export class AppLog extends AppLogCore {
     constructor() {
@@ -11,7 +11,13 @@ export class AppLog extends AppLogCore {
      * @param log 日志内容
      * @returns
      */
-    public w(log: IResponse, target?: ILogTarget[]): boolean {
+    public w(
+        log: {
+            type: 'info' | 'success' | 'error' | 'warn';
+            content: ICustomContent;
+        },
+        target?: Array<'console' | 'web' | 'local'>
+    ): boolean {
         return super.w(log, target);
     }
 
@@ -20,10 +26,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public info(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
+    public info(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'info',
-            content: isString(content) ? { type, content } : content,
+            content: isObject(content) ? content : { type, content },
         });
     }
     /**
@@ -31,10 +37,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public success(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
+    public success(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'success',
-            content: isString(content) ? { type, content } : content,
+            content: isObject(content) ? content : { type, content },
         });
     }
     /**
@@ -42,29 +48,10 @@ export class AppLog extends AppLogCore {
      * @param content
      * @returns boolean
      */
-    public error(content: IResponseContent | string, type: IResponseContent['type'] = 'log'): boolean {
+    public error(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'error',
-            content: isString(content) ? { type, content } : content,
-        });
-    }
-
-    /**
-     * 数据库日志
-     * @param sql
-     * @param timing
-     * @returns
-     */
-    public sql(sql: string, timing?: number | undefined) {
-        return this.w({
-            type: 'info',
-            content: {
-                type: 'sql',
-                content: {
-                    sql,
-                    timing,
-                },
-            },
+            content: isObject(content) ? content : { type, content },
         });
     }
 
@@ -74,7 +61,7 @@ export class AppLog extends AppLogCore {
      * @param type
      * @returns
      */
-    public console(content: IResponseContent | string, type: IResponse['type'] = 'info'): void {
+    public console(content: object | number | string | string, type: string = 'log'): void {
         return super.console(isString(content) ? { type: 'log', content } : content, type);
     }
 
@@ -83,7 +70,7 @@ export class AppLog extends AppLogCore {
      * @param time
      * @returns
      */
-    public read(time?: Date) {
+    public read(time?: Date, type?: string) {
         return this.readLog(time);
     }
 }

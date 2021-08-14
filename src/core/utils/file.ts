@@ -43,8 +43,8 @@ export function getPackage(): any {
  * @param path 在主目录的位置
  * @returns
  */
-export function getFilePath(path: string): string {
-    return Path.join(getRootPath(), path);
+export function getFilePath(...path: string[]): string {
+    return Path.join(getRootPath(), ...path);
 }
 /**
  * 获取主目录地址

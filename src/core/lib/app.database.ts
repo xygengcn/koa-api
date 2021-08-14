@@ -4,7 +4,7 @@
 
 import { Sequelize, Dialect, PoolOptions } from 'sequelize';
 import config from '@core/lib/app.config';
-import AppLog from '@core/lib/app.log';
+import appEventBus from './app.event';
 
 class AppDatabaseCore {
     /**
@@ -66,7 +66,16 @@ class AppDatabaseCore {
                 timestamps: false,
             },
             logging: (sql, timing) => {
-                AppLog.sql(sql);
+                appEventBus.emitLog({
+                    type: 'info',
+                    content: {
+                        type: 'sql',
+                        content: {
+                            sql,
+                            timing,
+                        },
+                    },
+                });
             },
         });
     }

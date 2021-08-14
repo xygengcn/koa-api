@@ -12,11 +12,11 @@
 export function TimeFormat(time?: string | number | Date, format: string = 'yyyy-MM-dd HH:mm:ss'): string {
     const dates = time ? new Date(time) : new Date();
     const year = dates.getFullYear();
-    const month = dates.getMonth() + 1 > 9 ? dates.getMonth() + 1 : '0' + (dates.getMonth() + 1);
-    const date = dates.getDate() > 9 ? dates.getDate() : '0' + dates.getDate();
-    const hour = dates.getHours() > 9 ? dates.getHours() : '0' + dates.getHours();
-    const min = dates.getMinutes() > 9 ? dates.getMinutes() : '0' + dates.getMinutes();
-    const ss = dates.getSeconds() > 9 ? dates.getSeconds() : '0' + dates.getSeconds();
+    const month = String(dates.getMonth() + 1).padStart(2, '0');
+    const date = String(dates.getDate()).padStart(2, '0');
+    const hour = String(dates.getHours()).padStart(2, '0');
+    const min = String(dates.getMinutes()).padStart(2, '0');
+    const ss = String(dates.getSeconds()).padStart(2, '0');
     // 获取星期
     const dow = dates.getDay();
     const week = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];

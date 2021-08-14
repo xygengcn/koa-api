@@ -5,8 +5,9 @@ import Koa, { ResponseOptions } from 'koa';
 import { isArray, isObject } from 'lodash';
 import Middleware from './app.decorator';
 import appControllerCore from './app.core.controller';
-import appEventCore from './app.core.event';
+import appEventBus from './app.event';
 import { AppMiddleware, IHttpContent, IResponse, ResponseType } from '@core/typings/app';
+import Config from '@core/lib/app.config';
 @Middleware()
 export default class AppMiddlewareInit implements AppMiddleware {
     /**
@@ -24,8 +25,9 @@ export default class AppMiddlewareInit implements AppMiddleware {
     ): IResponse {
         //请求参数
         const request = {
+            header: ctx.header,
             params: ctx.params || {},
-            query: ctx.request.body,
+            query: ctx.body || {},
         };
         // 请求结果
         const content: IHttpContent = {
@@ -35,7 +37,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
             time: new Date().getTime() - options.startTime,
             updateTime: options.startTime,
             request,
-            respone: ctx.body,
+            response: ctx.body,
             path: ctx.url,
             error: options.code === 200 || ctx.code === 200 ? null : options.error || '内部服务器报错',
             code: (isObject(ctx.body) && ctx.body.code) || options.code || 500,
@@ -52,6 +54,29 @@ export default class AppMiddlewareInit implements AppMiddleware {
     }
 
     /**
+     * 配置处理
+     * @returns
+     */
+    private setOptions(ctx: Koa.Context, options?: ResponseOptions): ResponseOptions {
+        const option = {
+            ...(options || {}),
+            headers: {
+                version: Config.get('version'),
+                author: Config.get('author'),
+                ...(options?.headers || {}),
+            },
+        };
+        if (option.headers) {
+            Object.keys(option.headers).forEach((key) => {
+                if (option.headers && option.headers[key]) {
+                    ctx.append(key, option.headers[key]);
+                }
+            });
+        }
+        return option;
+    }
+
+    /**
      * 最后处理数据
      * @param ctx
      * @param content
@@ -62,9 +87,11 @@ export default class AppMiddlewareInit implements AppMiddleware {
         // 错误回调
         if (content.type === 'error') {
             const httpContent = content.content.content as IHttpContent;
-            ctx.fail(httpContent.error, httpContent.code, {
+            // 请求头设置
+            const options = this.setOptions(ctx, {
                 developMsg: httpContent.developMsg,
             });
+            ctx.fail(httpContent.error, httpContent.code, options);
         }
     }
 
@@ -75,11 +102,14 @@ export default class AppMiddlewareInit implements AppMiddleware {
      * @param msg
      * @param option
      */
-    private success(ctx: Koa.Context, data: string | number | object | undefined, option?: ResponseOptions): void {
-        ctx.type = (option && option.type) || ResponseType.json;
+    private success(ctx: Koa.Context, data: string | number | object | undefined, options?: ResponseOptions): void {
+        // 类型
+        ctx.type = (options && options.type) || ResponseType.json;
+        // 请求头设置
+        options = this.setOptions(ctx, options);
         if (ctx.type === ResponseType.json) {
             ctx.body = {
-                code: (option && option.successCode) || 200,
+                code: (options && options.successCode) || 200,
                 data: data || {},
                 updateTime: new Date().getTime(),
             };
@@ -94,16 +124,36 @@ export default class AppMiddlewareInit implements AppMiddleware {
      * @param ctx
      * @param error 错误文本
      * @param code 错误代码
-     * @param option
+     * @param options
      */
-    private fail(ctx: Koa.Context, error: string | number | object | null, code: number, option?: ResponseOptions) {
-        // 处理返回数据
-        ctx.type = (option && option.type) || ResponseType.json;
+    private fail(ctx: Koa.Context, error: string | number | object | null, code: number, options?: ResponseOptions) {
+        // 类型
+        ctx.type = (options && options.type) || ResponseType.json;
         ctx.body = {
-            code: code || (option && option.failCode) || 404,
-            error: error || (option && option.error) || 'fail',
-            developMsg: option && option.developMsg,
+            code: code || (options && options.failCode) || 404,
+            error: error || (options && options.error) || 'fail',
+            developMsg: options && options.developMsg,
             updateTime: new Date().getTime(),
+        };
+    }
+
+    /**
+     * 获取单个路由额外参数
+     * @param ctx
+     * @returns
+     */
+    private exts(ctx: Koa.Context) {
+        const matched = appControllerCore.instance.match(ctx.path, ctx.method);
+        if (matched && matched.route) {
+            const method = matched.path[0];
+            return (
+                appControllerCore.instance.exts.get(method.name) || {
+                    url: ctx.path,
+                }
+            );
+        }
+        return {
+            url: ctx.path,
         };
     }
     /**
@@ -116,7 +166,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
             //请求开始时间
             const startTime: number = new Date().getTime();
             // 请求结果
-            let responeContent: IResponse | null = null;
+            let responseContent: IResponse | null = null;
             //成功返回
             ctx.success = (data, option?) => {
                 this.success(ctx, data, option);
@@ -126,50 +176,41 @@ export default class AppMiddlewareInit implements AppMiddleware {
                 this.fail(ctx, error, code, option);
             };
             // 拓展字段
-            ctx.exts = () => {
-                const matched = appControllerCore.instance.match(ctx.path, ctx.method);
-                if (matched && matched.route) {
-                    const method = matched.path[0];
-                    return appControllerCore.instance.exts.get(method.name);
-                }
-                return {
-                    url: ctx.path,
-                };
-            };
+            ctx.exts = this.exts(ctx);
             // 事件监听
-            ctx.$event = appEventCore;
+            ctx.$event = appEventBus;
 
             // 错误处理
             try {
                 await next();
                 if ((isObject(ctx.body) && ctx.body.code === 200) || ctx.status === 200) {
-                    responeContent = this.formatContent(ctx, {
+                    responseContent = this.formatContent(ctx, {
                         code: (isObject(ctx.body) && ctx.body.code) || ctx.status,
                         error: isObject(ctx.body) && ctx.body.error,
                         startTime,
                     });
                 } else if (isObject(ctx.body) && ctx.body.code) {
-                    responeContent = this.formatContent(ctx, {
+                    responseContent = this.formatContent(ctx, {
                         code: ctx.body.code,
                         startTime,
                         error: ctx.body.error,
                     });
                 } else {
-                    responeContent = this.formatContent(ctx, {
+                    responseContent = this.formatContent(ctx, {
                         code: 404,
                         startTime,
                         error: 'Not Found',
                     });
                 }
             } catch (e) {
-                responeContent = this.formatContent(ctx, {
+                responseContent = this.formatContent(ctx, {
                     code: e && e.code,
                     startTime,
                     error: e && e.error,
                     developMsg: (e && e.developMsg) || `${e}`,
                 });
             } finally {
-                responeContent && this.finally(ctx, responeContent);
+                responseContent && this.finally(ctx, responseContent);
             }
         };
     }

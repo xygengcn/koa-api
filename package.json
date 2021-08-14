@@ -1,14 +1,16 @@
 {
   "name": "koa-api",
-  "version": "0.1.3",
+  "version": "0.1.4",
+  "author": "xygengcn",
+  "homepage": "https://xygeng.cn",
   "private": true,
   "license": "MIT",
   "scripts": {
     "dev:tsc": "tsc -w",
-    "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect build/app.js",
+    "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect=7000 app/app.js",
     "dev": "tsc && concurrently npm:dev:*",
-    "sit": "cross-env NODE_ENV=production pm2 start www/build/app.js",
-    "prd": "cross-env NODE_ENV=production pm2 start build/app.js",
+    "prd": "cross-env NODE_ENV=production pm2 start app/app.js",
+    "sit": "cross-env NODE_ENV=production pm2 start www/app/app.js",
     "build": "tsc && node build.js",
     "lint": "prettier ./src"
   },
@@ -37,16 +39,16 @@
     "typescript": "^4.3.2"
   },
   "_moduleAliases": {
-    "@core": "./build/core",
-    "@util": "./build/core/utils",
-    "@model": "./build/model"
+    "@core": "./app/core",
+    "@util": "./app/core/utils",
+    "@model": "./app/model"
   },
   "_moduleDirectories": [
     "node_modules_custom"
   ],
   "nodemonConfig": {
     "ignore": [
-      "./build/config"
+      "./app/config"
     ]
   }
 }

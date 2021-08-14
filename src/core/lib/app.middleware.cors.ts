@@ -11,7 +11,7 @@ export default class AppMiddlewareCors implements AppMiddleware {
     private allowMethods = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
     init(options?: AppMiddlewareOpts) {
         return async (ctx: Koa.Context, next: Koa.Next) => {
-            const exts: RequestExts = ctx.exts();
+            const exts: RequestExts = ctx.exts;
             ctx.vary('Origin');
             ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
             if (options && options.allowMethods) {

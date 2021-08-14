@@ -3,7 +3,7 @@
         "target": "es6",
         "module": "commonjs",
         "allowJs": true,
-        "outDir": "./build",
+        "outDir": "./app",
         "rootDir": "./src",
         "strict": true,
         "watch": false,

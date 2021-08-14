@@ -2,7 +2,7 @@
  * 程序装饰器合集
  */
 
-import { ILogTarget, RequestType } from '@core/typings/app';
+import { RequestType } from '@core/typings/app';
 import { Context, Next, RequestExts } from 'koa';
 import AppController from './app.controller';
 
@@ -45,16 +45,15 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
      */
     const option = (options: RequestExts): RequestExts => {
         return {
-            log: [ILogTarget.local, ILogTarget.console],
             ...options,
         };
     };
-    return function (target: Object, name: string, descriptor: PropertyDescriptor) {
+    return function (target, name: string, descriptor: PropertyDescriptor) {
         const controllerMethod = descriptor.value;
         const path: string = (options && options.url) || `/${name}`;
         const opts = option(options || { url: path });
-        descriptor.value = function (router: AppController, target) {
-            const routerName: string = `${target.name}.${name}`;
+        descriptor.value = function (router: AppController) {
+            const routerName: string = `${router.name}.${name}`;
             router[method || RequestType.GET](routerName, path, async (ctx, next) => {
                 const params = ctx.params === {} ? ctx.request.body : ctx.params; //请求数据
                 const res = await controllerMethod.call(this, ctx, next, params); //获取返回值

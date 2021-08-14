@@ -218,39 +218,15 @@ export default class IndexController {
 
 > 使用 Log.w 方法，详细方法请看测试用例
 
-#### 日志参数
-
-| 参数   | 类型   | 说明                                       |
-| ------ | ------ | ------------------------------------------ |
-| Ilog   | object | 主要内容                                   |
-| target | string | 打印对象，local、console、online，默认都有 |
-|        |        |                                            |
-
-#### Ilog 主要内容参数
-
-| 参数    | 类型            | 说明                         |
-| ------- | --------------- | ---------------------------- |
-| type    | String          | 日志类型，Success,info,error |
-| content | Object/string   | 日志主要内容                 |
-| Keyword | string/string[] | console 需要高亮的字词，可选 |
-
 #### 测试用例
 
 ```js
 import { Log } from '@core/app';
 const logContent = {
-    type: ILogType.error,
+    type: 'info',
     content: {
-        type: ctx.method,
-        time: new Date().getTime() - updateTime,
-        updateTime,
-        request,
-        respone: ctx.body,
-        router: ctx.url,
-        content: '内部服务器报错',
-        code: 500,
-        clientIP: getClientIp(ctx.req),
-        developMsg: `${e}`,
+        type: 'sql',
+        content: "",
     },
 };
 Log.w(logContent);

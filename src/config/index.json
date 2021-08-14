@@ -5,6 +5,6 @@
         "type": "mysql",
         "user": "root",
         "password": "root",
-        "database": "api_xygeng_cn"
+        "database": "test"
     }
 }
