@@ -1,8 +1,7 @@
 import Cluster from 'cluster';
 import OS from 'os';
 import http from 'http';
-import Koa, { Context, RequestExts } from 'koa';
-import debug from 'debug';
+import Koa, { Context } from 'koa';
 import AppMiddlewareCore from './app.core.middleware';
 import appEventBus from './app.event';
 import { AppMiddlewareOpts, IResponse, IResponseContent } from '@core/typings/app';
@@ -78,7 +77,6 @@ class App {
      */
     private onListening() {
         if (!this.server) return null;
-        debug(`Listening on Port: ${this.port}, Addr: ${this.server.address()}`);
         appEventBus.emitError({ type: 'system', content: `Listening on Port: ${this.port}, Addr: ${this.server.address()}` });
     }
 
@@ -96,11 +94,12 @@ class App {
     /**
      * 启动http服务
      */
-    private startServer() {
+    private startServer(): App {
         if (!this.server) {
             this.server = this.createServer();
         }
         this.server && this.server.listen(this.port);
+        return this;
     }
     /**
      * 监听请求返回
@@ -150,23 +149,23 @@ class App {
     /**
      * 设置跨域配置
      */
-    public cors(options: AppMiddlewareOpts) {
+    public cors(options: AppMiddlewareOpts): App {
         this.middleware.option(options);
+        return this;
     }
 
     /**
      * 启动程序
      */
-    private startApp(): void {
-        this.startServer();
-        // 内置日志系统
-        this.onHttp((ctx, content) => {
-            if (process.env.NODE_ENV === 'development' && content.type === 'error') {
-                console.error('日志系统', ctx);
+    private startApp() {
+        this.startServer().onError((content, ctx) => {
+            if (process.env.NODE_ENV === 'development') {
+                console.error('日志系统:', ctx);
             }
-            const exts: RequestExts = ctx.exts;
-            AppLog.w(content, exts.log);
+            const exts = ctx?.exts;
+            AppLog.error(content, exts?.log);
         });
+        return this;
     }
     /**
      * 集群
@@ -241,11 +240,12 @@ class App {
      * 启动程序
      * @param port 端口
      */
-    public start(port: number = 3000, configs?: { cluster?: boolean }): void {
+    public start(port: number = 3000, configs?: { cluster?: boolean }): App {
         this.port = port || 3000;
         this.cluster(configs?.cluster, () => {
             this.startApp();
         });
+        return this;
     }
 }
 export default new App();
