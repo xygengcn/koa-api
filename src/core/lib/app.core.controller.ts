@@ -17,7 +17,7 @@ export class AppControllerCore {
     constructor() {
         this.path = getFilePath('./controller');
         this.instance = new AppController();
-        this.getAllControllers(this.path);
+        this.getAllControllers(this.instance, this.path);
     }
 
     /**
@@ -55,7 +55,7 @@ export class AppControllerCore {
      * 读取所有控制器数据
      * @param path 控制器目录
      */
-    private getAllControllers(path: string, dir: string = '/'): void {
+    private getAllControllers(parent: AppController, path: string, dir: string = '/'): void {
         const controllerFiles = readDirSync(path);
         const appController = new AppController('AppController', dir);
         controllerFiles.forEach((file) => {
@@ -64,10 +64,10 @@ export class AppControllerCore {
                 const controller = this.getController(file, filepath);
                 controller && appController.use(controller.routes());
             } else if (isDirectory(filepath)) {
-                this.getAllControllers(filepath, file);
+                this.getAllControllers(appController, filepath, file);
             }
         });
-        this.instance.use(appController.routes());
+        parent.use(appController.routes());
     }
 }
 

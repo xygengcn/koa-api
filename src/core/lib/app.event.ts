@@ -50,9 +50,6 @@ export class AppEvent {
      */
     public onHttp(callback: (ctx: Context, content: IResponse) => void) {
         return this.$on('http', (ctx: Context, content: IResponse) => {
-            if (content.type === 'error') {
-                this.emitError(content.content, ctx);
-            }
             callback(ctx, content);
         });
     }
@@ -61,6 +58,9 @@ export class AppEvent {
      * 触发请求返回
      */
     public emitHttp(ctx: Context, content: IResponse) {
+        if (content.type === 'error') {
+            this.emitError(content.content, ctx);
+        }
         return this.$emit('http', ctx, content);
     }
 
