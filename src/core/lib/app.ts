@@ -165,11 +165,6 @@ class App {
             const exts = ctx?.exts;
             AppLog.error(content, exts?.log);
         });
-        this.onHttp((ctx, content) => {
-            if (process.env.NODE_ENV === 'development' && content.type === 'error') {
-                console.error('日志系统:', ctx);
-            }
-        });
         return this;
     }
     /**

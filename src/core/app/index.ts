@@ -8,6 +8,7 @@ import AppDataBase from '@core/lib/app.database';
 import { Sequelize } from 'sequelize/types';
 import { ControllerDecorator, MethodDecorator } from '@core/lib/app.decorator';
 import { RequestType } from '@core/typings/app';
+import { ParsedUrlQuery } from 'querystring';
 /**
  * 抛出参数类型
  */
@@ -15,7 +16,10 @@ export type Context = Koa.Context;
 
 export type Next = Koa.Next;
 
-export type Params = Object | undefined | null;
+export interface Params {
+    query: ParsedUrlQuery;
+    param: string | string | Record<string, unknown>;
+}
 
 /**
  * 控制器装饰器

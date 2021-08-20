@@ -55,8 +55,11 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
         descriptor.value = function (router: AppController) {
             const routerName: string = `${router.name}.${name}`;
             router[method || RequestType.GET](routerName, path, async (ctx, next) => {
-                const params = ctx.params === {} ? ctx.request.body : ctx.params; //请求数据
-                const res = await controllerMethod.call(this, ctx, next, params); //获取返回值
+                // 调用方法
+                const res = await controllerMethod.call(this, ctx, next, {
+                    query: ctx.query,
+                    param: ctx.request.body,
+                });
                 ctx.success(res, opts);
                 return res;
             });
