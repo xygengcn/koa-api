@@ -79,13 +79,14 @@ export default class UserController extends AppController {
     @GET('/config')
     setConfig(ctx: Context, next: Next, params: Params) {
         // 读取配置的name，格式为a.b.c => {a:{b:{c:123}}} 结果为123
-        const oldName = this.$config.get('name');
+        const name = this.$config.get('name');
         // 修改配置，默认写入配置文件，第三个参数false则不修改文件仅修改内存
-        this.$config.set('name', 'new openApi');
+        this.$config.set('new-name', 'new openApi');
+        // 新加配置 user:{name:'xygengcn'}
+        this.$config.set('user.name', 'xygengcn');
         return {
+            name,
             database: this.$config.get('database.host'), // 读取数据库配置的database的host
-            oldName,
-            newName: 'new openApi',
             configs: this.$config.get(),
         };
     }

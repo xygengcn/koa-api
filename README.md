@@ -59,7 +59,7 @@ yarn run sit
 -   core -> 框架核心
     -   controller -> 控制器处理类
     -   lib -> 核心代码
-    -   utils -> 工具类
+    -   util -> 工具类
     -   type -> 类型文件
 -   app.ts -> 入口文件
 

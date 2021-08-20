@@ -23,6 +23,7 @@ export default class IndexController extends AppController {
             msg: '这是常规的get请求',
             className: this.name,
             name: ctx.routerName,
+            mode: process.env.NODE_ENV,
         };
     }
 

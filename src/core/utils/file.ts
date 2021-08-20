@@ -48,6 +48,8 @@ export function getFilePath(...path: string[]): string {
 }
 /**
  * 获取主目录地址
+ *
+ * 以app.js或app.ts
  */
 export function getRootPath(): string {
     return Path.join(__dirname, '../../');

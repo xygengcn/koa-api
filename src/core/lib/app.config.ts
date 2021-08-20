@@ -9,8 +9,8 @@ export class AppConfig extends AppConfigCore {
      * @param data 值
      * @param force 是否写入本地，默认true
      */
-    public set(property: string, data: any, force: boolean = true): Boolean {
-        return this.setValue(property, data, force);
+    public set(property: string, data: any, force: boolean = true): void {
+        this.setValue(property, data, force);
     }
 
     /**

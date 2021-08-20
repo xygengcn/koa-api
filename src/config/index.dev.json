@@ -1,5 +1,5 @@
 {
-    "name": "openApi",
+    "name": "openApi-dev",
     "database": {
         "host": "100.119.118.97",
         "type": "mysql",

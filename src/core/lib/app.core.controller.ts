@@ -2,22 +2,18 @@ import { set } from 'lodash';
 import { getFilePath, isDirectory, isFile, isIndexFile, readDirSync, getFileName } from '@core/utils/file';
 import * as Path from 'path';
 import AppController from './app.controller';
+import Config from '@core/lib/app.config';
 
 /**
  * 控制器处理基础类
  */
 export class AppControllerCore {
+    // 实例
     public instance: AppController;
 
-    /**
-     * 控制器文件夹路径
-     */
-    private path: string = '';
-
-    constructor() {
-        this.path = getFilePath('./controller');
+    constructor(path: string) {
         this.instance = new AppController();
-        this.getAllControllers(this.instance, this.path);
+        this.getAllControllers(this.instance, getFilePath(path));
     }
 
     /**
@@ -71,4 +67,4 @@ export class AppControllerCore {
     }
 }
 
-export default new AppControllerCore();
+export default new AppControllerCore(Config.get('controller.path'));

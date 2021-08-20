@@ -18,7 +18,7 @@ export type Next = Koa.Next;
 
 export interface Params {
     query: ParsedUrlQuery;
-    param: string | string | Record<string, unknown>;
+    param: any;
 }
 
 /**

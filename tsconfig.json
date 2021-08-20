@@ -30,6 +30,12 @@
             ],
             "@model/*": [
                 "./src/model/*"
+            ],
+            "@type/*": [
+                "./src/type/*"
+            ],
+            "@database/*": [
+                "./src/database/*"
             ]
         },
     },

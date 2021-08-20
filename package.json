@@ -10,7 +10,7 @@
     "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect=7000 app/app.js",
     "dev": "tsc && concurrently npm:dev:*",
     "prd": "cross-env NODE_ENV=production pm2 start app/app.js",
-    "sit": "cross-env NODE_ENV=production pm2 start www/app/app.js",
+    "sit": "cross-env NODE_ENV=sit pm2 start www/app/app.js",
     "build": "tsc && node build.js",
     "lint": "prettier ./src"
   },
@@ -21,7 +21,9 @@
     "koa-router": "^7.4.0",
     "mysql2": "^2.2.5",
     "sequelize": "^6.6.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "module-alias": "^2.2.2",
+    "cross-env": "^7.0.3"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
@@ -31,8 +33,6 @@
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.28",
     "concurrently": "^5.3.0",
-    "cross-env": "^7.0.3",
-    "module-alias": "^2.2.2",
     "nodemon": "^1.19.1",
     "prettier": "2.3.1",
     "typescript": "^4.3.2"
@@ -40,7 +40,9 @@
   "_moduleAliases": {
     "@core": "./app/core",
     "@util": "./app/core/utils",
-    "@model": "./app/model"
+    "@model": "./app/model",
+    "@database": "./app/database",
+    "@type": "./app/type"
   },
   "_moduleDirectories": [
     "node_modules_custom"
