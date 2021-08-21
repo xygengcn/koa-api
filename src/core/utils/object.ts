@@ -51,14 +51,13 @@ export function isIllegalObject(obj, attrs: string[]): false | string[] {
     if (!obj || !isObject(obj)) return attrs;
 
     // 遍历
-    const illegalAttrs = attrs.reduce((resultAttrs, attr, index) => {
+    const illegalAttrs = attrs.filter((attr) => {
         // 如果值存在
-        if (get(obj, attr) && resultAttrs.length) {
-            // 剔除
-            resultAttrs.splice(index, 1);
+        if (get(obj, attr)) {
+            return false;
         }
-        return resultAttrs || [];
-    }, attrs);
+        return true;
+    });
 
     // 属性为空为true
     if (illegalAttrs.length === 0) {
