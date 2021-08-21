@@ -1,8 +1,8 @@
+import { ObjecUtils } from './../core/app/index';
+import AppController, { Context, Controller, GET, Next, Params, POST } from '@core/app';
 /**
  * 测试用例
  */
-
-import AppController, { Context, Controller, GET, Next, Params, POST } from '@core/app';
 
 @Controller('/')
 export default class IndexController extends AppController {
@@ -18,12 +18,13 @@ export default class IndexController extends AppController {
      */
     @GET('/get')
     async index(ctx: Context, next: Next, params: Params) {
-        this.console();
+        const result = this.console();
         return {
             msg: '这是常规的get请求',
             className: this.name,
             name: ctx.routerName,
-            mode: process.env.NODE_ENV
+            mode: process.env.NODE_ENV,
+            result
         };
     }
 
@@ -48,6 +49,16 @@ export default class IndexController extends AppController {
      * 3. 普通函数
      */
     private console() {
-        console.log(this.name);
+        const obj = {
+            url: 234,
+            url2: '',
+            user: {
+                name: 1
+            },
+            test: 111
+        };
+
+        // 测试对象是否合法，可用于检验前端传参数的合法性
+        return ObjecUtils.isLegalObject(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
     }
 }

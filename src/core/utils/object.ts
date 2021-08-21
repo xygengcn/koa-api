@@ -2,6 +2,8 @@
  * 对象操作工具集合
  */
 
+import { get } from 'lodash';
+
 /**
  * 是否是数组
  * @param arr
@@ -31,4 +33,35 @@ export function isPromise(obj: any) {
         (typeof obj === 'object' || typeof obj === 'function') && // 初始promise 或 promise.then返回的
         typeof obj.then === 'function'
     );
+}
+
+/**
+ * 判断是合法对象
+ *
+ * 对象含有必要的属性且不为空
+ *
+ * @param obj
+ * @param attrs
+ * @returns
+ */
+export function isLegalObject(obj, attrs: string[]): boolean | string[] {
+    // 不是对象直接fasle
+    if (!obj || !isObject(obj)) return attrs;
+
+    // 遍历
+    const result = attrs.reduce((resultAttrs, attr, index) => {
+        // 如果值存在
+        if (get(obj, attr) && resultAttrs.length) {
+            // 剔除
+            resultAttrs.splice(index, 1);
+        }
+        return resultAttrs;
+    }, attrs);
+
+    // 属性为空为true
+    if (result.length === 0) {
+        return true;
+    }
+
+    return result;
 }

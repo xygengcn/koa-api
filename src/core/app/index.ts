@@ -9,6 +9,23 @@ import { Sequelize } from 'sequelize/types';
 import { ControllerDecorator, MethodDecorator } from '@core/lib/app.decorator';
 import { RequestType } from '@core/typings/app';
 import { ParsedUrlQuery } from 'querystring';
+import * as fileUtils from '@util/file';
+import * as urlUtils from '@util/url';
+import * as timeUtils from '@util/time';
+import * as objectUtils from '@util/object';
+
+/**
+ * 抛出工具函数
+ */
+
+export const FileUtils = fileUtils;
+
+export const UrlUtils = urlUtils;
+
+export const TimeUtils = timeUtils;
+
+export const ObjecUtils = objectUtils;
+
 /**
  * 抛出参数类型
  */
