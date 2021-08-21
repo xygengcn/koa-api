@@ -55,7 +55,7 @@ class AppDatabaseCore {
                 max: 5, // 连接池中最大连接数量
                 min: 0, // 连接池中最小连接数量
                 idle: 10000, // 如果一个线程 10 秒钟内没有被使用过的话，那么就释放线程
-                ...this.pool,
+                ...this.pool
             },
             define: {
                 // 如果为 true 则表的名称和 model 相同，即 user
@@ -63,7 +63,7 @@ class AppDatabaseCore {
                 // 如果指定的表名称本就是复数形式则不变
                 freezeTableName: true,
                 // sequelize默认会自动为其添加 createdAt 和updatedAt
-                timestamps: false,
+                timestamps: false
             },
             logging: (sql, timing) => {
                 appEventBus.emitLog({
@@ -72,11 +72,11 @@ class AppDatabaseCore {
                         type: 'sql',
                         content: {
                             sql,
-                            timing,
-                        },
-                    },
+                            timing
+                        }
+                    }
                 });
-            },
+            }
         });
     }
 }

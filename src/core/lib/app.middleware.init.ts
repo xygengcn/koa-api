@@ -27,7 +27,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
         const request = {
             header: ctx.header,
             params: ctx.params || {},
-            query: ctx.body || {},
+            query: ctx.body || {}
         };
         // 请求结果
         const content: IHttpContent = {
@@ -42,14 +42,14 @@ export default class AppMiddlewareInit implements AppMiddleware {
             error: options.code === 200 || ctx.code === 200 ? null : options.error || '内部服务器报错',
             code: (isObject(ctx.body) && ctx.body.code) || options.code || 500,
             clientIP: ctx.ip || ctx.ips,
-            referer: ctx.request.headers.origin || ctx.request.headers.referer || '',
+            referer: ctx.request.headers.origin || ctx.request.headers.referer || ''
         };
         return {
             type: options.code === 200 || ctx.code === 200 ? 'success' : 'error',
             content: {
                 type: 'http',
-                content,
-            },
+                content
+            }
         };
     }
 
@@ -63,8 +63,8 @@ export default class AppMiddlewareInit implements AppMiddleware {
             headers: {
                 version: Config.get('version'),
                 author: Config.get('author'),
-                ...(options?.headers || {}),
-            },
+                ...(options?.headers || {})
+            }
         };
         if (option.headers) {
             Object.keys(option.headers).forEach((key) => {
@@ -89,7 +89,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
             const httpContent = content.content.content as IHttpContent;
             // 请求头设置
             const options = this.setOptions(ctx, {
-                developMsg: httpContent.developMsg,
+                developMsg: httpContent.developMsg
             });
             ctx.fail(httpContent.error, httpContent.code, options);
         }
@@ -111,7 +111,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
             ctx.body = {
                 code: (options && options.successCode) || 200,
                 data: data || {},
-                updateTime: new Date().getTime(),
+                updateTime: new Date().getTime()
             };
         } else {
             const text = isArray(data) || isObject(data) ? JSON.stringify(data) : data;
@@ -133,7 +133,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
             code: code || (options && options.failCode) || 404,
             error: error || (options && options.error) || 'fail',
             developMsg: options && options.developMsg,
-            updateTime: new Date().getTime(),
+            updateTime: new Date().getTime()
         };
     }
 
@@ -148,12 +148,12 @@ export default class AppMiddlewareInit implements AppMiddleware {
             const method = matched.path[0];
             return (
                 appControllerCore.instance.exts.get(method.name) || {
-                    url: ctx.path,
+                    url: ctx.path
                 }
             );
         }
         return {
-            url: ctx.path,
+            url: ctx.path
         };
     }
     /**
@@ -187,19 +187,19 @@ export default class AppMiddlewareInit implements AppMiddleware {
                     responseContent = this.formatContent(ctx, {
                         code: (isObject(ctx.body) && ctx.body.code) || ctx.status,
                         error: isObject(ctx.body) && ctx.body.error,
-                        startTime,
+                        startTime
                     });
                 } else if (isObject(ctx.body) && ctx.body.code) {
                     responseContent = this.formatContent(ctx, {
                         code: ctx.body.code,
                         startTime,
-                        error: ctx.body.error,
+                        error: ctx.body.error
                     });
                 } else {
                     responseContent = this.formatContent(ctx, {
                         code: 404,
                         startTime,
-                        error: 'Not Found',
+                        error: 'Not Found'
                     });
                 }
             } catch (e) {
@@ -207,7 +207,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
                     code: e && e.code,
                     startTime,
                     error: e && e.error,
-                    developMsg: (e && e.developMsg) || `${e}`,
+                    developMsg: (e && e.developMsg) || `${e}`
                 });
             } finally {
                 responseContent && this.finally(ctx, responseContent);

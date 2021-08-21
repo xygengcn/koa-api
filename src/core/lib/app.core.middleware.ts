@@ -38,7 +38,7 @@ export default class AppMiddlewareCore {
     private initMiddleware(): void {
         this.beforeRouteUse(
             KoaBodyParser({
-                enableTypes: ['json', 'form', 'text'],
+                enableTypes: ['json', 'form', 'text']
             })
         );
         this.beforeRouteUse(KoaJson());
@@ -56,7 +56,7 @@ export default class AppMiddlewareCore {
     public option(options: any) {
         this.middlewareOptions = {
             ...this.middlewareOptions,
-            ...options,
+            ...options
         };
     }
 

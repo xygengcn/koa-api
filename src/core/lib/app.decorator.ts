@@ -45,7 +45,7 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
      */
     const option = (options: RequestExts): RequestExts => {
         return {
-            ...options,
+            ...options
         };
     };
     return function (target, name: string, descriptor: PropertyDescriptor) {
@@ -58,7 +58,7 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
                 // 调用方法
                 const res = await controllerMethod.call(this, ctx, next, {
                     query: ctx.query,
-                    param: ctx.request.body,
+                    param: ctx.request.body
                 });
                 ctx.success(res, opts);
                 return res;
@@ -69,14 +69,14 @@ export function MethodDecorator(method: RequestType, options?: RequestExts) {
             value: 'controllerMethod',
             writable: false,
             configurable: false,
-            enumerable: true,
+            enumerable: true
         });
         // 把配置挂载装饰器返回值
         Object.defineProperty(descriptor.value, 'options', {
             value: opts,
             writable: false,
             configurable: false,
-            enumerable: true,
+            enumerable: true
         });
         return descriptor;
     };

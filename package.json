@@ -12,7 +12,7 @@
     "prd": "cross-env NODE_ENV=production pm2 start app/app.js",
     "sit": "cross-env NODE_ENV=sit pm2 start www/app/app.js",
     "build": "tsc && node build.js",
-    "lint": "prettier ./src"
+    "lint": "prettier --config ./.prettierrc --write ./src "
   },
   "dependencies": {
     "koa": "^2.7.0",

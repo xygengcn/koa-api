@@ -30,7 +30,7 @@ export class Test extends Model<TestTable, Optional<TestTable, 'id'>> implements
 
         // 随机查询一条消息
         return Test.findOne({
-            order: [Sequelize.literal('rand()')],
+            order: [Sequelize.literal('rand()')]
         }).then((res) => res && res.toJSON());
     }
 
@@ -49,27 +49,27 @@ Test.init(
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            unique: true,
+            unique: true
         },
         apiName: {
             type: DataTypes.STRING, // 指定值的类型
-            field: 'api_name', // 指定存储在表中的键名称
+            field: 'api_name' // 指定存储在表中的键名称
         },
         type: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING
         },
         total: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.NUMBER
         },
         date: {
-            type: DataTypes.DATE,
-        },
+            type: DataTypes.DATE
+        }
     },
     {
         // 【重要】挂载实例，这一步重点
         sequelize: AppModel,
         // 表名
-        tableName: 'data',
+        tableName: 'data'
     }
 );
 

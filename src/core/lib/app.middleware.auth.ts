@@ -16,7 +16,7 @@ export default class AppMiddlewareAuth implements AppMiddleware {
             let errorMsg: ResponseError = {
                 code: 10405,
                 developMsg: '',
-                error: '验证失败',
+                error: '验证失败'
             };
             if (!exts) return await next();
             if (!exts.hasOwnProperty('auth')) {
@@ -30,7 +30,7 @@ export default class AppMiddlewareAuth implements AppMiddleware {
                     const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
                         errorMsg = {
                             ...errorMsg,
-                            ...err,
+                            ...err
                         };
                     });
                     if (auth) {
@@ -40,7 +40,7 @@ export default class AppMiddlewareAuth implements AppMiddleware {
                     const auth = exts.auth.call(exts.auth, { ctx, next }, (err) => {
                         errorMsg = {
                             ...errorMsg,
-                            ...err,
+                            ...err
                         };
                     });
                     if (auth) {
@@ -49,7 +49,7 @@ export default class AppMiddlewareAuth implements AppMiddleware {
                 }
             }
             return ctx.fail(errorMsg.error, errorMsg.code, {
-                developMsg: errorMsg.developMsg,
+                developMsg: errorMsg.developMsg
             });
         };
     }

@@ -59,7 +59,7 @@ export default class AppLogCore {
         if (target.includes('local') && this.logTarget.includes('local')) {
             const content = {
                 time: new Date().getTime(),
-                ...log,
+                ...log
             };
             const str: string = JSON.stringify(content);
             this.logToFile(str, log.type);
@@ -77,7 +77,7 @@ export default class AppLogCore {
             const typeStr = {
                 success: `\u001b[32m[Success]:\u001b[0m `,
                 error: `\u001b[31m[Error]:\u001b[0m `,
-                info: `\u001b[2m[Info]:\u001b[0m `,
+                info: `\u001b[2m[Info]:\u001b[0m `
             };
             return console.log(typeStr[type] || typeStr.info, content);
         }

@@ -39,7 +39,7 @@ function authError(
 ): boolean {
     callback({
         code: 10405,
-        error: '验证失败测试用例',
+        error: '验证失败测试用例'
     });
     return false; //验证通过
 }
@@ -58,11 +58,11 @@ export default class UserController extends AppController {
      */
     @GET({
         url: '/',
-        origin: ['http://localhost:5330', 'http://localhost:523300'],
+        origin: ['http://localhost:5330', 'http://localhost:523300']
     })
     get() {
         return {
-            name: this.name,
+            name: this.name
         };
     }
 
@@ -87,7 +87,7 @@ export default class UserController extends AppController {
         return {
             name,
             database: this.$config.get('database.host'), // 读取数据库配置的database的host
-            configs: this.$config.get(),
+            configs: this.$config.get()
         };
     }
 
@@ -105,7 +105,7 @@ export default class UserController extends AppController {
         const data: any = await Test.getOne();
         return {
             name: this.name,
-            data: data,
+            data: data
         };
     }
 
@@ -150,7 +150,7 @@ export default class UserController extends AppController {
     userauth(ctx: Context, next: Next, params: Params) {
         console.log('验证路由');
         return {
-            name: this.name,
+            name: this.name
         };
     }
 
@@ -162,7 +162,7 @@ export default class UserController extends AppController {
     @GET({ url: '/authError', auth: authError })
     userauthError(ctx: Context, next: Next, params: Params) {
         return {
-            name: this.name,
+            name: this.name
         };
     }
 }

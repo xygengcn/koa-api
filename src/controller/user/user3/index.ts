@@ -11,7 +11,7 @@ export default class User3 extends AppController {
     @GET('/get2')
     get2() {
         return {
-            name: this.name,
+            name: this.name
         };
     }
 }

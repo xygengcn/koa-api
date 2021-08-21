@@ -7,15 +7,12 @@
         "password": "root",
         "database": "test"
     },
-    "controller":{
-        "path":"./controller"
+    "controller": {
+        "path": "./controller"
     },
-    "log":{
+    "log": {
         "enble": true,
-        "path":"../logs/",
-        "target": [
-            "local",
-            "console"
-        ]
+        "path": "../logs/",
+        "target": ["local", "console"]
     }
 }

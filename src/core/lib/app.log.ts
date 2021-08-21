@@ -29,7 +29,7 @@ export class AppLog extends AppLogCore {
     public info(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'info',
-            content: isObject(content) ? content : { type, content },
+            content: isObject(content) ? content : { type, content }
         });
     }
     /**
@@ -40,7 +40,7 @@ export class AppLog extends AppLogCore {
     public success(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'success',
-            content: isObject(content) ? content : { type, content },
+            content: isObject(content) ? content : { type, content }
         });
     }
     /**
@@ -51,7 +51,7 @@ export class AppLog extends AppLogCore {
     public error(content: ICustomContent | number | string | string, type: string = 'log'): boolean {
         return this.w({
             type: 'error',
-            content: isObject(content) ? content : { type, content },
+            content: isObject(content) ? content : { type, content }
         });
     }
 

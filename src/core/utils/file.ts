@@ -17,7 +17,7 @@ export function readLine(path: string): Promise<string[]> {
     return new Promise((resolve) => {
         let arr: Array<string> = [];
         var readObj = readline.createInterface({
-            input: fs.createReadStream(path),
+            input: fs.createReadStream(path)
         });
         // 一行一行地读取文件
         readObj.on('line', function (line) {

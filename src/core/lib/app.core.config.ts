@@ -9,7 +9,7 @@ export default class AppConfigCore {
         const configName = {
             development: 'index.dev.json',
             sit: 'index.sit.json',
-            production: 'index.json',
+            production: 'index.json'
         };
         this.configDefaultFile = getFilePath(path, configName[process.env.NODE_ENV || 'development']);
         this.init(this.configDefaultFile);

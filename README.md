@@ -1,5 +1,10 @@
 # 基于Typescript + KOA 开发的 Restful APi 接口
 
+
+# 版本支持
+
+mysql>=5.7
+
 ## 官网
 
 [网站 api.xygeng.cn](https://api.xygeng.cn)

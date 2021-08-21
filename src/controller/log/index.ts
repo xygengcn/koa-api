@@ -21,7 +21,7 @@ export default class LogController extends AppController {
     @GET({ url: '/ok' })
     log1(ctx: Context, next: Next, params: Params) {
         return {
-            msg: 'hello world',
+            msg: 'hello world'
         };
     }
 
@@ -37,7 +37,7 @@ export default class LogController extends AppController {
     async log2(ctx: Context, next: Next, params: Params) {
         this.$log.success('34567890');
         return {
-            mode: process.env.NODE_ENV,
+            mode: process.env.NODE_ENV
         };
     }
 
@@ -55,7 +55,7 @@ export default class LogController extends AppController {
      */
     @GET({
         url: '/read',
-        log: [],
+        log: []
     })
     async read(ctx: Context, next: Next, params: Params) {
         const logs = await this.$log.read();

@@ -55,7 +55,7 @@ export const POST = (option?: RequestExts | string) => {
 export const Request = function (method: RequestType, option: RequestExts | undefined | string) {
     if (typeof option === 'string') {
         option = {
-            url: option,
+            url: option
         };
     }
     return MethodDecorator(method, option);

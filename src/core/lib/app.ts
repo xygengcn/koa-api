@@ -192,12 +192,12 @@ class App {
                             controller: 'system',
                             content: {
                                 workerId: worker.process.pid,
-                                address: address,
+                                address: address
                             },
                             developMsg: '监听worker',
-                            updateTime: new Date().getTime(),
-                        },
-                    },
+                            updateTime: new Date().getTime()
+                        }
+                    }
                 });
             });
             // 监听worker退出事件，code进程非正常退出的错误code，signal导致进程被杀死的信号名称
@@ -209,11 +209,11 @@ class App {
                         content: {
                             workerId: worker.process.pid,
                             signal,
-                            code,
+                            code
                         },
                         error: '进程异常退出',
-                        updateTime: new Date().getTime(),
-                    },
+                        updateTime: new Date().getTime()
+                    }
                 };
                 appEventBus.emitError(content);
                 Cluster.fork();
