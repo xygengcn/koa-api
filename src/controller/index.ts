@@ -1,5 +1,4 @@
-import { ObjecUtils } from './../core/app/index';
-import AppController, { Context, Controller, GET, Next, Params, POST } from '@core/app';
+import AppController, { Context, Controller, GET, Next, Params, POST, ObjecUtils } from '@core/app';
 /**
  * 测试用例
  */
@@ -59,6 +58,6 @@ export default class IndexController extends AppController {
         };
 
         // 测试对象是否合法，可用于检验前端传参数的合法性
-        return ObjecUtils.isLegalObject(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
+        return ObjecUtils.isIllegalObject(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
     }
 }

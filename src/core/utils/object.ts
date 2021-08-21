@@ -40,28 +40,30 @@ export function isPromise(obj: any) {
  *
  * 对象含有必要的属性且不为空
  *
+ * 合法返回false，不合法返回不合法的属性
+ *
  * @param obj
  * @param attrs
  * @returns
  */
-export function isLegalObject(obj, attrs: string[]): boolean | string[] {
+export function isIllegalObject(obj, attrs: string[]): false | string[] {
     // 不是对象直接fasle
     if (!obj || !isObject(obj)) return attrs;
 
     // 遍历
-    const result = attrs.reduce((resultAttrs, attr, index) => {
+    const illegalAttrs = attrs.reduce((resultAttrs, attr, index) => {
         // 如果值存在
         if (get(obj, attr) && resultAttrs.length) {
             // 剔除
             resultAttrs.splice(index, 1);
         }
-        return resultAttrs;
+        return resultAttrs || [];
     }, attrs);
 
     // 属性为空为true
-    if (result.length === 0) {
-        return true;
+    if (illegalAttrs.length === 0) {
+        return false;
     }
 
-    return result;
+    return illegalAttrs;
 }
