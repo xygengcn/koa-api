@@ -1,8 +1,21 @@
 /**
  * 对象操作工具集合
  */
+import { get, isNull, isUndefined } from 'lodash';
 
-import { get } from 'lodash';
+/**
+ * 判断值不存在，为空的情况
+ *
+ * 去除0或false的影响
+ * @param arr
+ * @returns
+ */
+export function isEmpty(value: any) {
+    if (isUndefined(value) || isNull(value) || value === '') {
+        return true;
+    }
+    return false;
+}
 
 /**
  * 是否是数组
@@ -46,18 +59,40 @@ export function isPromise(obj: any) {
  * @param attrs
  * @returns
  */
-export function isIllegalObject(obj, attrs: string[]): false | string[] {
+export function isIllegalObjectSync(obj, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): false | string[] {
     // 不是对象直接fasle
-    if (!obj || !isObject(obj)) return attrs;
+    if (!obj || !isObject(obj))
+        return attrs.map((item) => {
+            if (typeof item === 'object') {
+                return item.key;
+            }
+            return item;
+        });
 
     // 遍历
-    const illegalAttrs = attrs.filter((attr) => {
-        // 如果值存在
-        if (get(obj, attr)) {
-            return false;
-        }
-        return true;
-    });
+    const illegalAttrs = attrs
+        .filter((attr) => {
+            // 是对象
+            if (typeof attr === 'object') {
+                const value = get(obj, attr.key);
+                if (!isEmpty(value) && attr.rule(value)) {
+                    return false;
+                }
+                return true;
+            } else {
+                const value = get(obj, attr);
+                if (!isEmpty(value)) {
+                    return false;
+                }
+                return true;
+            }
+        })
+        .map((item) => {
+            if (typeof item === 'object') {
+                return item.key;
+            }
+            return item;
+        });
 
     // 属性为空为true
     if (illegalAttrs.length === 0) {
@@ -65,4 +100,57 @@ export function isIllegalObject(obj, attrs: string[]): false | string[] {
     }
 
     return illegalAttrs;
+}
+
+/**
+ * 判断是合法对象 返回回调
+ * @param obj
+ * @param attrs
+ * @returns
+ */
+export function isIllegalObject(obj, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): Promise<boolean> {
+    // 不是对象直接fasle
+    if (!obj || !isObject(obj)) {
+        return Promise.reject(
+            attrs.map((item) => {
+                if (typeof item === 'object') {
+                    return item.key;
+                }
+                return item;
+            })
+        );
+    }
+
+    // 遍历
+    const illegalAttrs = attrs
+        .filter((attr) => {
+            // 是对象
+            if (typeof attr === 'object') {
+                const value = get(obj, attr.key);
+                if (!isEmpty(value) && attr.rule(value)) {
+                    return false;
+                }
+                return true;
+            } else {
+                const value = get(obj, attr);
+                if (!isEmpty(value)) {
+                    return false;
+                }
+                return true;
+            }
+        })
+        .map((item) => {
+            if (typeof item === 'object') {
+                return item.key;
+            }
+            return item;
+        });
+
+    // 属性为空为true
+    if (illegalAttrs.length === 0) {
+        return Promise.resolve(true);
+    }
+
+    const errorText = `参数${illegalAttrs.join('、')}不规范`;
+    return Promise.reject({ attr: illegalAttrs, error: errorText });
 }

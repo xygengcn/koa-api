@@ -41,10 +41,10 @@ function authError(
         code: 10405,
         error: '验证失败测试用例'
     });
-    return false; //验证通过
+    return false;
 }
 @Controller()
-export default class UserController extends AppController {
+export default class User extends AppController {
     /**
      * 1、跨域测试用例
      *

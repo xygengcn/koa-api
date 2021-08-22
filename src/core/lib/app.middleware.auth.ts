@@ -3,7 +3,6 @@
  */
 
 import { AppMiddleware } from '@core/typings/app';
-import { isPromise } from '@core/utils/object';
 import { ResponseError, Next, Context, RequestExts } from 'koa';
 import { isBoolean, isFunction } from 'lodash';
 import Middleware from './app.decorator';
@@ -26,26 +25,14 @@ export default class AppMiddlewareAuth implements AppMiddleware {
                 return await next();
             }
             if (isFunction(exts.auth)) {
-                if (isPromise(exts.auth)) {
-                    const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
-                        errorMsg = {
-                            ...errorMsg,
-                            ...err
-                        };
-                    });
-                    if (auth) {
-                        return await next();
-                    }
-                } else {
-                    const auth = exts.auth.call(exts.auth, { ctx, next }, (err) => {
-                        errorMsg = {
-                            ...errorMsg,
-                            ...err
-                        };
-                    });
-                    if (auth) {
-                        return await next();
-                    }
+                const auth = await exts.auth.call(exts.auth, { ctx, next }, (err) => {
+                    errorMsg = {
+                        ...errorMsg,
+                        ...err
+                    };
+                });
+                if (auth) {
+                    return await next();
                 }
             }
             return ctx.fail(errorMsg.error, errorMsg.code, {
