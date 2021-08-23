@@ -5,7 +5,8 @@ export enum RequestType {
     GET = 'get',
     POST = 'post',
     PUT = 'put',
-    DELETE = 'delete'
+    DELETE = 'delete',
+    ALL = 'all'
 }
 export enum ResponseType {
     html = 'text/html',
