@@ -60,9 +60,9 @@ export function getRootPath(): string {
  * @param path
  * @returns
  */
-export function isFile(path: string) {
+export function isFile(path: string): boolean {
     const stat = getFileInfo(path);
-    return stat && stat.isFile();
+    return !!stat && stat.isFile();
 }
 /**
  * 判断是不是index文件
@@ -154,8 +154,11 @@ export function writeFileSync(path: string, data: string): void {
  * @param path 路径
  * @returns
  */
-export function readFileSync(path: string): Buffer {
-    return fs.readFileSync(path);
+export function readFileSync(path: string): Buffer | false {
+    if (isFile(path)) {
+        return fs.readFileSync(path);
+    }
+    return false;
 }
 
 /**
