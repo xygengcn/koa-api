@@ -1,4 +1,5 @@
 import AppController, { Context, Controller, GET, Next, Params, POST, ObjecUtils } from '@core/app';
+import { readFileSync, getFilePath } from '@core/utils/file';
 /**
  * 测试用例
  */
@@ -37,11 +38,25 @@ export default class IndexController extends AppController {
      */
     @POST('/post')
     async hello(ctx: Context, next: Next, params: Params) {
-        console.log(this.name);
         return {
             msg: '这是常规的post请求',
             mode: process.env.NODE_ENV
         };
+    }
+
+    // 显示图片
+
+    @GET({
+        url: '/image',
+        type: 'image/jpeg',
+        headers: {
+            'Content-Type': 'image/jpeg'
+        }
+    })
+    async image() {
+        const file = readFileSync(getFilePath('../test/test.jpeg'));
+        console.log('file', getFilePath('../test/test.jpeg'), file);
+        return file;
     }
 
     /**
@@ -58,6 +73,6 @@ export default class IndexController extends AppController {
         };
 
         // 测试对象是否合法，可用于检验前端传参数的合法性
-        return ObjecUtils.isIllegalObject(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
+        return ObjecUtils.isIllegalObjectSync(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
     }
 }

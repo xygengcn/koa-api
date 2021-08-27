@@ -1,7 +1,7 @@
 import { appEventBus, ResponseType } from './app';
 declare module 'koa' {
     interface ResponseOptions {
-        type?: ResponseType;
+        type?: ResponseType | string;
         successCode?: number;
         failCode?: number;
         error?: string;

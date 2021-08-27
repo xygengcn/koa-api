@@ -2,7 +2,7 @@
  * 内置中间件，重写返回格式、拓展字段、错误处理
  */
 import Koa, { ResponseOptions } from 'koa';
-import { isArray, isObject } from 'lodash';
+import { isObject } from 'lodash';
 import Middleware from './app.decorator';
 import appControllerCore from './app.core.controller';
 import appEventBus from './app.event';
@@ -63,13 +63,14 @@ export default class AppMiddlewareInit implements AppMiddleware {
             headers: {
                 version: Config.get('version'),
                 author: Config.get('author'),
+                'Content-Type': 'application/json;charset=utf-8',
                 ...(options?.headers || {})
             }
         };
         if (option.headers) {
             Object.keys(option.headers).forEach((key) => {
                 if (option.headers && option.headers[key]) {
-                    ctx.append(key, option.headers[key]);
+                    ctx.set(key, option.headers[key]);
                 }
             });
         }
@@ -89,6 +90,9 @@ export default class AppMiddlewareInit implements AppMiddleware {
             const httpContent = content.content.content as IHttpContent;
             // 请求头设置
             const options = this.setOptions(ctx, {
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
                 developMsg: httpContent.developMsg
             });
             ctx.fail(httpContent.error, httpContent.code, options);
@@ -104,18 +108,19 @@ export default class AppMiddlewareInit implements AppMiddleware {
      */
     private success(ctx: Koa.Context, data: string | number | object | undefined, options?: ResponseOptions): void {
         // 类型
-        ctx.type = (options && options.type) || ResponseType.json;
+        if (options?.type) {
+            ctx.type = options.type;
+        }
         // 请求头设置
         options = this.setOptions(ctx, options);
-        if (ctx.type === ResponseType.json) {
+        if (ctx.type === ResponseType.json || !options?.type) {
             ctx.body = {
                 code: (options && options.successCode) || 200,
                 data: data || {},
                 updateTime: new Date().getTime()
             };
         } else {
-            const text = isArray(data) || isObject(data) ? JSON.stringify(data) : data;
-            ctx.body = String(text) || '';
+            ctx.body = data as any;
         }
     }
 
@@ -128,7 +133,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
      */
     private fail(ctx: Koa.Context, error: string | number | object | null, code: number, options?: ResponseOptions) {
         // 类型
-        ctx.type = (options && options.type) || ResponseType.json;
+        ctx.type = ResponseType.json;
         ctx.body = {
             code: code || (options && options.failCode) || 404,
             error: error || (options && options.error) || 'fail',
@@ -203,6 +208,9 @@ export default class AppMiddlewareInit implements AppMiddleware {
                     });
                 }
             } catch (e) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('系统报错', e);
+                }
                 responseContent = this.formatContent(ctx, {
                     code: e && e.code,
                     startTime,
