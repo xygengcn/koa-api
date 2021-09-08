@@ -1,7 +1,6 @@
 node_modules
-www
+/www
 dist
-build
-app
-logs
-temp
+/app
+/logs
+/temp

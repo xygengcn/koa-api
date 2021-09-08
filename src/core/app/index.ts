@@ -1,31 +1,12 @@
 /**
  * 控制器对外接口，对外接口暴露
  */
-import AppConfig from '@core/lib/app.config';
-import Koa, { RequestExts } from 'koa';
-import AppLog from '@core/lib/app.log';
-import AppDataBase from '@core/lib/app.database';
-import { Sequelize } from 'sequelize/types';
-import { ControllerDecorator, MethodDecorator } from '@core/lib/app.decorator';
-import { RequestType } from '@core/typings/app';
-import { ParsedUrlQuery } from 'querystring';
-import * as fileUtils from '@util/file';
-import * as urlUtils from '@util/url';
-import * as timeUtils from '@util/time';
-import * as objectUtils from '@util/object';
-
-/**
- * 抛出工具函数
- */
-
-export const FileUtils = fileUtils;
-
-export const UrlUtils = urlUtils;
-
-export const TimeUtils = timeUtils;
-
-export const ObjecUtils = objectUtils;
-
+import AppConfig from '@lib/config';
+import AppDatabaseCore from '@lib/database';
+import Koa from 'koa';
+import appEvent from '@lib/event/index';
+import { GetDecorator, ControllerDecorator, PostDecorator, ReturnsDecorator, ResponseDecorator, CorsDecotator, NameDecorator, DescriptionDecorator, HeadersDecorator, ContentDecorator, ExtsDecorator, QueryDecorator, AuthDecorator } from '@lib/decorators';
+import { getRootPath } from '@util/file';
 /**
  * 抛出参数类型
  */
@@ -33,71 +14,72 @@ export type Context = Koa.Context;
 
 export type Next = Koa.Next;
 
-export interface Params {
-    query: ParsedUrlQuery;
-    param: any;
-}
-
 /**
- * 控制器装饰器
- * @param prefix 路由前缀
+ * 参数获取
  */
-export function Controller(prefix: string = '/') {
-    return ControllerDecorator(prefix);
-}
+export type Request = RequestContent;
 
-/**
- * Get请求
- * @param option 请求参数
- */
-export const GET = (option?: RequestExts | string) => {
-    return Request(RequestType.GET, option);
-};
+// 类装饰器
+export const Controller = ControllerDecorator;
 
-/**
- * Post请求
- * @param option 请求参数
- *
- */
-export const POST = (option?: RequestExts | string) => {
-    return Request(RequestType.POST, option);
-};
+// get装饰器
+export const Get = GetDecorator;
 
-/**
- * http通用请求
- * @param method 请求方法
- * @param option 请求参数
- */
+// post装饰器
+export const Post = PostDecorator;
 
-export const Request = function (method: RequestType, option: RequestExts | undefined | string) {
-    if (typeof option === 'string') {
-        option = {
-            url: option
-        };
-    }
-    return MethodDecorator(method, option);
-};
+// 返回类型
+export const Returns = ReturnsDecorator;
 
-/**
- * 日志系统
- */
-export const Log = AppLog;
+// 请求头部检验
+export const Headers = HeadersDecorator;
 
-/**
- * 配置系统
- */
+// 返回配置
+export const Response = ResponseDecorator;
+
+// 跨域配置
+export const Cors = CorsDecotator;
+
+// 接口名字
+export const Name = NameDecorator;
+
+// 接口简介
+export const Description = DescriptionDecorator;
+
+// 参数content验证
+export const Content = ContentDecorator;
+
+// url参数验证
+export const Query = QueryDecorator;
+
+// 参数exts验证
+export const Exts = ExtsDecorator;
+
+// 验证
+export const Auth = AuthDecorator;
+
+// 配置获取
 export const Config = AppConfig;
 
-/**
- * 控制继承类
- */
-export default class AppController {
-    protected name;
-    protected $log = Log;
-    protected $config = Config;
-}
+// 日志
+export const Log = appEvent.emitLog;
+
+// 数据库
+export const AppDatabase = AppDatabaseCore;
+
+// 文件工具库
+export * as FileUtils from '@util/file';
+
+// url工具库
+export * as UrlUtils from '@util/url';
+
+// 时间工具库
+export * as TimeUtils from '@util/time';
+
+// 对象工具库
+export * as ObjectUtils from '@util/object';
 
 /**
- * 模版类
+ * app.js 的根目录
  */
-export const AppModel: Sequelize = AppDataBase;
+export const __ROOT__ = getRootPath();

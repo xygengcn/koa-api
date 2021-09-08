@@ -1,78 +1,72 @@
-import AppController, { Context, Controller, GET, Next, Params, POST, ObjecUtils } from '@core/app';
-import { readFileSync, getFilePath } from '@core/utils/file';
-/**
- * 测试用例
- */
+import { getFilePath, readFileSync } from '@util/file';
+import { Controller, Get, Post, Response, Returns, Next, Context, Request, Name, Description, Content, Query } from 'app';
 
-@Controller('/')
-export default class IndexController extends AppController {
-    /**
-     * 1、常规get请求测试用例
-     *
-     * /get
-     *
-     * @param ctx
-     * @param next
-     * @param params
-     * @returns
-     */
-    @GET('/get')
-    async index(ctx: Context, next: Next, params: Params) {
-        const result = this.console();
-        return {
-            msg: '这是常规的get请求',
-            className: this.name,
-            name: ctx.routerName,
-            mode: process.env.NODE_ENV,
-            result
-        };
-    }
-
-    /**
-     * 2、常规post请求测试用例
-     *
-     * /post
-     *
-     * @param ctx
-     * @returns
-     */
-    @POST('/post')
-    async hello(ctx: Context, next: Next, params: Params) {
-        return {
-            msg: '这是常规的post请求',
-            mode: process.env.NODE_ENV
-        };
-    }
-
-    // 显示图片
-
-    @GET({
-        url: '/image',
-        type: 'image/jpeg',
-        headers: {
-            'Content-Type': 'image/jpeg'
+@Controller('/', { name: '测试用例', isTop: true })
+export default class IndexController {
+    @Name('常规get请求测试用例')
+    @Description('这是测试get请求接口，这里是接口描述')
+    @Returns({
+        msg: {
+            type: String
+        },
+        mode: {
+            type: String,
+            defaultValue: 'development'
         }
     })
-    async image() {
-        const file = readFileSync(getFilePath('../test/test.jpeg'));
-        console.log('file', getFilePath('../test/test.jpeg'), file);
-        return file;
+    @Query({
+        id: {
+            require: true
+        }
+    })
+    @Get('/get')
+    async index(ctx, next, params) {
+        return {
+            msg: '这是常规的get请求',
+            mode: process.env.NODE_ENV,
+            query: params.query
+        };
+    }
+    @Description('这是测试post请求接口，这里是接口描述')
+    @Name('常规post请求测试用例')
+    @Content({
+        'user.name': {
+            type: String,
+            require: true
+        },
+        age: {
+            type: Number
+        }
+    })
+    @Returns({
+        msg: {
+            type: Number
+        },
+        mode: {
+            type: String,
+            defaultValue: 'development'
+        }
+    })
+    @Post('/post')
+    async hello(ctx: Context, next: Next, params: Request) {
+        return {
+            msg: '这是常规的post请求',
+            data: {
+                ...(params?.data || {})
+            }
+        };
     }
 
-    /**
-     * 3. 普通函数
-     */
-    private console() {
-        const obj = {
-            url: 234,
-            url2: '',
-            user: {
-                name: 1
-            },
-            test: 111
-        };
-
-        // 测试对象是否合法，可用于检验前端传参数的合法性
-        return ObjecUtils.isIllegalObjectSync(obj, ['url', 'url2', 'test', 'test2', 'user.name', 'user.age']);
+    @Description('这是测试显示图片请求接口，这里是接口描述')
+    @Name('图片显示')
+    @Response({
+        headers: {
+            'content-type': 'image/jpeg'
+        }
+    })
+    @Get('/image')
+    async image() {
+        const file = readFileSync(getFilePath('../test/test.jpeg'));
+        return file;
     }
 }

@@ -6,6 +6,6 @@
     },
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
     "prettier.tabWidth": 4,
-    "prettier.printWidth": 800,
+    "prettier.printWidth": 300,
     "prettier.singleQuote": true,
 }

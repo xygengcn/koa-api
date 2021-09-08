@@ -1,56 +1,59 @@
 {
-  "name": "koa-api",
-  "version": "0.1.4",
-  "author": "xygengcn",
-  "homepage": "https://xygeng.cn",
-  "private": true,
-  "license": "MIT",
-  "scripts": {
-    "dev:tsc": "tsc -w",
-    "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect=7000 app/app.js",
-    "dev": "tsc && concurrently npm:dev:*",
-    "prd": "cross-env NODE_ENV=production pm2 start app/app.js",
-    "sit": "cross-env NODE_ENV=sit pm2 start www/app/app.js",
-    "build": "tsc && node build.js",
-    "lint": "prettier --config ./.prettierrc --write ./src "
-  },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "cross-env": "^7.0.3",
-    "koa": "^2.7.0",
-    "koa-bodyparser": "^4.2.1",
-    "koa-json": "^2.0.2",
-    "koa-router": "^7.4.0",
-    "lodash": "^4.17.21",
-    "module-alias": "^2.2.2",
-    "mysql2": "^2.2.5",
-    "sequelize": "^6.6.2"
-  },
-  "devDependencies": {
-    "@types/debug": "^4.1.5",
-    "@types/koa-bodyparser": "^4.3.0",
-    "@types/koa-json": "^2.0.18",
-    "@types/koa-router": "^7.4.1",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.28",
-    "concurrently": "^5.3.0",
-    "nodemon": "^1.19.1",
-    "prettier": "2.3.1",
-    "typescript": "^4.3.2"
-  },
-  "_moduleAliases": {
-    "@core": "./app/core",
-    "@util": "./app/core/utils",
-    "@model": "./app/model",
-    "@database": "./app/database",
-    "@type": "./app/type"
-  },
-  "_moduleDirectories": [
-    "node_modules_custom"
-  ],
-  "nodemonConfig": {
-    "ignore": [
-      "./app/config"
-    ]
-  }
+    "name": "koa-api",
+    "description": "基于Typescript + KOA 开发的 Restful APi 接口",
+    "version": "0.2.0",
+    "author": "xygengcn",
+    "homepage": "https://github.com/xygengcn/koa-api/",
+    "private": true,
+    "main": "app/app.js",
+    "license": "MIT",
+    "scripts": {
+        "dev:tsc": "tsc -w",
+        "dev:nodemon": "cross-env NODE_ENV=development nodemon --inspect=7000 app/app.js",
+        "dev": "tsc && concurrently npm:dev:*",
+        "prd": "pm2 start pm2.json",
+        "start": "npm run prd",
+        "build": "tsc && node build.js",
+        "lint": "prettier --config ./.prettierrc --write ./src "
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "json2md": "^1.11.0",
+        "koa": "^2.7.0",
+        "koa-body": "^4.2.0",
+        "koa-router": "^7.4.0",
+        "lodash": "^4.17.21",
+        "module-alias": "^2.2.2",
+        "mysql2": "^2.2.5",
+        "sequelize": "^6.6.2"
+    },
+    "devDependencies": {
+        "@types/debug": "^4.1.5",
+        "@types/koa-router": "^7.4.1",
+        "@types/lodash": "^4.14.168",
+        "@types/node": "^14.14.28",
+        "concurrently": "^5.3.0",
+        "nodemon": "^2.0.12",
+        "prettier": "2.3.1",
+        "cross-env": "^7.0.3",
+        "typescript": "^4.3.2"
+    },
+    "_moduleAliases": {
+        "app": "./app/core/app",
+        "@lib": "./app/core/lib",
+        "@util": "./app/core/utils",
+        "@model": "./app/model",
+        "@plugin": "./app/plugins",
+        "@database": "./app/database",
+        "@typings": "./app/core/typings",
+        "@type": "./app/type"
+    },
+    "_moduleDirectories": [
+        "node_modules_custom"
+    ],
+    "nodemonConfig": {
+        "ignore": [
+            "./app/config"
+        ]
+    }
 }

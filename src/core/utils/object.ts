@@ -59,7 +59,7 @@ export function isPromise(obj: any) {
  * @param attrs
  * @returns
  */
-export function isIllegalObjectSync(obj, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): false | string[] {
+export function isIllegalObjectSync(obj: Object, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): false | string[] {
     // 不是对象直接fasle
     if (!obj || !isObject(obj))
         return attrs.map((item) => {
@@ -75,7 +75,7 @@ export function isIllegalObjectSync(obj, attrs: Array<string | { key: string; ru
             // 是对象
             if (typeof attr === 'object') {
                 const value = get(obj, attr.key);
-                if (!isEmpty(value) && attr.rule(value)) {
+                if (attr.rule && attr.rule(value)) {
                     return false;
                 }
                 return true;
@@ -108,7 +108,7 @@ export function isIllegalObjectSync(obj, attrs: Array<string | { key: string; ru
  * @param attrs
  * @returns
  */
-export function isIllegalObject(obj, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): Promise<boolean> {
+export function isIllegalObject(obj: Object, attrs: Array<string | { key: string; rule: (value: any) => Boolean }>): Promise<boolean> {
     // 不是对象直接fasle
     if (!obj || !isObject(obj)) {
         return Promise.reject(
@@ -127,7 +127,7 @@ export function isIllegalObject(obj, attrs: Array<string | { key: string; rule: 
             // 是对象
             if (typeof attr === 'object') {
                 const value = get(obj, attr.key);
-                if (!isEmpty(value) && attr.rule(value)) {
+                if (attr.rule && attr.rule(value)) {
                     return false;
                 }
                 return true;

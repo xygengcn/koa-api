@@ -6,6 +6,15 @@ import * as fs from 'fs';
 import { MakeDirectoryOptions } from 'fs';
 import * as Path from 'path';
 import readline from 'readline';
+import { promisify } from 'util';
+
+/**
+ * 文件是否存在
+ * @param path
+ */
+export function exists(path: string) {
+    return fs.existsSync(path);
+}
 
 /**
  * 返回一行一行读取数组
@@ -15,8 +24,8 @@ import readline from 'readline';
 export function readLine(path: string): Promise<string[]> {
     if (!isFile(path)) return Promise.resolve([]);
     return new Promise((resolve) => {
-        let arr: Array<string> = [];
-        var readObj = readline.createInterface({
+        const arr: Array<string> = [];
+        const readObj = readline.createInterface({
             input: fs.createReadStream(path)
         });
         // 一行一行地读取文件
@@ -110,8 +119,9 @@ export function readJson(path: string): Object {
 
 /**
  * 获取文件名
+ *
  * @param filePath
- * @param ext 去除后缀
+ * @param ext 去除后缀,带点
  * @returns
  */
 export function getFileName(filePath: string, ext?: string): string {
@@ -123,8 +133,8 @@ export function getFileName(filePath: string, ext?: string): string {
  * @param path 目录
  * @returns
  */
-export function readDirSync(path: string): string[] {
-    return fs.readdirSync(path);
+export function readDirSync(path: string, encoding: BufferEncoding = 'utf8'): string[] {
+    return fs.readdirSync(path, encoding);
 }
 
 /**
@@ -167,6 +177,9 @@ export function readFileSync(path: string): Buffer | false {
  * @returns
  */
 export function getFileInfo(path: string) {
+    if (!fs.existsSync(path)) {
+        return null;
+    }
     let fileInfo: fs.Stats;
     try {
         fileInfo = fs.lstatSync(path);
@@ -193,6 +206,7 @@ export function isDirectory(path: string): boolean {
  * @returns
  */
 export function mkdir(path: string, option: MakeDirectoryOptions & { recursive: true } = { recursive: true }) {
+    if (fs.existsSync(path)) return true;
     return fs.mkdirSync(path, option);
 }
 
@@ -221,4 +235,24 @@ export function rmdir(path: string): boolean {
     // 删除空目录
     fs.rmdirSync(path);
     return true;
+}
+
+/**
+ * 删除文件
+ * @param filePath
+ */
+export function removeSync(filePath: string) {
+    if (exists(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+}
+/**
+ * 删除文件
+ * @param filePath
+ */
+export function remove(filePath: string): Promise<void> {
+    if (exists(filePath)) {
+        return promisify(fs.unlink)(filePath);
+    }
+    return Promise.resolve();
 }

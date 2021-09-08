@@ -1,7 +1,7 @@
 # 基于Typescript + KOA 开发的 Restful APi 接口
 
 
-# 版本支持
+## 版本支持
 
 mysql>=5.7
 
@@ -61,6 +61,8 @@ yarn run sit
 -   config -> 配置文件
 -   controller -> 控制器
 -   model -> 模版
+-   database -> 数据库
+-   plugins -> 插件
 -   core -> 框架核心
     -   controller -> 控制器处理类
     -   lib -> 核心代码
@@ -88,7 +90,7 @@ yarn run sit
 ### 设置配置
 
 ```tsx
-const { Config } = require('@core/app');
+const { Config } = require('app');
 
 /**
  * set(对象属性,对象值，是否写入本地文件)
@@ -108,7 +110,7 @@ this.$config.set('data.name', 'zhangsan', true);
 ### 获取配置
 
 ```tsx
-const { Config } = require('@core/app');
+const { Config } = require('app');
 
 /**
  * set(对象属性,对象值，是否写入本地文件)
@@ -139,9 +141,9 @@ const age = Config.get('data.age'); //12
 
 ```ts
 // index.js
-import AppController, { Controller, Get, Post } from '@core/app';
+import { Controller, Get, Post } from 'app';
 @Controller()
-export default class IndexController extends AppController {
+export default class IndexController{
     @GET('/test')
     async hello() {
         return {
@@ -152,7 +154,7 @@ export default class IndexController extends AppController {
 // [Get] /test => {}
 
 // user/index.js
-import { Controller, Get, Post } from '@core/app';
+import { Controller, Get, Post } from 'app';
 @Controller()
 export default class IndexController {
     @POST('/test')
@@ -189,7 +191,7 @@ export default class IndexController {
 
 ### 日志配置
 
-> 请求日志系统自带，可以在配置文件自行修改属性，配置文件（config/log.json)
+> 请求日志系统自带，可以在配置文件自行修改属性，配置文件（config.json)
 
 ```json
 {
@@ -205,12 +207,13 @@ export default class IndexController {
 
 ### 控制器写日志
 
-> 使用 this.$log 方法，显示查看测试用例
+> 使用 Log 方法，显示查看测试用例
 
 ```js
+import { Controller, Get, Log } from 'app';
  @Get('/test')
     async hello(ctx) {
-        this.$log.success("hahah"); //打印开发日志
+        Log({type:"log",content:"hahah"}); //打印开发日志
         return {
             title: "haha"
         }
@@ -226,7 +229,7 @@ export default class IndexController {
 #### 测试用例
 
 ```js
-import { Log } from '@core/app';
+import { Log } from 'app';
 const logContent = {
     type: 'info',
     content: {
@@ -257,7 +260,7 @@ Log.w(logContent);
 
 // model/test.js
 
-import { AppModel, Log } from '@core/app';
+import { AppDatabase, Log } from 'app';
 import { DataTypes, Model, Optional } from 'sequelize';
 
 /**
@@ -302,7 +305,7 @@ Test.init(
     },
     {
         // 挂载实例，重要
-        sequelize: AppModel,
+        sequelize: AppDatabase,
         // 表名
         tableName: 'data',
     }
@@ -316,10 +319,10 @@ export default Test;
 @GET('/yes')
     async user1(ctx, next) {
         // 调用其他路由的数据
-        const data = await this.user3(ctx, next);
+        const data = await Test.getOne();
 
         // 获取其他配置信息
-        const name = this.$config.get('name');
+        const name = Config.get('name');
 
         // 返回结果
         return {
@@ -344,3 +347,6 @@ export default Test;
 | 500   | 内部服务器报错        | 代码逻辑错误         |
 | 10403 | CORS Forbidden        | 不允许跨域访问       |
 | 10405 | Authentication Failed | 验证失败             |
+| 10601 | Content TypeError     | content参数验证失败  |
+| 10602 | Exts TypeError        | Exts参数验证失败     |
+|       |                       |                      |

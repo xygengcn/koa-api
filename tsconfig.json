@@ -22,8 +22,14 @@
             "node"
         ],
         "paths": {
-            "@core/*": [
-                "./src/core/*"
+            "app": [
+                "./src/core/app"
+            ],
+            "@type/*": [
+                "./src/type/*"
+            ],
+            "@lib/*": [
+                "./src/core/lib/*"
             ],
             "@util/*": [
                 "./src/core/utils/*"
@@ -31,8 +37,11 @@
             "@model/*": [
                 "./src/model/*"
             ],
-            "@type/*": [
-                "./src/type/*"
+            "@typings/*": [
+                "./src/core/typings/*"
+            ],
+            "@plugin/*": [
+                "./src/plugins/*"
             ],
             "@database/*": [
                 "./src/database/*"
