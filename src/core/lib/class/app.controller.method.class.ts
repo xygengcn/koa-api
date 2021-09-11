@@ -22,7 +22,7 @@ export default class AppControllerMethod implements ControllerMethod {
     public method: ControllerMethod['method'] = 'GET';
 
     // auth
-    public auth: ControllerMethod['auth'] = undefined;
+    public auth: ControllerMethod['auth'];
 
     // 跨域属性
     public origin: ControllerMethod['origin'] = [];

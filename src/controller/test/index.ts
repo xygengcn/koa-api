@@ -2,7 +2,7 @@
  * 测试用例
  */
 
-import { Config, Context, Controller, Description, Get, Name, Next, Request, Response, Auth } from 'app';
+import { Config, Context, Controller, Description, Get, Name, Next, RequestParams, Response, Auth } from 'app';
 import Test from '@model/test';
 
 /**
@@ -69,7 +69,7 @@ export default class User {
     @Name('配置文件测试用例')
     @Description('读取配置和写入配置')
     @Get('/config')
-    setConfig(ctx: Context, next: Next, params: Request) {
+    setConfig(ctx: Context, next: Next, params: RequestParams) {
         // 读取配置的name，格式为a.b.c => {a:{b:{c:123}}} 结果为123
         const name = Config.get('name');
         // 修改配置，默认写入配置文件，第三个参数false则不修改文件仅修改内存
@@ -93,7 +93,7 @@ export default class User {
      */
     @Name('数据库测试用例')
     @Get('/get')
-    async ok(ctx: Context, next: Next, params: Request) {
+    async ok(ctx: Context, next: Next, params: RequestParams) {
         // 调用模版数据
         const data: any = await Test.query();
         return {
@@ -116,7 +116,7 @@ export default class User {
     })
     @Name('返回字符串测试用例')
     @Get('/html')
-    user2(ctx: Context, next: Next, params: Request) {
+    user2(ctx: Context, next: Next, params: RequestParams) {
         return '这是一条字符串';
     }
 
@@ -143,7 +143,7 @@ export default class User {
     @Name('验证成功测试用例')
     @Description('用处：可以验证是否有token、跨域等问题')
     @Get({ url: '/auth', auth: auth })
-    userauth(ctx: Context, next: Next, params: Request) {
+    userauth(ctx: Context, next: Next, params: RequestParams) {
         return {
             name: '111'
         };
@@ -157,7 +157,7 @@ export default class User {
     @Name('验证失败测试用例')
     @Auth(authError)
     @Get('/authError')
-    userauthError(ctx: Context, next: Next, params: Request) {
+    userauthError(ctx: Context, next: Next, params: RequestParams) {
         return {
             name: 'aa'
         };

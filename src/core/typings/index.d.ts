@@ -16,7 +16,7 @@ declare interface DefaultContent {
 }
 
 declare interface RequestOptions extends ControllerMethod {
-    url?: string;
+    url: string;
     method?: 'GET' | 'POST' | 'ALL' | 'DELETE' | 'PUT' | 'HEAD';
     header?: Object; // 返回请求头
 }

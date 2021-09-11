@@ -1,5 +1,4 @@
-import { getFilePath, readFileSync } from '@util/file';
-import { Controller, Get, Post, Response, Returns, Next, Context, Request, Name, Description, Content, Query } from 'app';
+import { Controller, Get, Http, Post, Response, Returns, Next, Context, RequestParams, Name, Description, Content, Query, FileUtils } from 'app';
 
 @Controller('/', { name: '测试用例', isTop: true })
 export default class IndexController {
@@ -34,26 +33,36 @@ export default class IndexController {
             type: String,
             require: true
         },
-        age: {
-            type: Number
-        }
+        age: Number
     })
     @Returns({
-        msg: {
-            type: Number
-        },
+        msg: Number,
         mode: {
             type: String,
             defaultValue: 'development'
         }
     })
     @Post('/post')
-    async hello(ctx: Context, next: Next, params: Request) {
+    async hello(ctx: Context, next: Next, params: RequestParams) {
         return {
             msg: '这是常规的post请求',
             data: {
                 ...(params?.data || {})
             }
+        };
+    }
+
+    @Description('支持get、post、option请求接口，这里是接口描述')
+    @Name('常规请求测试用例')
+    @Returns({
+        msg: Number,
+        data: String
+    })
+    @Http({ url: '/http', method: 'ALL' })
+    async http(ctx: Context, next: Next, params: RequestParams) {
+        return {
+            msg: '这是常规的http请求',
+            data: '支持get、post、option请求接口'
         };
     }
 
@@ -66,7 +75,7 @@ export default class IndexController {
     })
     @Get('/image')
     async image() {
-        const file = readFileSync(getFilePath('../test/test.jpeg'));
+        const file = FileUtils.readFileSync(FileUtils.getFilePath('../test/test.jpeg'));
         return file;
     }
 }

@@ -5,7 +5,7 @@ import AppConfig from '@lib/config';
 import AppDatabaseCore from '@lib/database';
 import Koa from 'koa';
 import appEvent from '@lib/event/index';
-import { GetDecorator, ControllerDecorator, PostDecorator, ReturnsDecorator, ResponseDecorator, CorsDecotator, NameDecorator, DescriptionDecorator, HeadersDecorator, ContentDecorator, ExtsDecorator, QueryDecorator, AuthDecorator } from '@lib/decorators';
+import { GetDecorator, ControllerDecorator, PostDecorator, ReturnsDecorator, ResponseDecorator, CorsDecotator, NameDecorator, DescriptionDecorator, HeadersDecorator, ContentDecorator, ExtsDecorator, QueryDecorator, AuthDecorator, RequestDecorator } from '@lib/decorators';
 import { getRootPath } from '@util/file';
 /**
  * 抛出参数类型
@@ -17,10 +17,13 @@ export type Next = Koa.Next;
 /**
  * 参数获取
  */
-export type Request = RequestContent;
+export type RequestParams = RequestContent;
 
 // 类装饰器
 export const Controller = ControllerDecorator;
+
+// 请求装饰器
+export const Http = RequestDecorator;
 
 // get装饰器
 export const Get = GetDecorator;
