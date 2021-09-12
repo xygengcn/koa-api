@@ -26,7 +26,7 @@ export function GetDecorator(options?: RequestOptions | string) {
 }
 
 // post请求
-export function PostDecorator(url: string, options?: RequestOptions) {
+export function PostDecorator(options?: RequestOptions | string) {
     let option: RequestOptions = options as RequestOptions;
     if (typeof options === 'string') {
         option = {
@@ -35,7 +35,6 @@ export function PostDecorator(url: string, options?: RequestOptions) {
     }
     return RequestDecorator({
         ...(option || {}),
-        url,
         method: RequestMethod.POST
     });
 }
