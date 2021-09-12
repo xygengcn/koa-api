@@ -95,7 +95,7 @@ export function ContentDecorator(options: { [key: string]: DefaultMethodValue | 
 }
 
 // url参数检验
-export function QueryDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
+export function QueryDecorator(options: { [key: string]: DefaultMethodValue<any, Type<String>> | DefaultMethodValue<any, Type<String>>['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
         if (typeof value !== 'object') {
             options[key] = {

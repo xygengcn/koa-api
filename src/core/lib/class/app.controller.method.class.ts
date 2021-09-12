@@ -31,7 +31,7 @@ export default class AppControllerMethod implements ControllerMethod {
     public returns: ControllerMethod['returns'] = {};
 
     // get请求参数
-    public query: ControllerMethod['query'] = {};
+    public query: ControllerMethod<any, Type<String>>['query'] = {};
 
     // post参数的content
     public content: ControllerMethod['content'] = {};

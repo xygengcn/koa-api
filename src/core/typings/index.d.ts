@@ -140,30 +140,30 @@ declare interface AppMiddleware {
 declare type Type<T> = { (): T } | { new (...args: never[]): T & object } | { new (...args: string[]): Function };
 
 // 自定义配置
-interface DefaultMethodValue<T = any> {
-    type: Type<T>;
-    defaultValue?: any;
+interface DefaultMethodValue<T = any, K = any> {
+    type: K & Type<T>;
+    defaultValue?: any; // require为true时失效
     require?: boolean;
     validator?(value: any): Boolean;
     description?: string;
 }
 
-declare interface ControllerMethod {
+declare interface ControllerMethod<T = any, K = Type<T>> {
     // 来源请求头
     headers?: {
-        [key: string]: DefaultMethodValue;
+        [key: string]: DefaultMethodValue<T, K>;
     };
 
     query?: {
-        [key: string]: DefaultMethodValue;
+        [key: string]: DefaultMethodValue<T, K>;
     };
 
     content?: {
-        [key: string]: DefaultMethodValue;
+        [key: string]: DefaultMethodValue<T, K>;
     };
 
     exts?: {
-        [key: string]: DefaultMethodValue;
+        [key: string]: DefaultMethodValue<T, K>;
     };
 
     auth?: (
@@ -177,7 +177,7 @@ declare interface ControllerMethod {
     origin?: string[];
 
     returns?: {
-        [key: string]: DefaultMethodValue;
+        [key: string]: DefaultMethodValue<T, K>;
     };
 
     method?: 'GET' | 'POST' | 'ALL' | 'DELETE' | 'PUT' | 'HEAD';

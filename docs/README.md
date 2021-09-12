@@ -28,7 +28,8 @@
 
 | 参数名 | 参数类型 | 是否必须 | 默认值 | 参数描述 |
 | --- | ---- | ---- | --- | ---- |
-| id | Number | true |  |  |
+| id | String | true |  |  |
+| name | String | false | xygengcn |  |
 
 #### 返回类型
 
@@ -70,6 +71,7 @@
 | 参数名 | 参数类型 | 是否必须 | 默认值 | 参数描述 |
 | --- | ---- | ---- | --- | ---- |
 | user.name | String | true |  |  |
+| email | String | false | test@xygeng.cn |  |
 | age | Number | false |  |  |
 
 #### 请求体exts参数

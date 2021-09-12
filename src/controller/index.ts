@@ -2,6 +2,13 @@ import { Controller, Get, Http, Post, Response, Returns, Next, Context, RequestP
 
 @Controller('/', { name: '测试用例', isTop: true })
 export default class IndexController {
+    /**
+     * 常规get请求测试用例
+     * @param ctx
+     * @param next
+     * @param params
+     * @returns
+     */
     @Name('常规get请求测试用例')
     @Description('这是测试get请求接口，这里是接口描述')
     @Returns({
@@ -15,8 +22,12 @@ export default class IndexController {
     })
     @Query({
         id: {
-            type: Number,
+            type: String,
             require: true
+        },
+        name: {
+            type: String,
+            defaultValue: 'xygengcn'
         }
     })
     @Get('/get')
@@ -35,6 +46,10 @@ export default class IndexController {
         'user.name': {
             type: String,
             require: true
+        },
+        email: {
+            type: String,
+            defaultValue: 'test@xygeng.cn'
         },
         age: Number
     })

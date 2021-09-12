@@ -1,3 +1,4 @@
+import { isObject } from 'lodash';
 import { RequestMethod } from '@typings/enum';
 import { Next, Context } from 'koa';
 import AppControllerClass from '../class/app.controller.class';
@@ -40,11 +41,52 @@ export function DecoratorController(path: string, options?: ControllerOptions): 
                     const requestMethod = controllerMethod.method || RequestMethod.GET;
                     // 写入路由
                     controller[requestMethod.toLocaleLowerCase()](controllerMethod.routeName, controllerMethod.url, async (ctx: Context, next: Next) => {
+                        // 获取预设参数
+                        const controllerParams = ctx.controller || {};
+
+                        // url请求参数
+                        const requestQuery: Object = Object.assign({}, ctx.query || {});
+
+                        // content请求参数
+                        const requestDataContent: Object = Object.assign({}, ctx.request?.body?.content || {});
+
+                        // exts请求参数
+                        const requestDataExts: Object = Object.assign({}, ctx.request?.body?.exts || {});
+
+                        // 设置默认参数
+                        if (controllerParams.query && isObject(controllerParams.query)) {
+                            Object.entries(controllerParams.query).forEach(([key, value]) => {
+                                if (!requestQuery.hasOwnProperty(key) && value.hasOwnProperty('defaultValue')) {
+                                    requestQuery[key] = value.defaultValue;
+                                }
+                            });
+                        }
+                        // 设置默认参数
+                        if (controllerParams.content && isObject(controllerParams.content)) {
+                            Object.entries(controllerParams.content).forEach(([key, value]) => {
+                                if (!requestDataContent.hasOwnProperty(key) && value.hasOwnProperty('defaultValue')) {
+                                    requestDataContent[key] = value.defaultValue;
+                                }
+                            });
+                        }
+                        // 设置默认参数
+                        if (controllerParams.exts && isObject(controllerParams.exts)) {
+                            Object.entries(controllerParams.exts).forEach(([key, value]) => {
+                                if (!requestDataExts.hasOwnProperty(key) && value.hasOwnProperty('defaultValue')) {
+                                    requestDataExts[key] = value.defaultValue;
+                                }
+                            });
+                        }
+
                         // 调用原始方法
                         const res = await controllerMethod.value.call(new target(), ctx, next, {
-                            query: ctx.query,
-                            data: ctx.request.body
-                        });
+                            query: requestQuery,
+                            data: {
+                                ...(ctx.request?.body || {}),
+                                content: requestDataContent,
+                                exts: requestDataExts
+                            }
+                        } as RequestContent);
                         // 返回接口最终值
                         ctx.success(res, controllerMethod.response);
                         return res;
