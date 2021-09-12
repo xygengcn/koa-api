@@ -136,12 +136,15 @@ declare interface AppMiddleware {
     init: (option?: any) => (ctx: any, next: any) => any;
 }
 
+// 类型
+declare type Type<T> = { (): T } | { new (...args: never[]): T & object } | { new (...args: string[]): Function };
+
 // 自定义配置
-interface DefaultMethodValue {
-    type?: String | Number | Object;
+interface DefaultMethodValue<T = any> {
+    type: Type<T>;
     defaultValue?: any;
     require?: boolean;
-    check?: (value: String | Number | Object) => Boolean;
+    validator?(value: any): Boolean;
     description?: string;
 }
 

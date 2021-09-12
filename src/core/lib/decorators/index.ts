@@ -62,7 +62,7 @@ export function DescriptionDecorator(name: string) {
 // 返回类型提示
 export function ReturnsDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
-        if (typeof value === 'function') {
+        if (typeof value !== 'object') {
             options[key] = {
                 type: value
             };
@@ -74,7 +74,7 @@ export function ReturnsDecorator(options: { [key: string]: DefaultMethodValue | 
 // 请求头校验
 export function HeadersDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
-        if (typeof value === 'function') {
+        if (typeof value !== 'object') {
             options[key] = {
                 type: value
             };
@@ -86,7 +86,7 @@ export function HeadersDecorator(options: { [key: string]: DefaultMethodValue | 
 // Post content参数检验
 export function ContentDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
-        if (typeof value === 'function') {
+        if (typeof value !== 'object') {
             options[key] = {
                 type: value
             };
@@ -98,7 +98,7 @@ export function ContentDecorator(options: { [key: string]: DefaultMethodValue | 
 // url参数检验
 export function QueryDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
-        if (typeof value === 'function') {
+        if (typeof value !== 'object') {
             options[key] = {
                 type: value
             };
@@ -110,7 +110,7 @@ export function QueryDecorator(options: { [key: string]: DefaultMethodValue | De
 // exts参数校验
 export function ExtsDecorator(options: { [key: string]: DefaultMethodValue | DefaultMethodValue['type'] }) {
     Object.entries(options).forEach(([key, value]) => {
-        if (typeof value === 'function') {
+        if (typeof value !== 'object') {
             options[key] = {
                 type: value
             };

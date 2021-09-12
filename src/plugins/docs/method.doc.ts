@@ -57,7 +57,7 @@ export default class ControllerMethodDoc {
             rows = rowKeys.map((key) => {
                 const headerOption = get(this.methodController.headers, key);
                 const name: string = key;
-                const type: string = (headerOption?.type as Function)?.name || '';
+                const type: string = this.getType(headerOption?.type);
                 const defaultValue: string = String(headerOption?.defaultValue || '');
                 const require: string = String(!!headerOption?.require || false);
                 const description: string = headerOption?.description || '';
@@ -84,7 +84,7 @@ export default class ControllerMethodDoc {
             rows = rowKeys.map((key) => {
                 const headerOption = get(this.methodController.query, key);
                 const name: string = key;
-                const type: string = (headerOption?.type as Function)?.name || '';
+                const type: string = this.getType(headerOption?.type);
                 const defaultValue: string = String(headerOption?.defaultValue || '');
                 const require: string = String(!!headerOption?.require || false);
                 const description: string = headerOption?.description || '';
@@ -114,7 +114,7 @@ export default class ControllerMethodDoc {
             rows = rowKeys.map((key) => {
                 const headerOption = get(this.methodController.content, key);
                 const name: string = key;
-                const type: string = (headerOption?.type as Function)?.name || '';
+                const type: string = this.getType(headerOption?.type);
                 const defaultValue: string = String(headerOption?.defaultValue || '');
                 const require: string = String(!!headerOption?.require || false);
                 const description: string = headerOption?.description || '';
@@ -144,7 +144,7 @@ export default class ControllerMethodDoc {
             rows = rowKeys.map((key) => {
                 const headerOption = get(this.methodController.exts, key);
                 const name: string = key;
-                const type: string = (headerOption?.type as Function)?.name || '';
+                const type: string = this.getType(headerOption?.type);
                 const defaultValue: string = String(headerOption?.defaultValue || '');
                 const require: string = String(!!headerOption?.require || false);
                 const description: string = headerOption?.description || '';
@@ -171,7 +171,7 @@ export default class ControllerMethodDoc {
             rows = rowKeys.map((key) => {
                 const headerOption = get(this.methodController.returns, key);
                 const name: string = key;
-                const type: string = (headerOption?.type as Function)?.name || '';
+                const type: string = this.getType(headerOption?.type);
                 const defaultValue: string = String(headerOption?.defaultValue || '');
                 const require: string = String(!!headerOption?.require || false);
                 const description: string = headerOption?.description || '';
@@ -187,6 +187,31 @@ export default class ControllerMethodDoc {
                 }
             }
         ];
+    }
+
+    /**
+     * 获取类型
+     */
+    private getType(value: DefaultMethodValue['type'] | undefined): string {
+        if (value) {
+            if (value === Object) {
+                return 'Object';
+            }
+            if (value === String) {
+                return 'String';
+            }
+            if (value === Number) {
+                return 'Number';
+            }
+            if (value === Boolean) {
+                return 'Boolean';
+            }
+            if (value === Array) {
+                return 'Array';
+            }
+            return String(value);
+        }
+        return '';
     }
     /**
      * 调出每一个接口的文档

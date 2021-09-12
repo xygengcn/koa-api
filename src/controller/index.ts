@@ -15,6 +15,7 @@ export default class IndexController {
     })
     @Query({
         id: {
+            type: Number,
             require: true
         }
     })

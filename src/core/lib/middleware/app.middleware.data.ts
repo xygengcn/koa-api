@@ -4,9 +4,8 @@
 
 import { isIllegalObjectSync } from '@util/object';
 import { Next, Context } from 'koa';
-import { isEmpty } from 'lodash';
+import { isEmpty, isArray } from 'lodash';
 import Middleware from '../decorators/middleware';
-
 @Middleware()
 export default class AppMiddlewareData implements AppMiddleware {
     /**
@@ -43,9 +42,19 @@ export default class AppMiddlewareData implements AppMiddleware {
                                 return false;
                             }
                         }
+                        if (config.type === Boolean) {
+                            if (typeof value !== 'boolean') {
+                                return false;
+                            }
+                        }
+                        if (config.type === Array) {
+                            if (!isArray(value)) {
+                                return false;
+                            }
+                        }
                     }
-                    if (config.check) {
-                        return config.check(value);
+                    if (config.validator) {
+                        return config.validator(value);
                     }
                     return true;
                 }
