@@ -6,5 +6,4 @@
 - Restful 标准
 - 支持自动生成文档
 
-[Get Started](#版本支持)
 [GitHub](https://github.com/xygengcn/koa-api/)

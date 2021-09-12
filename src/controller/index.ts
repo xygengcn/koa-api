@@ -27,6 +27,8 @@ export default class IndexController {
             query: params.query
         };
     }
+
+    //常规post请求测试用例
     @Description('这是测试post请求接口，这里是接口描述')
     @Name('常规post请求测试用例')
     @Content({
