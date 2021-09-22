@@ -106,7 +106,7 @@ export function writeJson(path: string, params: Object): void {
  * @returns
  */
 export function readJson(path: string): Object {
-    const data = readFileSync(path) as any;
+    const data = readFileSync(path, 'utf8') as string;
     try {
         if (data) {
             return JSON.parse(data);
@@ -164,11 +164,11 @@ export function writeFileSync(path: string, data: string): void {
  * @param path 路径
  * @returns
  */
-export function readFileSync(path: string): string | false {
+export function readFileSync(path: string, options?: BufferEncoding): string | Buffer {
     if (isFile(path)) {
-        return fs.readFileSync(path, 'utf8');
+        return fs.readFileSync(path, options);
     }
-    return false;
+    return '';
 }
 
 /**
