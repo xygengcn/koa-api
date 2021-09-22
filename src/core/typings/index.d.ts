@@ -54,11 +54,10 @@ declare interface HttpContent {
     status: string | number;
     time: number; // 耗时
     request: { params: any; header: any; query: any }; // 请求参数
-    response: Object; // 返回数据
+    response?: any; // 返回数据
     path: string; // 路由
     clientIP: string | string[]; // 客户端ip
     updateTime: number; // 请求时间
-    referer: string | string[]; // 来源
     error?: any;
     developMsg?: string; // 开发信息
 }

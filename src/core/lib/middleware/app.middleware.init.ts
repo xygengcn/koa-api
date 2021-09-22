@@ -32,17 +32,16 @@ export default class AppMiddlewareInit implements AppMiddleware {
         // 请求结果
         const content: HttpContent = {
             type: ctx.method,
+            path: ctx.url,
             name: ctx.routerName,
             status: ctx.status,
+            request,
+            response: '',
             time: new Date().getTime() - options.startTime,
             updateTime: options.startTime,
-            request,
-            response: ctx.body,
-            path: ctx.url,
             error: options.code === 200 || ctx.code === 200 ? null : options.error || '内部服务器报错',
             code: (isObject(ctx.body) && ctx.body.code) || options.code || 500,
             clientIP: ctx.ip || ctx.ips,
-            referer: ctx.request.headers.origin || ctx.request.headers.referer || '',
             developMsg: options?.developMsg
         };
         return {
@@ -200,7 +199,7 @@ export default class AppMiddlewareInit implements AppMiddleware {
                         error: 'Not Found'
                     });
                 }
-            } catch (e) {
+            } catch (e: any) {
                 if (process.env.NODE_ENV === 'development') {
                     console.error('系统报错', e);
                 }

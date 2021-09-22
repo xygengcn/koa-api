@@ -164,9 +164,9 @@ export function writeFileSync(path: string, data: string): void {
  * @param path 路径
  * @returns
  */
-export function readFileSync(path: string): Buffer | false {
+export function readFileSync(path: string): string | false {
     if (isFile(path)) {
-        return fs.readFileSync(path);
+        return fs.readFileSync(path, 'utf8');
     }
     return false;
 }

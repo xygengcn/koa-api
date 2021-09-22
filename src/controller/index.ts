@@ -31,7 +31,7 @@ export default class IndexController {
         }
     })
     @Get('/get')
-    async index(ctx, next, params) {
+    async get(ctx, next, params) {
         return {
             msg: '这是常规的get请求',
             mode: process.env.NODE_ENV,

@@ -20,7 +20,7 @@ app.onLog((content) => {
 
 // 请求回调
 app.onHttp((content, ctx) => {
-    console.log('请求回调', ctx);
+    // console.log('请求回调', ctx);
     // Log.w(content);
 });
 
