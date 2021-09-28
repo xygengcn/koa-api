@@ -70,8 +70,7 @@ class AppDatabaseCore {
                     type: 'info',
                     subType: 'sql',
                     content: {
-                        sql,
-                        timing
+                        sql
                     }
                 });
             }
