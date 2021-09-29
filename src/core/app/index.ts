@@ -4,9 +4,9 @@
 import AppConfig from '@lib/config';
 import AppDatabaseCore from '@lib/database';
 import Koa from 'koa';
-import appEvent from '@lib/event/index';
 import { GetDecorator, ControllerDecorator, PostDecorator, ReturnsDecorator, ResponseDecorator, CorsDecotator, NameDecorator, DescriptionDecorator, HeadersDecorator, ContentDecorator, ExtsDecorator, QueryDecorator, AuthDecorator, RequestDecorator } from '@lib/decorators';
 import { getRootPath } from '@util/file';
+import UtilsLog from '@util/log';
 /**
  * 抛出参数类型
  */
@@ -65,7 +65,7 @@ export const Auth = AuthDecorator;
 export const Config = AppConfig;
 
 // 日志
-export const Log = appEvent.emitLog;
+export const Log = UtilsLog;
 
 // 数据库
 export const AppDatabase = AppDatabaseCore;

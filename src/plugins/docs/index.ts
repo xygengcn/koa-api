@@ -26,9 +26,11 @@ export class AppDocs {
             if (controller.isTop) {
                 this.navbarController.push(controller);
             }
-            const controllerDoc = new ControllerDoc(controller);
-            const mdList = controllerDoc.toJSON() || [];
-            arr = arr.concat(...mdList);
+            if (controller.isDoc) {
+                const controllerDoc = new ControllerDoc(controller);
+                const mdList = controllerDoc.toJSON() || [];
+                arr = arr.concat(...mdList);
+            }
             return arr;
         }, []);
     }

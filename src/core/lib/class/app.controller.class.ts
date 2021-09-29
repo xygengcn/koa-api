@@ -30,6 +30,11 @@ export default class AppControllerClass extends KoaRouter {
     public readonly isTop?: boolean = false;
 
     /**
+     * 是否开启文档
+     */
+    public readonly isDoc?: boolean = true;
+
+    /**
      * 路由配置
      */
     public opts?: ILayerOptions;

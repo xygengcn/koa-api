@@ -25,6 +25,7 @@ declare interface ControllerOptions {
     name?: string;
     description?: string;
     isTop?: boolean;
+    isDoc?: boolean;
 }
 
 /**

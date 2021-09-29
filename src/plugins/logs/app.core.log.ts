@@ -24,7 +24,7 @@ export default class AppLogCore {
     /**
      * 日志缓存
      */
-    private logCaches: { [subType: string]: string[] } = {};
+    private logCaches: { [subType: string]: string[] } = { log: [] };
     /**
      * 配置
      */

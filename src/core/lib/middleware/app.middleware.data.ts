@@ -61,6 +61,17 @@ export default class AppMiddlewareData implements AppMiddleware {
             };
         });
     }
+
+    /**
+     * 是不是存在必要的
+     * @param content
+     * @returns
+     */
+    isRequire(content: ControllerMethod['content'] = {}): boolean {
+        return Object.entries(content).some(([key, value]) => {
+            return value.require;
+        });
+    }
     init() {
         return async (ctx: Context, next: Next) => {
             const controller = ctx.controller;
@@ -71,7 +82,7 @@ export default class AppMiddlewareData implements AppMiddleware {
             }
 
             // 验证content
-            if (controller.content && !isEmpty(controller.content)) {
+            if (ctx.method === 'POST' && controller.content && !isEmpty(controller.content)) {
                 if (ctx.request.body?.content) {
                     const content = controller.content;
                     const isIllegal = isIllegalObjectSync(ctx.request.body.content, this.valid(content));
@@ -82,7 +93,7 @@ export default class AppMiddlewareData implements AppMiddleware {
                             error: '参数检验失败'
                         });
                     }
-                } else {
+                } else if (this.isRequire(controller.content)) {
                     return ctx.fail({
                         code: 10601,
                         developMsg: 'content为null',
@@ -102,7 +113,7 @@ export default class AppMiddlewareData implements AppMiddleware {
                             error: 'url参数检验失败'
                         });
                     }
-                } else {
+                } else if (this.isRequire(controller.query)) {
                     return ctx.fail({
                         code: 10601,
                         developMsg: '参数为空',
@@ -122,7 +133,7 @@ export default class AppMiddlewareData implements AppMiddleware {
                             error: '参数检验失败'
                         });
                     }
-                } else {
+                } else if (this.isRequire(controller.exts)) {
                     return ctx.fail({
                         code: 10602,
                         developMsg: 'exts为null',

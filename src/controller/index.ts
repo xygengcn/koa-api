@@ -49,6 +49,7 @@ export default class IndexController {
         },
         email: {
             type: String,
+            require: false,
             defaultValue: 'test@xygeng.cn'
         },
         age: Number
