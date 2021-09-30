@@ -105,7 +105,7 @@ declare interface AppEventBus {
     onError: (cb: (content: DefaultContent, ctx?: any) => void) => void;
     emitError: (content: DefaultContent, ctx?: any) => void;
     emitLog: (content: DefaultContent) => void;
-    onLog: (cb: (content: DefaultContent) => void) => void;
+    onLog: (cb: (content: DefaultContent, options?: any) => void) => void;
 }
 
 /**
@@ -187,4 +187,11 @@ declare interface ControllerMethod<T = any, K = Type<T>> {
     response?: ResponseOptions;
 
     [key: string]: any;
+}
+
+/**
+ * 日志管理类型
+ */
+declare interface UtilsLog extends Function {
+    error(content: DefaultContent['content'], subType?: string): boolean;
 }

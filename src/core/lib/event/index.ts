@@ -67,23 +67,23 @@ class AppEvent {
      * @param content
      * @returns
      */
-    public emitLog(content: DefaultContent | string) {
+    public emitLog(content: DefaultContent | string, options?: any) {
         if (typeof content === 'string') {
             content = {
                 type: 'log',
                 content
             };
         }
-        return this.$emit('log', content);
+        return this.$emit('log', content, options);
     }
 
     /**
      * 监听日志
      * @param callback
      */
-    public onLog(callback: (content: DefaultContent) => void) {
-        return this.$on('log', (content) => {
-            callback(content);
+    public onLog(callback: (content: DefaultContent, options?: any) => void) {
+        return this.$on('log', (content, options) => {
+            callback(content, options);
         });
     }
 

@@ -66,13 +66,16 @@ class AppDatabaseCore {
                 timestamps: false
             },
             logging: (sql, timing) => {
-                appEventBus.emitLog({
-                    type: 'info',
-                    subType: 'sql',
-                    content: {
-                        sql
-                    }
-                });
+                appEventBus.emitLog(
+                    {
+                        type: 'info',
+                        subType: 'sql',
+                        content: {
+                            sql
+                        }
+                    },
+                    ['local']
+                );
             }
         });
     }

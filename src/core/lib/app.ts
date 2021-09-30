@@ -121,9 +121,9 @@ export default class App {
      * @param callback
      * @returns
      */
-    public onLog(callback: (content: DefaultContent) => any): void {
-        return appEventBus.onLog((content) => {
-            callback(content);
+    public onLog(callback: (content: DefaultContent, options?: any) => any): void {
+        return appEventBus.onLog((content, options) => {
+            callback(content, options);
         });
     }
 
