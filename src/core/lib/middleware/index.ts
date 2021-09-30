@@ -42,12 +42,19 @@ export default class AppMiddlewareCore {
      * 初始化内置中间件
      */
     private initMiddleware(): void {
+        this.beforeRouteUse(this.useMiddleware(AppMiddlewareInit));
         this.beforeRouteUse(
             KoaBody({
-                multipart: true
+                multipart: true,
+                onError: (e) => {
+                    throw {
+                        code: 10501,
+                        error: '参数格式不对',
+                        developMsg: `${e}`
+                    };
+                }
             })
         );
-        this.beforeRouteUse(this.useMiddleware(AppMiddlewareInit));
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareCors));
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareAuth));
         this.beforeRouteUse(this.useMiddleware(AppMiddlewareData));

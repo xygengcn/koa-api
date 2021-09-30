@@ -347,6 +347,7 @@ export default Test;
 | 500   | 内部服务器报错        | 代码逻辑错误         |
 | 10403 | CORS Forbidden        | 不允许跨域访问       |
 | 10405 | Authentication Failed | 验证失败             |
+| 10501 | 参数格式不对     | 参数格式不对,仅支持json  |
 | 10601 | Content TypeError     | content参数验证失败  |
 | 10602 | Exts TypeError        | Exts参数验证失败     |
 |       |                       |                      |
