@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+*.html
+docs/
+*.config.js
+src/
+.vscode
+logs/
+nodemon.json
+pm2.json
+tsconfig.json
+.prettierrc
+yarn.lock

@@ -1,7 +1,9 @@
 {
-    "name": "koa-api",
-    "version": "0.3.0",
+    "name": "@xygengcn/koa-api",
+    "version": "0.3.3",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
+    "main": "dist/core/index.js",
+    "typings": "dist/core/index.d.ts",
     "scripts": {
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
         "build:core": "ncc build api/core --out api/core",
@@ -13,9 +15,13 @@
         "type": "git",
         "url": "git+https://github.com/xygengcn/koa-api.git"
     },
+    "keywords": [
+        "koa-api",
+        "koa",
+        "typescript"
+    ],
     "author": "xygengcn",
     "license": "ISC",
-    "typings": "./src/typings/index.d.ts",
     "bugs": {
         "url": "https://github.com/xygengcn/koa-api/issues"
     },

@@ -3,3 +3,4 @@
 /node_modules
 /logs
 /www
+.DS_Store

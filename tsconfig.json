@@ -3,7 +3,7 @@
         "target": "es6",
         "module": "commonjs",
         "allowJs": true,
-        "outDir": "./api",
+        "outDir": "./dist",
         "rootDir": "./src",
         "strict": true,
         "watch": false,
@@ -15,7 +15,7 @@
         "removeComments": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
-        "declaration": false,
+        "declaration": true,
         "lib": ["esnext"],
         "types": ["node"],
         "paths": {
