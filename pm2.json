@@ -1,37 +1,33 @@
 {
     "apps": {
-        "name": "koa-api",                             
-        "script": "./app/app.js",                      
-        "cwd": "./",                                
-        "args": "",                                 
-        "interpreter": "",                          
-        "interpreter_args": "",                     
-        "watch": false,                              
-        "ignore_watch": [                           
-            "node_modules",
-            "logs"
-        ],
-        "exec_mode": "cluster_mode",                
-        "instances": 4,                             
-        "max_memory_restart": 1,                    
-        "error_file": "./logs/pm2/app-err.log",         
-        "out_file": "./logs/pm2/app-out.log",           
-        "merge_logs": true,                         
-        "log_date_format": "YYYY-MM-DD HH:mm:ss",   
-        "min_uptime": "60s",                        
-        "max_restarts": 30,                         
-        "autorestart": true,                        
-        "cron_restart": "",                         
-        "restart_delay": 60,                     
+        "name": "koa-api",
+        "script": "./api/index.js",
+        "cwd": "./",
+        "args": "",
+        "interpreter": "",
+        "interpreter_args": "",
+        "watch": false,
+        "ignore_watch": ["node_modules", "logs", "wwww"],
+        "exec_mode": "cluster",
+        "instances": 4,
+        "max_memory_restart": 1,
+        "error_file": "./logs/pm2/app-err.log",
+        "out_file": "./logs/pm2/app-out.log",
+        "merge_logs": true,
+        "log_date_format": "YYYY-MM-DD HH:mm:ss",
+        "min_uptime": "60s",
+        "max_restarts": 30,
+        "autorestart": true,
+        "cron_restart": "",
+        "restart_delay": 60,
         "env": {
-           "NODE_ENV": "production"                         
+            "NODE_ENV": "production"
         },
         "env_dev": {
-            "NODE_ENV": "development"            
+            "NODE_ENV": "development"
         },
-        "env_sit": {                               
-            "NODE_ENV": "sit",
-            "REMOTE_ADDR": ""
+        "env_sit": {
+            "NODE_ENV": "sit"
         }
     }
 }

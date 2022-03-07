@@ -3,7 +3,7 @@
         "target": "es6",
         "module": "commonjs",
         "allowJs": true,
-        "outDir": "./app",
+        "outDir": "./api",
         "rootDir": "./src",
         "strict": true,
         "watch": false,
@@ -15,46 +15,14 @@
         "removeComments": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
-        "lib": [
-            "ES2017"
-        ],
-        "types": [
-            "node"
-        ],
+        "declaration": false,
+        "lib": ["esnext"],
+        "types": ["node"],
         "paths": {
-            "app": [
-                "./src/core/app"
-            ],
-            "@type/*": [
-                "./src/type/*"
-            ],
-            "@lib/*": [
-                "./src/core/lib/*"
-            ],
-            "@util/*": [
-                "./src/core/utils/*"
-            ],
-            "@model/*": [
-                "./src/model/*"
-            ],
-            "@typings/*": [
-                "./src/core/typings/*"
-            ],
-            "@plugin/*": [
-                "./src/plugins/*"
-            ],
-            "@database/*": [
-                "./src/database/*"
-            ]
-        },
+            "@/*": ["./src/*"]
+        }
     },
-    "exclude": [
-        "node_modules",
-        "build"
-    ],
-    "include": [
-        "./src/**/*.ts",
-        "./src/**/*.d.ts",
-        "./src/**/*.json"
-    ]
+    "exclude": ["node_modules", "build"],
+    "typeRoots": ["src/typings"],
+    "include": ["./src/**/*.ts", "./src/**/*.d.ts"]
 }

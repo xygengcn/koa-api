@@ -1,0 +1,17 @@
+{
+    "restartable": "rs",
+    "ignore": [".git", "node_modules/", "dist/", ".vscode/", "./api/", "./logs", "./wwww"],
+    "watch": ["src/"],
+    "script": "./src/index.ts",
+    "execMap": {
+        "ts": "node --inspect=7000 -r tsconfig-paths/register -r ts-node/register"
+    },
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "options": {
+        "extensions": ["js", "ts"],
+        "exec": "node"
+    },
+    "ext": "js,json,ts"
+}

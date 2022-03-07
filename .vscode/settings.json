@@ -1,11 +1,1 @@
-{
-    "editor.tabSize": 4,
-    "editor.detectIndentation": false,
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
-    "prettier.tabWidth": 4,
-    "prettier.printWidth": 300,
-    "prettier.singleQuote": true,
-}
+{}

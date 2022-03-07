@@ -1,6 +1,5 @@
-node_modules
-/www
-dist
-/app
+/dist
+/api
+/node_modules
 /logs
-/temp
+/www
