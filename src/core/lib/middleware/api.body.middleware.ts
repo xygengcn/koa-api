@@ -1,10 +1,10 @@
+import { ApiMiddlewareParams, ApiMiddleware } from './../../typings/index';
 import koaBody from 'koa-body';
-import { ApiDefaultOptions, IApiClassMiddleware } from '../../index';
-import Middleware from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware';
 import ApiError from '../../base/api.error';
 @Middleware('ApiBodyMiddleware')
-export class ApiBodyMiddleware implements IApiClassMiddleware {
-    resolve(apiOptions: ApiDefaultOptions) {
+export class ApiBodyMiddleware implements ApiMiddleware {
+    resolve({ options }: ApiMiddlewareParams) {
         return koaBody({
             multipart: true,
             onError: (e) => {
@@ -14,7 +14,7 @@ export class ApiBodyMiddleware implements IApiClassMiddleware {
                     developMsg: `${e}`
                 });
             },
-            ...(apiOptions.koaBody || {})
+            ...(options.koaBody || {})
         });
     }
 }

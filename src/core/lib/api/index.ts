@@ -1,6 +1,6 @@
 import ApiServer from './api.server';
 import http from 'http';
-import { ApiClassMiddleware, ApiDefaultOptions, ApiMiddleware } from '../../index';
+import { ApiClassMiddleware, ApiDefaultOptions, ApiFunctionMiddleware } from '../../index';
 import ApiKoa from './api.koa';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
@@ -19,7 +19,7 @@ export default class Api extends ApiServer {
      * 插入中间件
      * @param middleware
      */
-    public use(middleware: ApiMiddleware) {
+    public use(middleware: ApiFunctionMiddleware) {
         this.app.pushUseMiddleware(middleware);
         return this;
     }
@@ -28,7 +28,7 @@ export default class Api extends ApiServer {
      * 插入中间件
      * @param middleware
      */
-    public unshiftUse(middleware: ApiMiddleware) {
+    public unshiftUse(middleware: ApiFunctionMiddleware) {
         this.app.unshiftUse(middleware);
         return this;
     }

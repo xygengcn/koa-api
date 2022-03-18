@@ -1,13 +1,13 @@
-import { ApiRoutesOptions } from '../../index';
+import { ApiControllerAttributes, IApiRoute, IApiRoutes } from '../../index';
 import KoaRouter from 'koa-router';
 import ApiRoute from './api.route';
 import path from 'path';
 
-interface IApiRoutes extends KoaRouter.IRouterOptions, ApiRoutesOptions {
-    routePrefix?: string;
-    target?: ClassDecorator;
-}
 export default class ApiRoutes extends KoaRouter {
+    /**
+     * 配置属性
+     */
+    public attributes!: ApiControllerAttributes;
     /**
      * 文件所在目录和文件名
      */
@@ -22,11 +22,6 @@ export default class ApiRoutes extends KoaRouter {
      * 执行类
      */
     private target!: ClassDecorator;
-
-    /**
-     * 自定义名字
-     */
-    private name!: string;
 
     /**
      * 子路由
@@ -97,7 +92,7 @@ export default class ApiRoutes extends KoaRouter {
             this.methodRoutes.forEach((method) => {
                 if (method.type?.toLocaleLowerCase()) {
                     // 赋值函数，单个路由执行
-                    this[method.type.toLocaleLowerCase()](`${this.name}.${method.name}`, method.url, method.value(this.target));
+                    this[method.type.toLocaleLowerCase()](method.name, method.url, method.value(this.target));
                 }
             });
         }
@@ -108,5 +103,18 @@ export default class ApiRoutes extends KoaRouter {
             });
         }
         return super.routes();
+    }
+
+    /**
+     * 队列路由
+     */
+    public get queue(): Array<IApiRoute> {
+        const routes: Array<IApiRoute> = this.methodRoutes || [];
+        if (this.childRoutes?.length) {
+            this.childRoutes.forEach((route) => {
+                routes.push(...route.queue);
+            });
+        }
+        return routes;
     }
 }

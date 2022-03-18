@@ -1,8 +1,18 @@
-import { ApiDefaultOptions, IApiClassMiddleware } from '../../index';
-import Middleware from '../decorators/api.middleware';
-@Middleware('ApiBodyMiddleware')
-export class ApiBodyMiddleware implements IApiClassMiddleware {
-    resolve(apiOptions: ApiDefaultOptions) {
-        return () => {};
+import { ApiMiddleware, ApiMiddlewareParams, ApiResponseType, Context, Next } from '../../index';
+import { Middleware } from '../decorators/api.middleware';
+
+@Middleware('ApiResponseMiddleware')
+export class ApiResponseMiddleware implements ApiMiddleware {
+    resolve({ route, options }: ApiMiddlewareParams) {
+        return async (ctx: Context, next: Next) => {
+            await next();
+            if (route?.responseType === ApiResponseType.RESTFUL && options.response?.type === ApiResponseType.RESTFUL) {
+                ctx.body = {
+                    code: 200,
+                    data: ctx.body,
+                    updateTime: new Date().getTime()
+                };
+            }
+        };
     }
 }

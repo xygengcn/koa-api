@@ -1,7 +1,7 @@
 /**
  * 事件监听
  */
-import { DefaultContent } from '../index';
+import { ApiEventContent } from '../index';
 import { EventEmitter } from 'events';
 export class ApiEvent {
     // 事件监听
@@ -41,11 +41,17 @@ export class ApiEvent {
      * @param content
      * @returns
      */
-    public emitLog(content: DefaultContent | string, options?: any) {
-        if (typeof content === 'string') {
+    public emitLog(content: ApiEventContent | string, options?: any) {
+        if (typeof content !== 'object') {
             content = {
                 type: 'log',
-                content
+                content,
+                module: this.prefix
+            };
+        } else {
+            content = {
+                module: this.prefix,
+                ...content
             };
         }
         return this.emit('log', content, options);
@@ -55,7 +61,7 @@ export class ApiEvent {
      * 监听日志
      * @param callback
      */
-    public onLog<T = any>(callback: (content: DefaultContent, options?: T) => void) {
+    public onLog<T = any>(callback: (content: ApiEventContent, options?: T) => void) {
         return this.on('log', callback);
     }
 
@@ -64,7 +70,7 @@ export class ApiEvent {
      * @param callback
      * @returns
      */
-    public onError<T = any>(callback: (content: DefaultContent, options?: T) => void) {
+    public onError<T = any>(callback: (content: ApiEventContent, options?: T) => void) {
         return this.on('error', callback);
     }
 
@@ -74,16 +80,27 @@ export class ApiEvent {
      * @param content
      * @returns
      */
-    public emitError<T = any>(content: DefaultContent | string, options?: T) {
+    public emitError<T = any>(content: ApiEventContent | string, options?: T) {
         // 错误写入日志
-        if (typeof content === 'string') {
+        if (typeof content !== 'object') {
             content = {
                 type: 'error',
-                content
+                content,
+                module: this.prefix
+            };
+        } else {
+            content = {
+                module: this.prefix,
+                ...content
             };
         }
         return this.emit('error', content, options || {});
     }
 }
-const event = new ApiEvent();
-export default event;
+const apiEvent = new ApiEvent();
+
+export const Log = apiEvent.emitLog.bind(apiEvent);
+
+export const onLog = apiEvent.onLog.bind(apiEvent);
+
+export default apiEvent;

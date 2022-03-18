@@ -1,10 +1,11 @@
+import { ApiResponseType } from '@/core/typings';
 import { IMiddleware } from 'koa-router';
-import { ApiRouteOptions, ApiRouteRequestType, IApiRoute } from '../../index';
+import { ApiRequestType, IApiRoute } from '../../index';
 
 /**
  * 单个路由接口
  */
-export default class ApiRoute {
+export default class ApiRoute implements IApiRoute {
     // 函数名
     public methodName!: string;
 
@@ -17,11 +18,14 @@ export default class ApiRoute {
     // 路由
     public url!: string;
 
-    // 路由配置
-    public routeOptions!: ApiRouteOptions;
-
     // 路由类型
-    public type!: ApiRouteRequestType;
+    public type!: ApiRequestType;
+
+    // 默认RESTFUL返回格式
+    public responseType: ApiResponseType = ApiResponseType.RESTFUL;
+
+    // 描述
+    public description?: string;
 
     // 构造函数
     constructor(target: IApiRoute) {
@@ -29,8 +33,7 @@ export default class ApiRoute {
     }
 
     // 合并属性
-    public options(target: Partial<Exclude<IApiRoute, 'routeOptions'>>, routeOptions: Partial<ApiRouteOptions>) {
+    public options(target: Partial<IApiRoute>) {
         target && Object.assign(this, target);
-        routeOptions && Object.assign(this.routeOptions, routeOptions);
     }
 }

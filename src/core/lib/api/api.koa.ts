@@ -1,26 +1,31 @@
 import { ApiErrorMiddleware } from '../middleware/api.error.middleware';
-import { ApiDefaultOptions, ApiClassMiddleware, ApiMiddleware } from '../../index';
+import { ApiDefaultOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../index';
 import Koa from 'koa';
 import compose from 'koa-compose';
 import ApiRoutesMiddleware from '../middleware/api.routes.middleware';
 import { ApiBodyMiddleware } from '../middleware/api.body.middleware';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
+import { ApiResponseMiddleware } from '../middleware/api.response.middleware';
 export default class ApiKoa extends Koa {
     /**
      * 拓展中间件
      */
-    public extendMiddleware: Array<ApiMiddleware> = [];
+    public extendMiddleware: Array<ApiFunctionMiddleware> = [];
 
     /**
      * 配置
      */
-    public appDefaultOptions: ApiDefaultOptions;
+    public appDefaultOptions: ApiDefaultOptions = {
+        response: {
+            type: ApiResponseType.RESTFUL
+        }
+    };
 
     constructor(options?: ApiDefaultOptions) {
         super(options);
-        this.appDefaultOptions = options || {};
-        this.useMiddleware([ApiErrorMiddleware, ApiBodyMiddleware, ApiRoutesMiddleware]);
+        Object.assign(this.appDefaultOptions, options || {});
+        this.useMiddleware([ApiErrorMiddleware, ApiResponseMiddleware, ApiBodyMiddleware, ApiRoutesMiddleware]);
     }
 
     /**
@@ -43,7 +48,7 @@ export default class ApiKoa extends Koa {
      * 前插入
      * @param middleware
      */
-    public unshiftUse(middleware: ApiMiddleware): ApiKoa {
+    public unshiftUse(middleware: ApiFunctionMiddleware): ApiKoa {
         this.extendMiddleware.unshift(middleware);
         return this;
     }
@@ -66,7 +71,7 @@ export default class ApiKoa extends Koa {
      * 插入
      * @param middleware
      */
-    public pushUseMiddleware(middleware: ApiMiddleware) {
+    public pushUseMiddleware(middleware: ApiFunctionMiddleware) {
         this.extendMiddleware.push(middleware);
     }
 

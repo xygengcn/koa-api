@@ -1,21 +1,19 @@
-import { ApiRouteOptions, ApiRouteRequestType, ApiRoutesOptions, IApiRoute } from '../../index';
+import { ApiRequestType, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next } from '../../index';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
-import { Context, Next } from '../../index';
 
 /**
  * 路由类装饰器
  * @param path 路由前缀
  * @returns
  */
-export function ApiRoutesDecorator(prefix?: string, options?: ApiRoutesOptions): (target?: any) => any {
+export function ApiRoutesDecorator(prefix?: string, attributes?: ApiControllerAttributes): (target?: any) => any {
     return (target): ApiRoutes => {
         // 定义一个路由
         const route = new ApiRoutes({
             routePrefix: prefix,
             target: new target(),
-            name: target.name,
-            ...(options || {})
+            attributes: attributes || {}
         });
         // 通过原型，获取类里面所有方法
         const routeMethods: {
@@ -39,14 +37,14 @@ export function ApiRoutesDecorator(prefix?: string, options?: ApiRoutesOptions):
  *
  * 具体接口实现构造器
  */
-export function ApiRouteDecorator(options: Partial<IApiRoute>, routeOptions: ApiRouteOptions) {
+function ApiRouteDecorator(options: Partial<IApiRoute>) {
     return function (target: any, name: string, descriptor: PropertyDescriptor) {
         // 函数原型
         const routeMethodValue = descriptor.value;
 
         // 存在即合并
         if (routeMethodValue instanceof ApiRoute) {
-            routeMethodValue.options(options, routeOptions);
+            routeMethodValue.options(options);
             descriptor.value = function () {
                 return routeMethodValue;
             };
@@ -60,9 +58,11 @@ export function ApiRouteDecorator(options: Partial<IApiRoute>, routeOptions: Api
                     // url请求参数
                     const query: Object = Object.assign({}, ctx.query || {});
                     // body请求参数
-                    const body: Object = Object.assign({}, ctx.request?.body?.content || {});
+                    const body: Object = Object.assign({}, ctx.request?.body || {});
+                    // file
+                    const files: Object = Object.assign({}, ctx.request?.files || {});
                     // 函数返回结果
-                    const result = await routeMethodValue.call(_this, { query, body, ctx, next });
+                    const result = await routeMethodValue.call(_this, { query, body, ctx, files } as ApiRouteParams);
                     ctx.body = result;
                     next();
                 };
@@ -71,11 +71,10 @@ export function ApiRouteDecorator(options: Partial<IApiRoute>, routeOptions: Api
             descriptor.value = new ApiRoute({
                 ...options,
                 url,
-                type: options.type || ApiRouteRequestType.GET,
-                routeOptions: options.routeOptions || {},
+                type: options.type || ApiRequestType.GET,
                 methodName: name,
                 value,
-                name: options.name || name
+                name: options.name || `${target.constructor.name}.${name}`
             });
         }
         return descriptor;
@@ -87,15 +86,9 @@ export function ApiRouteDecorator(options: Partial<IApiRoute>, routeOptions: Api
  * @param options
  * @returns
  */
-export function RequestApiRouteDecorator(options: Pick<IApiRoute, 'type' | 'url'> & { options?: ApiRouteOptions }) {
+export function RequestApiRouteDecorator(options: ApiRequestOptions) {
     if (options.url) {
-        return ApiRouteDecorator(
-            {
-                url: options.url,
-                type: options.type || ApiRouteRequestType.GET
-            },
-            options.options || {}
-        );
+        return ApiRouteDecorator(options);
     }
     return function (target: any, name: string, descriptor: PropertyDescriptor) {
         return descriptor;
@@ -105,21 +98,21 @@ export function RequestApiRouteDecorator(options: Pick<IApiRoute, 'type' | 'url'
 /**
  * get请求装饰器
  */
-export function GetRequestApiRouteDecorator(url: string, options: ApiRouteOptions = {}) {
+export function GetRequestApiRouteDecorator(url: string, options: Partial<Omit<ApiRequestOptions, 'url' | 'type'>> = {}) {
     return RequestApiRouteDecorator({
+        ...options,
         url,
-        type: ApiRouteRequestType.GET,
-        options
+        type: ApiRequestType.GET
     });
 }
 
 /**
  * post请求装饰器
  */
-export function PostRequestApiRouteDecorator(url: string, options: ApiRouteOptions = {}) {
+export function PostRequestApiRouteDecorator(url: string, options: Partial<Omit<ApiRequestOptions, 'url' | 'type'>> = {}) {
     return RequestApiRouteDecorator({
+        ...options,
         url,
-        type: ApiRouteRequestType.POST,
-        options
+        type: ApiRequestType.POST
     });
 }

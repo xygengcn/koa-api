@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@/core';
+import { ApiError, ApiRequestType, ApiRouteParams, Controller, Get, Log, Post, Request } from '@/core';
 
 @Controller('/')
 export default class IndexController {
@@ -9,17 +9,18 @@ export default class IndexController {
     }
 
     @Get('/get')
-    public get(ctx) {
-        console.error(111, this, this?.age);
+    public get({ ctx }: ApiRouteParams) {
+        console.error('IndexController.get', this, this?.age);
+        Log('测试日志');
         return this.test();
     }
 
-    @Get('/error')
+    @Request({ url: '/error', type: ApiRequestType.GET })
     public error(ctx) {
-        throw {
+        throw new ApiError({
             code: 10001,
             error: 'error报错'
-        };
+        });
     }
 
     @Post('/post')

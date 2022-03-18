@@ -1,17 +1,12 @@
-import KoaRouter from 'koa-router';
+export { default as KoaRouter, Layer } from 'koa-router';
+export { Log, onLog } from './base/api.event';
 import Api from './lib/api';
-import { ApiRoutesDecorator, GetRequestApiRouteDecorator, PostRequestApiRouteDecorator, RequestApiRouteDecorator } from './lib/decorators/api.route.decorator';
+export { default as ApiError } from './base/api.error';
+
+export { ApiRoutesDecorator as Controller, GetRequestApiRouteDecorator as Get, PostRequestApiRouteDecorator as Post, RequestApiRouteDecorator as Request } from './lib/decorators/api.route.decorator';
+
+export { Middleware } from './lib/decorators/api.middleware';
 
 export * from './typings';
-
-export const Router = KoaRouter;
-
-export const Controller = ApiRoutesDecorator;
-
-export const Post = PostRequestApiRouteDecorator;
-
-export const Get = GetRequestApiRouteDecorator;
-
-export const Request = RequestApiRouteDecorator;
 
 export default Api;

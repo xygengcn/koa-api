@@ -1,8 +1,8 @@
-import { Context, Next, IApiClassMiddleware } from '../../index';
+import { Context, Next, ApiMiddleware } from '../../index';
 import ApiError from '../../base/api.error';
-import Middleware from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware';
 @Middleware('ApiErrorMiddleware')
-export class ApiErrorMiddleware implements IApiClassMiddleware {
+export class ApiErrorMiddleware implements ApiMiddleware {
     private error(ctx: Context) {
         switch (ctx.status) {
             case 404:
@@ -26,12 +26,6 @@ export class ApiErrorMiddleware implements IApiClassMiddleware {
                 await next();
                 if (ctx.status !== 200) {
                     this.error(ctx);
-                } else {
-                    ctx.body = {
-                        code: 200,
-                        data: ctx.body,
-                        updateTime: new Date().getTime()
-                    };
                 }
             } catch (error) {
                 if (error instanceof Error) {

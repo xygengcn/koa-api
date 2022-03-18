@@ -1,6 +1,6 @@
 {
     "name": "@xygengcn/koa-api",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/core/index.js",
     "typings": "dist/core/index.d.ts",
@@ -18,10 +18,12 @@
     "keywords": [
         "koa-api",
         "koa",
+        "api",
+        "RESTful",
         "typescript"
     ],
     "author": "xygengcn",
-    "license": "ISC",
+    "license": "MIT License",
     "bugs": {
         "url": "https://github.com/xygengcn/koa-api/issues"
     },

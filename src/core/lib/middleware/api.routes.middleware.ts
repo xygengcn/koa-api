@@ -1,11 +1,11 @@
 import ApiRoutes from '../routes/api.routes';
 import { isDirectory, isFile, readDirSync } from '../utils/file';
 import path from 'path';
-import Middleware from '../decorators/api.middleware';
-import { ApiMiddleware, ApiDefaultOptions, IApiClassMiddleware } from '../../index';
+import { Middleware } from '../decorators/api.middleware';
+import { ApiFunctionMiddleware, ApiDefaultOptions, ApiMiddleware } from '../../index';
 
 @Middleware('ApiRoutesMiddleware')
-export default class ApiRoutesMiddleware implements IApiClassMiddleware {
+export default class ApiRoutesMiddleware implements ApiMiddleware {
     /**
      * 匹配控制器正则
      */
@@ -19,7 +19,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
     /**
      * 路由集合中间件
      */
-    public controllers: ApiMiddleware = () => {};
+    public controllers: ApiFunctionMiddleware = () => {};
 
     /**
      * 主路由
@@ -33,7 +33,9 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
     public init(options: ApiDefaultOptions) {
         if (options?.controllerPath) {
             this.routerController = this.readControllers(options.controllerPath);
-            this.controllers = this.routerController?.routes() as ApiMiddleware;
+            this.controllers = this.routerController?.routes() as ApiFunctionMiddleware;
+            options.stack = this.routerController?.stack;
+            options.queue = this.routerController?.queue;
         }
     }
 

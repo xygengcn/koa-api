@@ -83,7 +83,7 @@ export default class IndexController{
 }
 // [Get] /test => {}
 
-// user/index.js
+// user/index.controller.ts
 import { Controller, Get, Post } from '@/core';
 @Controller()
 export default class IndexController {
@@ -96,4 +96,34 @@ export default class IndexController {
 }
 
 // 【Post】 /user/test =>{}
+```
+
+
+### 详细用例
+
+> 文件：src/controller/index.controller
+
+
+### 通用函数
+
+#### 日志打印
+
+```js
+
+import { Log } from '@/core';
+
+ Log("日志")
+
+```
+
+#### 日志监听
+
+```js
+
+import { onLog } from '@/core';
+
+ onLog((log)=>{
+     console.error(log)
+ })
+
 ```
