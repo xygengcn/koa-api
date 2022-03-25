@@ -7,6 +7,7 @@ export class ApiResponseMiddleware implements ApiMiddleware {
         return async (ctx: Context, next: Next) => {
             await next();
             if (route?.responseType === ApiResponseType.RESTFUL && options.response?.type === ApiResponseType.RESTFUL) {
+                ctx.set('content-type', 'application/json');
                 ctx.body = {
                     code: 200,
                     data: ctx.body,

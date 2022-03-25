@@ -28,6 +28,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                     this.error(ctx);
                 }
             } catch (error) {
+                ctx.set('content-type', 'application/json');
                 if (error instanceof Error) {
                     error = new ApiError({
                         code: 10500,

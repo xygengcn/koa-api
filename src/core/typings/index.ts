@@ -96,8 +96,8 @@ export enum ApiRequestType {
  * 返回类型
  */
 export enum ApiResponseType {
-    DEFAULT = 'DEFAULT',
-    RESTFUL = 'RESTFUL' // 正确返回结果将会包一层默认结构
+    DEFAULT = 'DEFAULT', // 不经过处理返回
+    RESTFUL = 'RESTFUL' // 正确返回结果将会包一层默认结构 default
 }
 /**
  * 控制类参数
@@ -114,13 +114,13 @@ export interface ApiControllerAttributes {
 export type ApiRequestOptions = Omit<IApiRoute, 'value' | 'methodName'>;
 
 /**
- * TODO 默认路由属性值
+ * @todo 默认路由属性值 预留，未实现
  */
 interface ApiRouteOptionsValue<T = any, K = any> {
     type: K & ClassType<T>;
     defaultValue?: any; // require为true时失效
     require?: boolean;
-    validator?(value: any): Boolean;
+    validator?(value: any): Boolean | Promise<Boolean>;
     description?: string;
 }
 
@@ -149,34 +149,63 @@ export interface IApiRoute<T = any, K = ClassType<T>> {
     // 路由
     url: string;
 
-    // 路由类型
+    /**
+     * 路由类型
+     * @default GET
+     */
     type?: ApiRequestType;
 
-    // 返回类型
+    /**
+     * 返回类型
+     *
+     * @default RESTFUL
+     */
     responseType?: ApiResponseType;
 
     // 描述
     description?: string;
 
-    // TODO 请求头
-    headers?: {
-        [key: string]: ApiRouteOptionsValue<T, K>;
-    };
-
-    // TODO 请求参数
-    query?: {
-        [key: string]: ApiRouteOptionsValue<T, K>;
-    };
-
-    // TODO 请求主体
-    body?: {
-        [key: string]: ApiRouteOptionsValue<T, K>;
-    };
-    // TODO 限制跨域
+    /**
+     * 限制跨域
+     * @todo 预留，未实现
+     * @deprecated
+     */
     origin?: string[];
 
-    // TODO 返回类型
-    returns?: {
-        [key: string]: ApiRouteOptionsValue<T, K>;
+    /**
+     * 返回参数
+     * @todo 预留，未实现，可自定义实现
+     */
+    response?: {
+        // TODO 返回头
+        headers?: {
+            [key: string]: ApiRouteOptionsValue<T, K>;
+        };
+
+        // TODO 返回类型
+        returns?: {
+            [key: string]: ApiRouteOptionsValue<T, K>;
+        };
+    };
+
+    /**
+     * 请求头参数
+     * @todo 可用于数据校验，预留，未实现，可自定义实现
+     */
+    request?: {
+        // TODO 请求头
+        headers?: {
+            [key: string]: ApiRouteOptionsValue<T, K>;
+        };
+
+        // TODO 请求参数
+        query?: {
+            [key: string]: ApiRouteOptionsValue<T, K>;
+        };
+
+        // TODO 请求主体
+        body?: {
+            [key: string]: ApiRouteOptionsValue<T, K>;
+        };
     };
 }
