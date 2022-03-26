@@ -29,6 +29,7 @@
     },
     "homepage": "https://github.com/xygengcn/koa-api#readme",
     "devDependencies": {
+        "@types/koa": "^2.13.4",
         "@types/koa-router": "^7.4.4",
         "@types/node": "^16.11.12",
         "cross-env": "^7.0.3",
