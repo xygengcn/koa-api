@@ -1,6 +1,6 @@
 {
     "name": "@xygengcn/koa-api",
-    "version": "0.3.4",
+    "version": "0.3.6",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/core/index.js",
     "typings": "dist/core/index.d.ts",
@@ -29,9 +29,6 @@
     },
     "homepage": "https://github.com/xygengcn/koa-api#readme",
     "devDependencies": {
-        "@types/koa": "^2.13.4",
-        "@types/koa-router": "^7.4.4",
-        "@types/node": "^16.11.12",
         "cross-env": "^7.0.3",
         "eslint": "^8.4.1",
         "nodemon": "^2.0.15",
@@ -42,6 +39,9 @@
         "typescript": "^4.5.3"
     },
     "dependencies": {
+        "@types/koa": "^2.13.4",
+        "@types/koa-router": "^7.4.4",
+        "@types/node": "^16.11.12",
         "koa": "^2.13.4",
         "koa-body": "^4.2.0",
         "koa-compose": "^4.1.0",
