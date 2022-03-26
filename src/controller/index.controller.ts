@@ -1,4 +1,6 @@
-import { ApiError, ApiRequestType, ApiRouteParams, Controller, Get, Log, Post, Request } from '@/core';
+import { ApiError, ApiRequestType, ApiResponseType, ApiRouteParams, Controller, Get, Log, Post, Request } from '@/core';
+import { createReadStream } from 'fs';
+import path from 'path';
 
 @Controller('/')
 export default class IndexController {
@@ -26,5 +28,11 @@ export default class IndexController {
     @Post('/post')
     public post(ctx) {
         return 1;
+    }
+
+    @Get('/img', { responseType: ApiResponseType.DEFAULT })
+    public showTodayImage({ ctx }: ApiRouteParams) {
+        ctx.set('content-type', 'image/jpeg');
+        return createReadStream(path.join(__dirname, '../../img/test/png'));
     }
 }
