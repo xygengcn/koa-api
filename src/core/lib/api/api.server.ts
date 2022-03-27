@@ -31,10 +31,12 @@ export default class ApiServer {
         server.on('error', this.onServerError);
         // 监听
         server.on('listening', () => {
-            this.$event.emitError({
-                type: 'log',
+            this.$event.emitLog({
                 subType: 'system',
-                content: `Listening on Port: ${this.options.port || 3000}, Addr: ${server.address()}`
+                content: {
+                    message: `Listening on Port: ${this.options.port || 3000}}`,
+                    addr: server.address()
+                }
             });
         });
         return server;
@@ -45,28 +47,34 @@ export default class ApiServer {
      * Event listener for HTTP server "error" event.
      */
     private onServerError(error) {
-        if (error.syscall !== 'listen') {
-            throw error;
-        }
         switch (error.code) {
             case 'EACCES':
                 this.$event.emitError({
-                    type: 'error',
                     subType: 'system',
-                    content: `Port requires elevated privileges`
+                    content: {
+                        message: `Port requires elevated privileges`,
+                        error
+                    }
                 });
                 this.httpServer = null;
                 break;
             case 'EADDRINUSE':
                 this.$event.emitError({
-                    type: 'error',
                     subType: 'system',
-                    content: `Port: is already in use`
+                    content: {
+                        message: `Port: is already in use`,
+                        error
+                    }
                 });
                 this.httpServer = null;
                 break;
             default:
-                throw error;
+                this.$event.emitError({
+                    subType: 'system',
+                    content: {
+                        error
+                    }
+                });
         }
         process.exit(1);
     }

@@ -10,7 +10,7 @@ export class ApiResponseMiddleware implements ApiMiddleware {
                 ctx.set('content-type', 'application/json');
                 ctx.body = {
                     code: 200,
-                    data: ctx.body,
+                    data: ctx.body || null,
                     updateTime: new Date().getTime()
                 };
             }

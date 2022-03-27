@@ -10,7 +10,7 @@ export class ApiBodyMiddleware implements ApiMiddleware {
             onError: (e) => {
                 throw new ApiError({
                     code: 10501,
-                    error: '参数格式不对',
+                    error: 'Incorrect body',
                     developMsg: `${e}`
                 });
             },

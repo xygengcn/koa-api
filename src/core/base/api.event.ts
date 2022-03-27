@@ -1,7 +1,7 @@
 /**
  * 事件监听
  */
-import { ApiEventContent } from '../index';
+import { ApiLogEventContent, ApiErrorEventContent, ApiEventContent } from '../index';
 import { EventEmitter } from 'events';
 export class ApiEvent {
     // 事件监听
@@ -41,27 +41,29 @@ export class ApiEvent {
      * @param content
      * @returns
      */
-    public emitLog(content: ApiEventContent | string, options?: any) {
+    public emitLog(content: ApiLogEventContent | string, options?: any) {
+        let eventContent: ApiEventContent;
         if (typeof content !== 'object') {
-            content = {
+            eventContent = {
                 type: 'log',
                 content,
                 module: this.prefix
             };
         } else {
-            content = {
-                module: this.prefix,
-                ...content
+            eventContent = {
+                ...content,
+                type: 'log',
+                module: this.prefix
             };
         }
-        return this.emit('log', content, options);
+        return this.emit('log', eventContent, options);
     }
 
     /**
      * 监听日志
      * @param callback
      */
-    public onLog<T = any>(callback: (content: ApiEventContent, options?: T) => void) {
+    public onLog<T = any>(callback: (content: ApiLogEventContent, options?: T) => void) {
         return this.on('log', callback);
     }
 
@@ -70,7 +72,7 @@ export class ApiEvent {
      * @param callback
      * @returns
      */
-    public onError<T = any>(callback: (content: ApiEventContent, options?: T) => void) {
+    public onError<T = any>(callback: (content: ApiErrorEventContent, options?: T) => void) {
         return this.on('error', callback);
     }
 
@@ -80,21 +82,23 @@ export class ApiEvent {
      * @param content
      * @returns
      */
-    public emitError<T = any>(content: ApiEventContent | string, options?: T) {
+    public emitError<T = any>(content: ApiErrorEventContent | string, options?: T) {
+        let eventContent: ApiEventContent;
         // 错误写入日志
         if (typeof content !== 'object') {
-            content = {
+            eventContent = {
                 type: 'error',
                 content,
                 module: this.prefix
             };
         } else {
-            content = {
-                module: this.prefix,
-                ...content
+            eventContent = {
+                ...content,
+                type: 'error',
+                module: this.prefix
             };
         }
-        return this.emit('error', content, options || {});
+        return this.emit('error', eventContent, options || {});
     }
 }
 const apiEvent = new ApiEvent();

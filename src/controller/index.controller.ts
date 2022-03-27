@@ -33,6 +33,6 @@ export default class IndexController {
     @Get('/img', { responseType: ApiResponseType.DEFAULT })
     public showTodayImage({ ctx }: ApiRouteParams) {
         ctx.set('content-type', 'image/jpeg');
-        return createReadStream(path.join(__dirname, '../../img/test/png'));
+        return createReadStream(path.join(__dirname, '../../test/test.jpeg'));
     }
 }

@@ -33,11 +33,25 @@ export interface ApiMiddleware {
 /**
  * 默认主体
  */
-export interface ApiEventContent<T = Object | string | number> {
+export interface ApiEventContent<T = Object | string | number | Error> {
     type?: string;
     subType?: string;
     content?: T;
     module?: string;
+}
+
+/**
+ * 日志事件
+ */
+export interface ApiLogEventContent extends Omit<ApiEventContent, 'type' | 'module'> {
+    type?: 'log';
+}
+
+/**
+ * 错误事件
+ */
+export interface ApiErrorEventContent extends Omit<ApiEventContent, 'type' | 'module'> {
+    type?: 'error';
 }
 
 // 类型
