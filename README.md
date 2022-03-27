@@ -48,6 +48,12 @@ yarn run prd
 yarn run sit
 ```
 
+-   生产环境
+
+```
+yarn add @xygengcn/koa-api
+```
+
 ## 控制器（重点）
 
 ---

@@ -1,5 +1,5 @@
-import { ApiControllerAttributes, IApiRoute, IApiRoutes } from '../../index';
-import KoaRouter from 'koa-router';
+import { ApiControllerAttributes, ApiRoutesTree, IApiRoute, IApiRoutes } from '../../index';
+import KoaRouter, { Layer } from 'koa-router';
 import ApiRoute from './api.route';
 import path from 'path';
 
@@ -7,7 +7,7 @@ export default class ApiRoutes extends KoaRouter {
     /**
      * 配置属性
      */
-    public attributes!: ApiControllerAttributes;
+    private attributes!: ApiControllerAttributes;
     /**
      * 文件所在目录和文件名
      */
@@ -17,6 +17,10 @@ export default class ApiRoutes extends KoaRouter {
      * 路由前缀
      */
     private routePrefix!: string;
+    /**
+     * 匿名控制器
+     */
+    private anonymous!: boolean;
 
     /**
      * 执行类
@@ -108,13 +112,55 @@ export default class ApiRoutes extends KoaRouter {
     /**
      * 队列路由
      */
-    public get queue(): Array<IApiRoute> {
-        const routes: Array<IApiRoute> = this.methodRoutes || [];
+    public getQueue(stacks: Array<Layer> | undefined): Array<IApiRoute> {
+        const routes: Array<IApiRoute> = [...this.methodRoutes] || [];
         if (this.childRoutes?.length) {
             this.childRoutes.forEach((route) => {
-                routes.push(...route.queue);
+                const queue = route.getQueue(stacks);
+                routes.push(...queue);
             });
         }
-        return routes;
+        return routes.map((route) => {
+            const stack = stacks?.find((layer) => layer.name === route.name);
+            return {
+                ...route,
+                url: stack?.path || route.url
+            };
+        });
+    }
+
+    /**
+     * 树形路由
+     */
+    public getRouteTree(stacks: Array<Layer> | undefined): ApiRoutesTree {
+        let routes: Array<IApiRoute> = [...this.methodRoutes] || [];
+        routes = routes.map((route) => {
+            const stack = stacks?.find((layer) => layer.name === route.name);
+            return {
+                ...route,
+                url: stack?.path || route.url
+            };
+        });
+        if (this.childRoutes?.length) {
+            const childRoutesTree = this.childRoutes.map((route) => {
+                const routeTree = route.getRouteTree(stacks);
+                return routeTree;
+            });
+            return {
+                path: this.path,
+                routePrefix: this.routePrefix,
+                anonymous: this.anonymous,
+                attributes: this.attributes,
+                routes,
+                childRoutesTree
+            };
+        }
+        return {
+            path: this.path,
+            routePrefix: this.routePrefix,
+            anonymous: this.anonymous,
+            attributes: this.attributes,
+            routes
+        };
     }
 }

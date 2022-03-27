@@ -10,14 +10,22 @@ export default class IndexController {
         return 2222;
     }
 
-    @Get('/get')
+    @Get('/get', { name: '测试Get请求的接口', description: '这是描述' })
     public get({ ctx }: ApiRouteParams) {
         console.error('IndexController.get', this, this?.age);
         Log('测试日志');
         return this.test();
     }
 
-    @Request({ url: '/error', type: ApiRequestType.GET })
+    @Get('/log', { name: '测试日志的接口' })
+    public log({ ctx }: ApiRouteParams) {
+        Log('测试日志');
+        return {
+            msg: '测试日志'
+        };
+    }
+
+    @Request({ url: '/error', type: ApiRequestType.GET, name: '测试错误请求的接口', description: '这是描述' })
     public error(ctx) {
         throw new ApiError({
             code: 10001,
@@ -25,12 +33,14 @@ export default class IndexController {
         });
     }
 
-    @Post('/post')
-    public post(ctx) {
-        return 1;
+    @Post('/post', { name: '测试Post请求的接口', description: '这是描述' })
+    public post({ body }: ApiRouteParams) {
+        return {
+            body
+        };
     }
 
-    @Get('/img', { responseType: ApiResponseType.DEFAULT })
+    @Get('/img', { responseType: ApiResponseType.DEFAULT, name: '测试图片预览的接口', description: '这是描述' })
     public showTodayImage({ ctx }: ApiRouteParams) {
         ctx.set('content-type', 'image/jpeg');
         return createReadStream(path.join(__dirname, '../../test/test.jpeg'));

@@ -34,8 +34,32 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         if (options?.controllerPath) {
             this.routerController = this.readControllers(options.controllerPath);
             this.controllers = this.routerController?.routes() as ApiFunctionMiddleware;
-            options.stack = this.routerController?.stack;
-            options.queue = this.routerController?.queue;
+            // 堆栈
+            const stack = this.routerController?.stack;
+            // 队列结构
+            const queue = this.routerController?.getQueue(stack);
+            // 树形结构
+            const routeTree = this.routerController?.getRouteTree(stack);
+            Object.defineProperties(options, {
+                stack: {
+                    writable: false,
+                    configurable: false,
+                    enumerable: true,
+                    value: stack
+                },
+                queue: {
+                    writable: false,
+                    enumerable: true,
+                    configurable: false,
+                    value: queue
+                },
+                routeTree: {
+                    writable: false,
+                    enumerable: true,
+                    configurable: false,
+                    value: routeTree
+                }
+            });
         }
     }
 
@@ -69,10 +93,11 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         } else if (controllerFiles.includes('index.controller.js')) {
             parent = this.readController(path.join(absolutePath, 'index.controller.js'), relativePath);
         }
-        // 没有index，创建一个空的
+        // 没有index，创建一个匿名的
         if (!parent) {
             parent = new ApiRoutes({
-                routePrefix: relativePath
+                routePrefix: path.basename(relativePath),
+                anonymous: true
             });
         }
 

@@ -15,21 +15,12 @@ export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middle
 export type ApiClassMiddleware = new (...args: any[]) => ApiMiddleware;
 
 /**
- * 外部启动插件的配置
- */
-export interface ApiOptions {
-    server: (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => void;
-    options: ApiDefaultOptions;
-    middlewares: Array<ApiFunctionMiddleware>;
-}
-
-/**
  * 中间类的函数参数
  */
 export interface ApiMiddlewareParams {
-    options: Readonly<ApiDefaultOptions>;
-    stack: Readonly<Layer> | undefined;
-    route: Readonly<IApiRoute> | undefined;
+    options: Readonly<ApiDefaultOptions>; // 全局配置
+    stack: Readonly<Layer> | undefined; // 当前路由
+    route: Readonly<IApiRoute> | undefined; // 当前路由
     ctx: Context;
 }
 
@@ -42,7 +33,7 @@ export interface ApiMiddleware {
 }
 
 /**
- * 默认主体
+ * 默认事件主体
  */
 export interface ApiEventContent<T = Object | string | number | Error> {
     type?: string;
@@ -98,11 +89,20 @@ export interface ApiDefaultOptions extends KoaOptions {
     controllerPath?: string;
     koaBody?: IKoaBodyOptions;
     response?: {
-        type: ApiResponseType;
+        type: ApiResponseType; // 全局是否按照restful格式返回
     };
-    stack?: Array<Layer>;
-    queue?: Array<Readonly<IApiRoute>>;
+    stack?: Array<Layer>; // 全局路由
+    queue?: Array<Readonly<IApiRoute>>; // 全局路由
+    routeTree?: Readonly<ApiRoutesTree>; // 全局路由
     exts?: any;
+}
+
+/**
+ * 外部启动插件的配置
+ */
+export interface ApiRunOptions extends ApiDefaultOptions {
+    server: (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => void;
+    middlewares: Array<ApiFunctionMiddleware>;
 }
 
 /**
@@ -156,6 +156,19 @@ export interface IApiRoutes extends IRouterOptions {
     routePrefix?: string;
     target?: ClassDecorator;
     attributes?: ApiControllerAttributes;
+    anonymous?: boolean;
+}
+
+/**
+ * 树路由结构
+ */
+export interface ApiRoutesTree {
+    routePrefix?: string;
+    attributes?: ApiControllerAttributes;
+    anonymous?: boolean;
+    path?: string;
+    routes: Array<IApiRoute>;
+    childRoutesTree?: Array<ApiRoutesTree>;
 }
 
 /**
