@@ -3,7 +3,6 @@ import { ApiDefaultOptions } from '../../index';
 import event from '../../base/api.event';
 
 export default class ApiServer {
-    protected $event = event;
     /**
      * 构造函数
      * @param options
@@ -31,7 +30,7 @@ export default class ApiServer {
         server.on('error', this.onServerError);
         // 监听
         server.on('listening', () => {
-            this.$event.emitLog({
+            event.emitLog({
                 subType: 'system',
                 content: {
                     message: `Listening on Port: ${this.options.port || 3000}}`,
@@ -49,7 +48,7 @@ export default class ApiServer {
     private onServerError(error) {
         switch (error.code) {
             case 'EACCES':
-                this.$event.emitError({
+                event.emitError({
                     subType: 'system',
                     content: {
                         message: `Port requires elevated privileges`,
@@ -59,7 +58,7 @@ export default class ApiServer {
                 this.httpServer = null;
                 break;
             case 'EADDRINUSE':
-                this.$event.emitError({
+                event.emitError({
                     subType: 'system',
                     content: {
                         message: `Port: is already in use`,
@@ -69,7 +68,7 @@ export default class ApiServer {
                 this.httpServer = null;
                 break;
             default:
-                this.$event.emitError({
+                event.emitError({
                     subType: 'system',
                     content: {
                         error
@@ -100,12 +99,12 @@ export default class ApiServer {
      * @param content
      * @returns
      */
-    public onLog = this.$event.onLog.bind(this.$event);
+    public onLog = event.onLog.bind(event);
 
     /**
      * 监听错误日志
      * @param callback
      * @returns
      */
-    public onError = this.$event.onError.bind(this.$event);
+    public onError = event.onError.bind(event);
 }
