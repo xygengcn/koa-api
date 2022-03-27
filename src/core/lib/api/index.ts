@@ -1,9 +1,7 @@
 import ApiServer from './api.server';
 import http from 'http';
-import { ApiClassMiddleware, ApiDefaultOptions, ApiFunctionMiddleware } from '../../index';
+import { ApiClassMiddleware, ApiDefaultOptions, ApiFunctionMiddleware, ApiOptions } from '../../index';
 import ApiKoa from './api.koa';
-import { IncomingMessage, ServerResponse } from 'http';
-import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 export default class Api extends ApiServer {
     constructor(options?: ApiDefaultOptions) {
         super(options);
@@ -53,9 +51,10 @@ export default class Api extends ApiServer {
     /**
      *  返回http
      */
-    public callback(): (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => void {
+    public callback(): ApiOptions['server'] {
         return this.app.callback();
     }
+
     /**
      * 启动
      * @param options
@@ -65,5 +64,18 @@ export default class Api extends ApiServer {
     public start(callback: Array<(server: http.Server) => void> = []): Api {
         this.startServer(this.app.callback(), callback);
         return this;
+    }
+
+    /**
+     * 不启动，获取相关配置
+     * @param callback
+     */
+    public run(callback: (options: ApiOptions) => void): void {
+        const server = this.app.callback();
+        callback({
+            server,
+            options: this.app.appDefaultOptions,
+            middlewares: this.app.extendMiddleware
+        });
     }
 }

@@ -127,3 +127,39 @@ import { onLog } from '@/core';
  })
 
 ```
+
+
+### 实例函数
+
+```js
+
+// koa默认中间件
+use()
+
+// 前插koa默认中间件
+unshiftUse()
+
+// 装饰器中间件
+useMiddleware()
+
+// 前插装饰器中间件
+unshiftUseMiddleware()
+
+// 返回koa 的callback
+
+callback()
+
+// 日志监听
+onLog()
+
+// 错误监听
+onError()
+
+// 获取配置，可用于实现插件，不启动http服务
+run()
+
+// 默认启动服务
+start()
+
+
+```

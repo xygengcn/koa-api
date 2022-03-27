@@ -1,6 +1,8 @@
 import { IKoaBodyOptions } from 'koa-body';
 import { IMiddleware, Layer, IRouterOptions } from 'koa-router';
 import { Context as KoaContext, Middleware, Next as KoaNext, Request } from 'koa';
+import { IncomingMessage, ServerResponse } from 'http';
+import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 
 export type Context = KoaContext;
 
@@ -11,6 +13,15 @@ export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middle
 
 // 自定义中间件
 export type ApiClassMiddleware = new (...args: any[]) => ApiMiddleware;
+
+/**
+ * 外部启动插件的配置
+ */
+export interface ApiOptions {
+    server: (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => void;
+    options: ApiDefaultOptions;
+    middlewares: Array<ApiFunctionMiddleware>;
+}
 
 /**
  * 中间类的函数参数
