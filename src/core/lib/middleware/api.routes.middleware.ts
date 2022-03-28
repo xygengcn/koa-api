@@ -97,7 +97,8 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         if (!parent) {
             parent = new ApiRoutes({
                 routePrefix: path.basename(relativePath),
-                anonymous: true
+                anonymous: true,
+                attributes: {}
             });
         }
 

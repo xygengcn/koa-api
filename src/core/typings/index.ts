@@ -139,9 +139,21 @@ export interface ApiControllerAttributes {
 export type ApiRequestOptions = Omit<IApiRoute, 'value' | 'methodName'>;
 
 /**
+ * post请求参数
+ */
+export type ApiPostRequestOptions = Partial<Omit<ApiRequestOptions, 'url' | 'type'>>;
+
+/**
+ * get请求参数
+ */
+export interface ApiGetRequestOptions extends Partial<ApiRequestOptions> {
+    request?: Omit<IApiRouteRequest, 'body'>;
+}
+
+/**
  * @todo 默认路由属性值 预留，未实现
  */
-interface ApiRouteOptionsValue<T = any, K = any> {
+export interface ApiRouteRequestOptionsValue<T = any, K = any> {
     type: K & ClassType<T>;
     defaultValue?: any; // require为true时失效
     require?: boolean;
@@ -150,13 +162,23 @@ interface ApiRouteOptionsValue<T = any, K = any> {
 }
 
 /**
+ * 单个路由请求的属性值
+ */
+export type ApiRouteRequestOption<T = any, K = ClassType<T>> = Record<string, ApiRouteRequestOptionsValue<T, K> | ApiRouteRequestOptionsValue['type']>;
+
+/**
+ * 路由返回格式
+ */
+export type ApiRouteResponeseOption<T = any, K = ClassType<T>> = Record<string, Omit<ApiRouteRequestOptionsValue<T, K>, 'validator'> | ApiRouteRequestOptionsValue['type']>;
+
+/**
  * 路由类参数
  */
 export interface IApiRoutes extends IRouterOptions {
     routePrefix?: string;
     target?: ClassDecorator;
-    attributes?: ApiControllerAttributes;
-    anonymous?: boolean;
+    attributes: ApiControllerAttributes;
+    anonymous: boolean;
 }
 
 /**
@@ -171,6 +193,30 @@ export interface ApiRoutesTree {
     childRoutesTree?: Array<ApiRoutesTree>;
 }
 
+/**
+ * 请求参数
+ */
+export interface IApiRouteRequest<T = any, K = ClassType<T>> {
+    // TODO 请求头
+    headers?: ApiRouteRequestOption<T, K>;
+
+    // TODO 请求参数
+    query?: ApiRouteRequestOption<T, K>;
+
+    // TODO 请求主体
+    body?: ApiRouteRequestOption<T, K>;
+}
+
+/**
+ * 返回头部设置和返回类型注释
+ */
+export interface IApiRouteResponse<T = any, K = ClassType<T>> {
+    // TODO 返回头
+    headers?: ApiRouteResponeseOption<T, K>;
+
+    // TODO 返回类型
+    returns?: ApiRouteResponeseOption<T, K>;
+}
 /**
  * 路由函数参数
  */
@@ -212,38 +258,13 @@ export interface IApiRoute<T = any, K = ClassType<T>> {
 
     /**
      * 返回参数
-     * @todo 预留，未实现，可自定义实现
+     * @todo 可用于文档生成，预留，未实现，可自定义实现
      */
-    response?: {
-        // TODO 返回头
-        headers?: {
-            [key: string]: ApiRouteOptionsValue<T, K>;
-        };
-
-        // TODO 返回类型
-        returns?: {
-            [key: string]: ApiRouteOptionsValue<T, K>;
-        };
-    };
+    response?: IApiRouteResponse;
 
     /**
      * 请求头参数
      * @todo 可用于数据校验，预留，未实现，可自定义实现
      */
-    request?: {
-        // TODO 请求头
-        headers?: {
-            [key: string]: ApiRouteOptionsValue<T, K>;
-        };
-
-        // TODO 请求参数
-        query?: {
-            [key: string]: ApiRouteOptionsValue<T, K>;
-        };
-
-        // TODO 请求主体
-        body?: {
-            [key: string]: ApiRouteOptionsValue<T, K>;
-        };
-    };
+    request?: IApiRouteRequest<T, K>;
 }

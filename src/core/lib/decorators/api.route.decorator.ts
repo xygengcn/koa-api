@@ -1,4 +1,4 @@
-import { ApiRequestType, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next } from '../../index';
+import { ApiRequestType, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions } from '../../index';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
 
@@ -13,7 +13,11 @@ export function ApiRoutesDecorator(prefix?: string, attributes?: ApiControllerAt
         const route = new ApiRoutes({
             routePrefix: prefix,
             target: new target(),
-            attributes: attributes || {}
+            anonymous: false,
+            attributes: {
+                name: target.name,
+                ...(attributes || {})
+            }
         });
         // 通过原型，获取类里面所有方法
         const routeMethods: {
@@ -98,7 +102,7 @@ export function RequestApiRouteDecorator(options: ApiRequestOptions) {
 /**
  * get请求装饰器
  */
-export function GetRequestApiRouteDecorator(url: string, options: Partial<Omit<ApiRequestOptions, 'url' | 'type'>> = {}) {
+export function GetRequestApiRouteDecorator(url: string, options: ApiGetRequestOptions = {}) {
     return RequestApiRouteDecorator({
         ...options,
         url,
@@ -109,7 +113,7 @@ export function GetRequestApiRouteDecorator(url: string, options: Partial<Omit<A
 /**
  * post请求装饰器
  */
-export function PostRequestApiRouteDecorator(url: string, options: Partial<Omit<ApiRequestOptions, 'url' | 'type'>> = {}) {
+export function PostRequestApiRouteDecorator(url: string, options: ApiPostRequestOptions = {}) {
     return RequestApiRouteDecorator({
         ...options,
         url,

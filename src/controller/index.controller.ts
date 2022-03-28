@@ -1,8 +1,7 @@
 import { ApiError, ApiRequestType, ApiResponseType, ApiRouteParams, Controller, Get, Log, Post, Request } from '@/core';
 import { createReadStream } from 'fs';
 import path from 'path';
-
-@Controller('/')
+@Controller('/', { name: '测试接口', description: '下面是测试一堆实例' })
 export default class IndexController {
     private age = 111;
     private test() {
@@ -26,7 +25,7 @@ export default class IndexController {
     }
 
     @Request({ url: '/error', type: ApiRequestType.GET, name: '测试错误请求的接口', description: '这是描述' })
-    public error(ctx) {
+    public error() {
         throw new ApiError({
             code: 10001,
             error: 'error报错'
