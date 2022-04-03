@@ -1,13 +1,13 @@
 import { ApiResponseType } from '@/core/typings';
 import { IMiddleware } from 'koa-router';
-import { ApiRequestType, IApiRoute } from '../../index';
+import { ApiRequestMethod, IApiRoute } from '../../index';
 
 /**
  * 单个路由接口
  */
 export default class ApiRoute implements IApiRoute {
     // 函数名
-    public methodName!: string;
+    public functionName!: string;
 
     // 自定义名字
     public name!: string;
@@ -19,7 +19,7 @@ export default class ApiRoute implements IApiRoute {
     public url!: string;
 
     // 路由类型
-    public type!: ApiRequestType;
+    public method!: ApiRequestMethod[];
 
     // 默认RESTFUL返回格式
     public responseType: ApiResponseType = ApiResponseType.RESTFUL;

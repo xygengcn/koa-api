@@ -1,4 +1,4 @@
-import { ApiRequestType, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions } from '../../index';
+import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions } from '../../index';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
 
@@ -21,13 +21,13 @@ export function ApiRoutesDecorator(prefix?: string, attributes?: ApiControllerAt
         });
         // 通过原型，获取类里面所有方法
         const routeMethods: {
-            [methodName: string]: PropertyDescriptor;
+            [functionName: string]: PropertyDescriptor;
         } = Object.getOwnPropertyDescriptors(target.prototype);
 
         // 遍历方法名，提取接口
-        Object.entries(routeMethods).forEach(([methodName, methodFunction]) => {
+        Object.entries(routeMethods).forEach(([functionName, methodFunction]) => {
             // 过滤构造函数
-            if (methodName !== 'constructor' && typeof methodFunction.value === 'object' && methodFunction.value instanceof ApiRoute) {
+            if (functionName !== 'constructor' && typeof methodFunction.value === 'object' && methodFunction.value instanceof ApiRoute) {
                 // 直接插入
                 route.pushMethodRoutes(methodFunction.value);
             }
@@ -71,12 +71,13 @@ function ApiRouteDecorator(options: Partial<IApiRoute>) {
                     next();
                 };
             };
+            const requestMethod: Array<ApiRequestMethod> = options.method || [ApiRequestMethod.GET];
             // 改造路由
             descriptor.value = new ApiRoute({
                 ...options,
                 url,
-                type: options.type || ApiRequestType.GET,
-                methodName: name,
+                method: requestMethod,
+                functionName: name,
                 value,
                 name: options.name || `${target.constructor.name}.${name}`
             });
@@ -92,7 +93,16 @@ function ApiRouteDecorator(options: Partial<IApiRoute>) {
  */
 export function RequestApiRouteDecorator(options: ApiRequestOptions) {
     if (options.url) {
-        return ApiRouteDecorator(options);
+        let requestMethod: Array<ApiRequestMethod> = [];
+        if (options.method instanceof Array) {
+            requestMethod = options.method;
+        } else {
+            requestMethod = [options.method];
+        }
+        return ApiRouteDecorator({
+            ...options,
+            method: requestMethod
+        });
     }
     return function (target: any, name: string, descriptor: PropertyDescriptor) {
         return descriptor;
@@ -106,7 +116,7 @@ export function GetRequestApiRouteDecorator(url: string, options: ApiGetRequestO
     return RequestApiRouteDecorator({
         ...options,
         url,
-        type: ApiRequestType.GET
+        method: [ApiRequestMethod.GET]
     });
 }
 
@@ -117,6 +127,6 @@ export function PostRequestApiRouteDecorator(url: string, options: ApiPostReques
     return RequestApiRouteDecorator({
         ...options,
         url,
-        type: ApiRequestType.POST
+        method: [ApiRequestMethod.POST]
     });
 }

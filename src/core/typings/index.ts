@@ -119,7 +119,7 @@ export interface ApiRunOptions extends ApiDefaultOptions {
 /**
  * 请求类型
  */
-export enum ApiRequestType {
+export enum ApiRequestMethod {
     GET = 'GET',
     POST = 'POST',
     ALL = 'ALL',
@@ -147,17 +147,19 @@ export interface ApiControllerAttributes {
 /**
  * 单个路由参数
  */
-export type ApiRequestOptions = Omit<IApiRoute, 'value' | 'methodName'>;
+export interface ApiRequestOptions extends Omit<IApiRoute, 'value' | 'functionName' | 'method'> {
+    method: ApiRequestMethod | ApiRequestMethod[];
+}
 
 /**
  * post请求参数
  */
-export type ApiPostRequestOptions = Partial<Omit<ApiRequestOptions, 'url' | 'type'>>;
+export interface ApiPostRequestOptions extends Partial<Omit<ApiRequestOptions, 'url' | 'method'>> {}
 
 /**
  * get请求参数
  */
-export interface ApiGetRequestOptions extends Partial<ApiRequestOptions> {
+export interface ApiGetRequestOptions extends Partial<Omit<ApiRequestOptions, 'url' | 'method'>> {
     request?: Omit<IApiRouteRequest, 'body'>;
 }
 
@@ -233,7 +235,7 @@ export interface IApiRouteResponse<T = any, K = ClassType<T>> {
  */
 export interface IApiRoute<T = any, K = ClassType<T>> {
     // 函数名
-    methodName: string;
+    functionName: string;
 
     // 自定义名字
     name?: string;
@@ -248,7 +250,7 @@ export interface IApiRoute<T = any, K = ClassType<T>> {
      * 路由类型
      * @default GET
      */
-    type?: ApiRequestType;
+    method: ApiRequestMethod[];
 
     /**
      * 返回类型

@@ -93,10 +93,11 @@ export default class ApiRoutes extends KoaRouter {
         }
         // 循环当前路由
         if (this.methodRoutes.length && this.target) {
-            this.methodRoutes.forEach((method) => {
-                if (method.type?.toLocaleLowerCase()) {
-                    // 赋值函数，单个路由执行
-                    this[method.type.toLocaleLowerCase()](method.name, method.url, method.value(this.target));
+            this.methodRoutes.forEach((route) => {
+                if (route.method.length > 0) {
+                    this.register(route.url, route.method, route.value(this.target), { name: route.name });
+                } else {
+                    this[route.method[0].toLocaleLowerCase() || 'get'](route.name, route.url, route.value(this.target));
                 }
             });
         }
