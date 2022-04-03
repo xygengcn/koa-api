@@ -1,4 +1,4 @@
-import { ApiMiddlewareParams, ApiMiddleware } from './../../typings/index';
+import { ApiMiddlewareParams, ApiMiddleware, ApiErrorCode, ApiErrorCodeMessage } from './../../typings/index';
 import koaBody from 'koa-body';
 import { Middleware } from '../decorators/api.middleware';
 import ApiError from '../../base/api.error';
@@ -9,8 +9,8 @@ export class ApiBodyMiddleware implements ApiMiddleware {
             multipart: true,
             onError: (e) => {
                 throw new ApiError({
-                    code: 10501,
-                    error: 'Incorrect body',
+                    code: ApiErrorCode.illegalBody,
+                    error: options.error?.message?.['illegalBody'] || ApiErrorCodeMessage.illegalBody,
                     developMsg: `${e}`
                 });
             },

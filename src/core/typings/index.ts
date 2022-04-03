@@ -3,6 +3,9 @@ import { IMiddleware, Layer, IRouterOptions } from 'koa-router';
 import { Context as KoaContext, Middleware, Next as KoaNext, Request } from 'koa';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
+import { ApiErrorCode } from './error';
+
+export * from './error';
 
 export type Context = KoaContext;
 
@@ -84,12 +87,20 @@ export interface KoaOptions {
 /**
  * 入口配置
  */
+export type ApiOptions = Omit<ApiDefaultOptions, 'stack' | 'queue' | 'routeTree'>;
+/**
+ * 全局配置
+ */
 export interface ApiDefaultOptions extends KoaOptions {
     port?: number;
     controllerPath?: string;
     koaBody?: IKoaBodyOptions;
     response?: {
         type: ApiResponseType; // 全局是否按照restful格式返回
+    };
+    // 自定义配置错误文案
+    error?: {
+        message: Partial<Record<keyof typeof ApiErrorCode, string>>;
     };
     stack?: Array<Layer>; // 全局路由
     queue?: Array<Readonly<IApiRoute>>; // 全局路由

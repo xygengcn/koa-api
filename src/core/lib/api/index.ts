@@ -1,9 +1,9 @@
 import ApiServer from './api.server';
 import http from 'http';
-import { ApiClassMiddleware, ApiDefaultOptions, ApiFunctionMiddleware, ApiRunOptions } from '../../index';
+import { ApiClassMiddleware, ApiOptions, ApiFunctionMiddleware, ApiRunOptions } from '../../index';
 import ApiKoa from './api.koa';
 export default class Api extends ApiServer {
-    constructor(options?: ApiDefaultOptions) {
+    constructor(options?: ApiOptions) {
         super(options);
         this.app = new ApiKoa(options);
     }

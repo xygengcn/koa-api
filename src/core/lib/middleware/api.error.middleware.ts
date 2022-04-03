@@ -1,16 +1,15 @@
-import { Layer } from 'koa-router';
-import { Context, Next, ApiMiddleware, ApiMiddlewareParams } from '../../index';
+import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../index';
 import ApiError from '../../base/api.error';
 import { Middleware } from '../decorators/api.middleware';
 import apiEvent from '@/core/base/api.event';
 @Middleware('ApiErrorMiddleware')
 export class ApiErrorMiddleware implements ApiMiddleware {
-    private error(ctx: Context) {
+    private error({ ctx, options }: ApiMiddlewareParams) {
         switch (ctx.status) {
             case 404:
                 throw new ApiError({
-                    code: 404,
-                    error: 'Not Found'
+                    code: ApiErrorCode.notFound,
+                    error: options.error?.message['notFound'] || ApiErrorCodeMessage.notFound
                 });
             default:
                 throw new ApiError({
@@ -29,12 +28,12 @@ export class ApiErrorMiddleware implements ApiMiddleware {
     /**
      * 验证方法
      */
-    private verifyMethod(ctx: Context, stack: Layer | undefined) {
+    private verifyMethod({ stack, ctx, options }: ApiMiddlewareParams) {
         if (ctx && stack) {
             if (!stack.methods.includes(ctx.method)) {
                 throw new ApiError({
-                    code: 10502,
-                    error: 'Incorrect Method',
+                    code: ApiErrorCode.illegalMethod,
+                    error: options.error?.message?.['illegalMethod'] || ApiErrorCodeMessage.illegalMethod,
                     developMsg: `Please request through ${stack.methods?.join('、')}.`
                 });
             }
@@ -44,10 +43,10 @@ export class ApiErrorMiddleware implements ApiMiddleware {
     public resolve({ stack, route, options }: ApiMiddlewareParams) {
         return async (ctx: Context, next: Next) => {
             try {
-                this.verifyMethod(ctx, stack);
+                this.verifyMethod({ stack, route, options, ctx });
                 await next();
                 if (ctx.status !== 200) {
-                    this.error(ctx);
+                    this.error({ ctx, stack, route, options });
                 }
             } catch (error) {
                 apiEvent.emitError(
@@ -77,15 +76,15 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                 } else {
                     if (typeof error !== 'object') {
                         error = {
-                            code: 10404,
-                            error: 'Unknown Error',
+                            code: ApiErrorCode.unknown,
+                            error: options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
                             developMsg: error
                         };
                     }
                 }
                 ctx.body = {
-                    code: 10404,
-                    error: 'Unknown Error',
+                    code: ApiErrorCode.unknown,
+                    error: options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
                     ...((error as Object) || {}),
                     updateTime: new Date().getTime()
                 };

@@ -1,5 +1,5 @@
 import { ApiErrorMiddleware } from '../middleware/api.error.middleware';
-import { ApiDefaultOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../index';
+import { ApiOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../index';
 import Koa from 'koa';
 import compose from 'koa-compose';
 import ApiRoutesMiddleware from '../middleware/api.routes.middleware';
@@ -16,13 +16,13 @@ export default class ApiKoa extends Koa {
     /**
      * 配置
      */
-    public appDefaultOptions: ApiDefaultOptions = {
+    public appDefaultOptions: ApiOptions = {
         response: {
             type: ApiResponseType.RESTFUL
         }
     };
 
-    constructor(options?: ApiDefaultOptions) {
+    constructor(options?: ApiOptions) {
         super(options);
         Object.assign(this.appDefaultOptions, options || {});
         this.useMiddleware([ApiErrorMiddleware, ApiResponseMiddleware, ApiBodyMiddleware, ApiRoutesMiddleware]);
