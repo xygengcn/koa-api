@@ -13,6 +13,10 @@ export class ApiResponseMiddleware implements ApiMiddleware {
                     data: ctx.body || null,
                     updateTime: new Date().getTime()
                 };
+                return;
+            }
+            if (route?.responseType === ApiResponseType.REDIRECT) {
+                ctx.body && ctx.redirect(ctx.body as string);
             }
         };
     }

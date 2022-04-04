@@ -1,4 +1,4 @@
-import { ApiError, ApiRequestMethod, ApiResponseType, ApiRouteParams, Controller, Get, Log, Post, Request } from '@/core';
+import { ApiError, ApiRequestMethod, ApiResponseType, ApiRouteParams, Controller, Get, Log, Post, Redirect, Request } from '@/core';
 import { createReadStream } from 'fs';
 import path from 'path';
 @Controller('/', { name: '测试接口', description: '下面是测试一堆实例' })
@@ -43,5 +43,10 @@ export default class IndexController {
     public showTodayImage({ ctx }: ApiRouteParams) {
         ctx.set('content-type', 'image/jpeg');
         return createReadStream(path.join(__dirname, '../../temp/test.jpeg'));
+    }
+
+    @Redirect('/redirect', { name: '重定向接口', description: '可以在直接重定向到其他页面' })
+    public redirect({ ctx }: ApiRouteParams) {
+        return 'https://baidu.com';
     }
 }

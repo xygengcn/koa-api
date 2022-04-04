@@ -1,4 +1,4 @@
-import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions, ApiControllerOptions } from '../../index';
+import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions, ApiControllerOptions, ApiResponseType } from '../../index';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
 
@@ -130,5 +130,17 @@ export function PostRequestApiRouteDecorator(url: string, options: ApiPostReques
         ...options,
         url,
         method: [ApiRequestMethod.POST]
+    });
+}
+
+/**
+ * 跳转请求装饰器
+ */
+export function RedirectRequestApiRouteDecorator(url: string, options: ApiPostRequestOptions = {}) {
+    return RequestApiRouteDecorator({
+        ...options,
+        url,
+        responseType: ApiResponseType.REDIRECT,
+        method: [ApiRequestMethod.GET]
     });
 }

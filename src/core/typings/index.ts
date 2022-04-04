@@ -133,7 +133,8 @@ export enum ApiRequestMethod {
  */
 export enum ApiResponseType {
     DEFAULT = 'DEFAULT', // 不经过处理返回
-    RESTFUL = 'RESTFUL' // 正确返回结果将会包一层默认结构 default
+    RESTFUL = 'RESTFUL', // 正确返回结果将会包一层默认结构 default
+    REDIRECT = 'REDIRECT' // 重定向
 }
 /**
  * 控制类额外参数
@@ -152,7 +153,7 @@ export type ApiControllerOptions = Partial<Omit<IApiRoutes, 'target' | 'attribut
  * 单个路由参数
  */
 export interface ApiRequestOptions extends Omit<IApiRoute, 'value' | 'functionName' | 'method'> {
-    method: ApiRequestMethod | ApiRequestMethod[];
+    method: ApiRequestMethod | Array<ApiRequestMethod>;
 }
 
 /**

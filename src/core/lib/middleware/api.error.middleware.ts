@@ -45,7 +45,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
             try {
                 this.verifyMethod({ stack, route, options, ctx });
                 await next();
-                if (ctx.status !== 200) {
+                if (ctx.status !== 200 && ctx.status !== 302) {
                     this.error({ ctx, stack, route, options });
                 }
             } catch (error) {
