@@ -3,6 +3,7 @@
  */
 import { ApiLogEventContent, ApiErrorEventContent, ApiEventContent } from '../index';
 import { EventEmitter } from 'events';
+import { ApiMiddlewareParams } from '../typings';
 export class ApiEvent {
     // 事件监听
     private $event: EventEmitter = new EventEmitter();
@@ -72,7 +73,7 @@ export class ApiEvent {
      * @param callback
      * @returns
      */
-    public onError<T = any>(callback: (content: ApiErrorEventContent, options?: T) => void) {
+    public onError<T = ApiMiddlewareParams>(callback: (content: ApiErrorEventContent, options?: T) => void) {
         return this.on('error', callback);
     }
 
