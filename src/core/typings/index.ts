@@ -136,13 +136,17 @@ export enum ApiResponseType {
     RESTFUL = 'RESTFUL' // 正确返回结果将会包一层默认结构 default
 }
 /**
- * 控制类参数
+ * 控制类额外参数
  */
 export interface ApiControllerAttributes {
     name?: string;
     // 描述
     description?: string;
 }
+/**
+ * 控制类主要参数
+ */
+export type ApiControllerOptions = Partial<Omit<IApiRoutes, 'target' | 'attributes'>>;
 
 /**
  * 单个路由参数

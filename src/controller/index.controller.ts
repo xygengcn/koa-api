@@ -42,6 +42,6 @@ export default class IndexController {
     @Get('/img', { responseType: ApiResponseType.DEFAULT, name: '测试图片预览的接口', description: '这是描述' })
     public showTodayImage({ ctx }: ApiRouteParams) {
         ctx.set('content-type', 'image/jpeg');
-        return createReadStream(path.join(__dirname, '../../test/test.jpeg'));
+        return createReadStream(path.join(__dirname, '../../temp/test.jpeg'));
     }
 }

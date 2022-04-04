@@ -1,4 +1,4 @@
-import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions } from '../../index';
+import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions, ApiControllerOptions } from '../../index';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
 
@@ -7,13 +7,15 @@ import ApiRoutes from '../routes/api.routes';
  * @param path 路由前缀
  * @returns
  */
-export function ApiRoutesDecorator(prefix?: string, attributes?: ApiControllerAttributes): (target?: any) => any {
+export function ApiRoutesDecorator(prefix?: string | ApiControllerOptions, attributes?: ApiControllerAttributes): (target?: any) => any {
+    // 支持其他参数
+    const options: ApiControllerOptions = typeof prefix === 'string' ? { routePrefix: prefix } : prefix || { routePrefix: '/' };
     return (target): ApiRoutes => {
         // 定义一个路由
         const route = new ApiRoutes({
-            routePrefix: prefix,
             target: new target(),
             anonymous: false,
+            ...options,
             attributes: {
                 name: target.name,
                 ...(attributes || {})

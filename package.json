@@ -1,12 +1,12 @@
 {
     "name": "@xygengcn/koa-api",
-    "version": "0.3.7",
+    "version": "0.3.9",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/core/index.js",
     "typings": "dist/core/index.d.ts",
     "scripts": {
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-        "prepublish": "npm run build",
+        "prepublish": "rm -rf ./dist && npm run build",
         "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
         "prd": "pm2 start pm2.json",
         "start": "npm run prd"
