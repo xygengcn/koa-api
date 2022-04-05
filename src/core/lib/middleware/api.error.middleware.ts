@@ -53,7 +53,19 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                     {
                         type: 'error',
                         subType: 'http',
-                        content: error as Error
+                        content: {
+                            error,
+                            updateTime: new Date().getTime(),
+                            request: {
+                                method: ctx.method,
+                                headers: ctx.headers,
+                                url: ctx.url,
+                                routeName: route?.functionName,
+                                querystring: ctx.querystring,
+                                ip: ctx.ip,
+                                ips: ctx.ips
+                            }
+                        }
                     },
                     {
                         stack,
