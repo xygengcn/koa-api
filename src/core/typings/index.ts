@@ -65,9 +65,9 @@ type ClassType<T> = { (): T } | { new (...args: never[]): T & object } | { new (
 /**
  * 路由参数
  */
-export interface ApiRouteParams {
-    query: Readonly<any>;
-    body: Readonly<any>;
+export interface ApiRouteParams<K = any, T = any> {
+    query: Readonly<K>;
+    body: Readonly<T>;
     ctx: Readonly<Context>;
     files: Request['files'];
 }
