@@ -1,5 +1,6 @@
 export enum ApiErrorCode {
     notFound = 10404,
+    serviceError = 10404,
     illegalBody = 10501,
     illegalMethod = 10502,
     unknown = 10503

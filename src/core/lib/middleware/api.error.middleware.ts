@@ -45,7 +45,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
             try {
                 this.verifyMethod({ stack, route, options, ctx });
                 await next();
-                if (ctx.status !== 200 && ctx.status !== 302) {
+                if (![200, 301, 204].includes(ctx.status)) {
                     this.error({ ctx, stack, route, options });
                 }
             } catch (error) {
@@ -77,9 +77,8 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                 ctx.set('content-type', 'application/json');
                 if (error instanceof Error) {
                     error = new ApiError({
-                        code: 10500,
-                        error: error.message,
-                        ...error
+                        code: ApiErrorCode.serviceError,
+                        error
                     });
                 }
                 ctx.status === 200;
@@ -88,16 +87,13 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                 } else {
                     if (typeof error !== 'object') {
                         error = {
-                            code: ApiErrorCode.unknown,
-                            error: options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
                             developMsg: error
                         };
                     }
                 }
                 ctx.body = {
                     code: ApiErrorCode.unknown,
-                    error: options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
-                    ...((error as Object) || {}),
+                    error: error || options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
                     updateTime: new Date().getTime()
                 };
             }

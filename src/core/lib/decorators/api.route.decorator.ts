@@ -70,6 +70,10 @@ function ApiRouteDecorator(options: Partial<IApiRoute>) {
                     // 函数返回结果
                     const result = await routeMethodValue.call(_this, { query, body, ctx, files } as ApiRouteParams);
                     ctx.body = result;
+                    // 即使为空也是200
+                    if (!result) {
+                        ctx.status = 200;
+                    }
                     next();
                 };
             };

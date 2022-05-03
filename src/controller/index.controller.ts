@@ -49,4 +49,9 @@ export default class IndexController {
     public redirect({ ctx }: ApiRouteParams) {
         return 'https://baidu.com';
     }
+
+    @Get('/nocontent')
+    public noContent() {
+        return null;
+    }
 }
