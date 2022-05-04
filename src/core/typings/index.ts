@@ -11,6 +11,9 @@ export type Context = KoaContext;
 
 export type Next = KoaNext;
 
+// 默认拓展类型
+export type ApiBaseExtends = Partial<Record<string, string | number | Object | Function>>;
+
 // 默认中间件
 export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middleware;
 
@@ -22,8 +25,9 @@ export type ApiClassMiddleware = new (...args: any[]) => ApiMiddleware;
  */
 export interface ApiMiddlewareParams {
     options: Readonly<ApiDefaultOptions>; // 全局配置
-    stack: Readonly<Layer> | undefined; // 当前路由
-    route: Readonly<IApiRoute> | undefined; // 当前路由
+    stack?: Readonly<Layer> | undefined; // 当前路由
+    route?: Readonly<IApiRoute> | undefined; // 当前路由
+    parents?: Readonly<Array<ApiRoutesBase>>; // 当前路由的父级结构
     ctx: Context;
 }
 
@@ -103,9 +107,10 @@ export interface ApiDefaultOptions extends KoaOptions {
         message: Partial<Record<keyof typeof ApiErrorCode, string>>;
     };
     stack?: Array<Layer>; // 全局路由
-    queue?: Array<Readonly<IApiRoute>>; // 全局路由
-    routeTree?: Readonly<ApiRoutesTree>; // 全局路由
-    exts?: any;
+    queue?: Array<Readonly<IApiRoute>>; // 全局路由队列
+    routeTree?: Readonly<ApiRoutesTree>; // 全局路由树
+    controllerQueue?: Array<Readonly<ApiRoutesBase>>; // 全局控制器队列
+    exts?: any; // 中间件参数
 }
 
 /**
@@ -143,6 +148,8 @@ export interface ApiControllerAttributes {
     name?: string;
     // 描述
     description?: string;
+    // 跨域
+    origin?: string;
 }
 /**
  * 控制类主要参数
@@ -152,7 +159,7 @@ export type ApiControllerOptions = Partial<Omit<IApiRoutes, 'target' | 'attribut
 /**
  * 单个路由参数
  */
-export interface ApiRequestOptions extends Omit<IApiRoute, 'value' | 'functionName' | 'method'> {
+export interface ApiRequestOptions extends Omit<IApiRoute, 'value' | 'routeName' | 'method'> {
     method: ApiRequestMethod | Array<ApiRequestMethod>;
 }
 
@@ -193,6 +200,7 @@ export type ApiRouteResponeseOption<T = any, K = ClassType<T>> = Record<string, 
  * 路由类参数
  */
 export interface IApiRoutes extends IRouterOptions {
+    controllerName?: string;
     routePrefix?: string;
     target?: ClassDecorator;
     attributes: ApiControllerAttributes;
@@ -202,11 +210,10 @@ export interface IApiRoutes extends IRouterOptions {
 /**
  * 树路由结构
  */
-export interface ApiRoutesTree {
-    routePrefix?: string;
-    attributes?: ApiControllerAttributes;
-    anonymous?: boolean;
+export interface ApiRoutesBase extends Pick<IApiRoutes, 'controllerName' | 'routePrefix' | 'attributes' | 'anonymous'> {
     path?: string;
+}
+export interface ApiRoutesTree extends ApiRoutesBase {
     routes: Array<IApiRoute>;
     childRoutesTree?: Array<ApiRoutesTree>;
 }
@@ -240,7 +247,7 @@ export interface IApiRouteResponse<T = any, K = ClassType<T>> {
  */
 export interface IApiRoute<T = any, K = ClassType<T>> {
     // 函数名
-    functionName: string;
+    routeName: string;
 
     // 自定义名字
     name?: string;

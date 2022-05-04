@@ -1,6 +1,6 @@
 import { ApiMiddlewareParams, ApiMiddleware, ApiErrorCode, ApiErrorCodeMessage } from './../../typings/index';
 import koaBody from 'koa-body';
-import { Middleware } from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware.decorator';
 import ApiError from '../../base/api.error';
 @Middleware('ApiBodyMiddleware')
 export class ApiBodyMiddleware implements ApiMiddleware {

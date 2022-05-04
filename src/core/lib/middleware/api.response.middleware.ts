@@ -1,5 +1,5 @@
 import { ApiMiddleware, ApiMiddlewareParams, ApiResponseType, Context, Next } from '../../index';
-import { Middleware } from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware.decorator';
 
 @Middleware('ApiResponseMiddleware')
 export class ApiResponseMiddleware implements ApiMiddleware {

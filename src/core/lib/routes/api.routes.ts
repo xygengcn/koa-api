@@ -1,9 +1,13 @@
-import { ApiControllerAttributes, ApiRoutesTree, IApiRoute, IApiRoutes } from '../../index';
+import { ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes } from '../../index';
 import KoaRouter, { Layer } from 'koa-router';
 import ApiRoute from './api.route';
 import path from 'path';
 
 export default class ApiRoutes extends KoaRouter {
+    /**
+     * 控制器类名 路由形式
+     */
+    private controllerName!: string;
     /**
      * 配置属性
      */
@@ -14,9 +18,9 @@ export default class ApiRoutes extends KoaRouter {
     private path!: string;
 
     /**
-     * 路由前缀
+     * 路由前缀,此变量是控制传参，并非最后prefix
      */
-    private routePrefix!: string;
+    private readonly routePrefix!: string;
     /**
      * 匿名控制器
      */
@@ -114,11 +118,22 @@ export default class ApiRoutes extends KoaRouter {
      * 队列路由
      */
     public getQueue(stacks: Array<Layer> | undefined): Array<IApiRoute> {
-        const routes: Array<IApiRoute> = [...this.methodRoutes] || [];
+        const routes: Array<IApiRoute> = this.methodRoutes.map((route) => {
+            return {
+                ...route,
+                routeName: (this.controllerName && `${this.controllerName}.${route.routeName}`) || route.routeName
+            };
+        });
+        // 有子节点
         if (this.childRoutes?.length) {
             this.childRoutes.forEach((route) => {
-                const queue = route.getQueue(stacks);
-                routes.push(...queue);
+                const queueList = route.getQueue(stacks).map((q) => {
+                    return {
+                        ...q,
+                        routeName: (this.controllerName && `${this.controllerName}.${q.routeName}`) || q.routeName
+                    };
+                });
+                routes.push(...queueList);
             });
         }
         return routes.map((route) => {
@@ -133,21 +148,36 @@ export default class ApiRoutes extends KoaRouter {
     /**
      * 树形路由
      */
-    public getRouteTree(stacks: Array<Layer> | undefined): ApiRoutesTree {
-        let routes: Array<IApiRoute> = [...this.methodRoutes] || [];
-        routes = routes.map((route) => {
+    public getRouteTree(stacks: Array<Layer> | undefined, parentName: string = ''): ApiRoutesTree {
+        const routes: Array<IApiRoute> = this.methodRoutes.map((route) => {
             const stack = stacks?.find((layer) => layer.name === route.name);
             return {
                 ...route,
+                routeName: `${this.controllerName}.${route.routeName}` || route.routeName,
                 url: stack?.path || route.url
             };
         });
+        // 有子节点
         if (this.childRoutes?.length) {
-            const childRoutesTree = this.childRoutes.map((route) => {
-                const routeTree = route.getRouteTree(stacks);
-                return routeTree;
+            // 获取子树
+            const childRoutesTree: Array<ApiRoutesTree> = this.childRoutes.map((route) => {
+                // 继承父级名字
+                const _parentName = parentName ? `${parentName}.${this.controllerName}` : this.controllerName;
+                const routeTree = route.getRouteTree(stacks, _parentName);
+                // 修改路由名
+                const childRoutes = routeTree.routes.map((r) => {
+                    return {
+                        ...r,
+                        routeName: `${parentName && parentName + '.'}${this.controllerName}.${r.routeName}` || r.routeName
+                    };
+                });
+                return {
+                    ...routeTree,
+                    routes: childRoutes
+                };
             });
             return {
+                controllerName: this.controllerName,
                 path: this.path,
                 routePrefix: this.routePrefix,
                 anonymous: this.anonymous,
@@ -156,12 +186,29 @@ export default class ApiRoutes extends KoaRouter {
                 childRoutesTree
             };
         }
+        // 没有子节点
         return {
+            controllerName: this.controllerName,
             path: this.path,
             routePrefix: this.routePrefix,
             anonymous: this.anonymous,
             attributes: this.attributes,
             routes
         };
+    }
+
+    /**
+     * 控制器集合
+     */
+    public getControllerQueue(queue: Array<ApiRoutesBase> = []): Array<ApiRoutesBase> {
+        // 插入本身
+        queue.push({ controllerName: this.controllerName, path: this.path, routePrefix: this.routePrefix, anonymous: this.anonymous, attributes: this.attributes });
+        // 有子节点
+        if (this.childRoutes?.length) {
+            this.childRoutes.forEach((child) => {
+                child.getControllerQueue(queue);
+            });
+        }
+        return queue;
     }
 }

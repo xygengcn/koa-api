@@ -1,6 +1,6 @@
 import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../index';
 import ApiError from '../../base/api.error';
-import { Middleware } from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware.decorator';
 import apiEvent from '@/core/base/api.event';
 @Middleware('ApiErrorMiddleware')
 export class ApiErrorMiddleware implements ApiMiddleware {
@@ -94,7 +94,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                                 method: ctx.method,
                                 headers: ctx.headers,
                                 url: ctx.url,
-                                routeName: route?.functionName,
+                                routeName: route?.routeName,
                                 querystring: ctx.querystring,
                                 ip: ctx.ip,
                                 ips: ctx.ips

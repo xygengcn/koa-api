@@ -8,12 +8,13 @@ import ApiRoutes from '../routes/api.routes';
  * @returns
  */
 export function ApiRoutesDecorator(prefix?: string | ApiControllerOptions, attributes?: ApiControllerAttributes): (target?: any) => any {
-    // 支持其他参数
-    const options: ApiControllerOptions = typeof prefix === 'string' ? { routePrefix: prefix } : prefix || { routePrefix: '/' };
     return (target): ApiRoutes => {
+        // 支持其他参数
+        const options: ApiControllerOptions = typeof prefix === 'string' ? { routePrefix: prefix } : prefix || { routePrefix: '/' };
         // 定义一个路由
         const route = new ApiRoutes({
             target: new target(),
+            controllerName: target.name,
             anonymous: false,
             ...options,
             attributes: {
@@ -83,7 +84,7 @@ function ApiRouteDecorator(options: Partial<IApiRoute>) {
                 ...options,
                 url,
                 method: requestMethod,
-                functionName: name,
+                routeName: name,
                 value,
                 name: options.name || `${target.constructor.name}.${name}`
             });

@@ -1,8 +1,9 @@
 import ApiRoutes from '../routes/api.routes';
 import { isDirectory, isFile, readDirSync } from '../utils/file';
 import path from 'path';
-import { Middleware } from '../decorators/api.middleware';
+import { Middleware } from '../decorators/api.middleware.decorator';
 import { ApiFunctionMiddleware, ApiDefaultOptions, ApiMiddleware } from '../../index';
+import { capitalizeFirstLetter } from '../utils/string';
 
 @Middleware('ApiRoutesMiddleware')
 export default class ApiRoutesMiddleware implements ApiMiddleware {
@@ -10,6 +11,11 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
      * 匹配控制器正则
      */
     public fileNameReg = /([\d\w]+)(\.controller\.[t|j]s)$/i;
+
+    /**
+     * path路由正则
+     */
+    public filePathReg = /(.+)(\.controller\.[t|j]s)$/i;
 
     /**
      * 匹配index控制器正则
@@ -40,6 +46,10 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
             const queue = this.routerController?.getQueue(stack);
             // 树形结构
             const routeTree = this.routerController?.getRouteTree(stack);
+
+            //控制器集合
+            const controllerQueue = this.routerController?.getControllerQueue([]);
+
             Object.defineProperties(options, {
                 stack: {
                     writable: false,
@@ -58,6 +68,12 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
                     enumerable: true,
                     configurable: false,
                     value: routeTree
+                },
+                controllerQueue: {
+                    writable: false,
+                    enumerable: true,
+                    configurable: false,
+                    value: controllerQueue
                 }
             });
         }
@@ -96,10 +112,12 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         // 没有index，创建一个匿名的
         if (!parent) {
             parent = new ApiRoutes({
-                routePrefix: path.basename(relativePath),
+                controllerName: capitalizeFirstLetter(`${path.basename(relativePath) || 'index'}Controller`),
+                routePrefix: '/',
                 anonymous: true,
                 attributes: {}
             });
+            parent.setPath(relativePath);
         }
 
         // 开启循环
@@ -135,12 +153,13 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         const controller = require(absolutePath).default;
         if (controller instanceof ApiRoutes) {
             // 提取文件名
-            const filePath = relativePath.match(this.fileNameReg);
+            const filePath = relativePath.match(this.filePathReg);
             if (filePath && filePath[1]) {
                 controller.setPath(filePath[1]);
             } else {
                 controller.setPath(relativePath);
             }
+            controller.prefix;
             return controller;
         }
         return null;

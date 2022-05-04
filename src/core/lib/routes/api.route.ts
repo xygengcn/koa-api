@@ -6,8 +6,8 @@ import { ApiRequestMethod, IApiRoute } from '../../index';
  * 单个路由接口
  */
 export default class ApiRoute implements IApiRoute {
-    // 函数名
-    public functionName!: string;
+    // 函数名，路由形式
+    public routeName!: string;
 
     // 自定义名字
     public name!: string;
