@@ -49,6 +49,40 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                     this.error({ ctx, stack, route, options });
                 }
             } catch (error) {
+                ctx.status === 200;
+                ctx.set('content-type', 'application/json');
+                if (typeof error === 'string') {
+                    error = new ApiError({
+                        code: ApiErrorCode.serviceError,
+                        error: {
+                            developMsg: `${error}`
+                        }
+                    });
+                }
+                if (error instanceof Error) {
+                    error = new ApiError({
+                        code: ApiErrorCode.serviceError,
+                        error: {
+                            ...error,
+                            developMsg: `${error}`
+                        }
+                    });
+                }
+                if (error instanceof ApiError) {
+                    ctx.body = {
+                        ...error,
+                        updateTime: new Date().getTime()
+                    };
+                } else {
+                    ctx.body = {
+                        code: ApiErrorCode.unknown,
+                        error: {
+                            developMsg: error
+                        },
+                        updateTime: new Date().getTime()
+                    };
+                }
+                // 日志记录
                 apiEvent.emitError(
                     {
                         type: 'error',
@@ -74,32 +108,6 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                         ctx
                     }
                 );
-                ctx.set('content-type', 'application/json');
-                if (error instanceof Error) {
-                    error = new ApiError({
-                        code: ApiErrorCode.serviceError,
-                        ...error
-                    });
-                }
-                if (typeof error === 'string') {
-                    error = new ApiError({
-                        code: ApiErrorCode.serviceError,
-                        error
-                    });
-                }
-                ctx.status === 200;
-                if (error instanceof ApiError) {
-                    ctx.body = {
-                        ...error,
-                        updateTime: new Date().getTime()
-                    };
-                } else {
-                    ctx.body = {
-                        code: ApiErrorCode.unknown,
-                        error,
-                        updateTime: new Date().getTime()
-                    };
-                }
             }
         };
     }
