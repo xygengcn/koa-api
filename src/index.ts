@@ -2,12 +2,12 @@ import { join } from 'path';
 import Api from './core';
 
 const api = new Api({
-    controllerPath: join(__dirname, 'controller'),
-    error: {
-        message: {
-            notFound: 'hahah'
-        }
-    }
+    controllerPath: join(__dirname, 'controller')
+    // error: {
+    //     message: {
+    //         notFound: 'hahah'
+    //     }
+    // }
 });
 
 api.onError((content) => {

@@ -78,24 +78,28 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                 if (error instanceof Error) {
                     error = new ApiError({
                         code: ApiErrorCode.serviceError,
+                        ...error
+                    });
+                }
+                if (typeof error === 'string') {
+                    error = new ApiError({
+                        code: ApiErrorCode.serviceError,
                         error
                     });
                 }
                 ctx.status === 200;
                 if (error instanceof ApiError) {
-                    ctx.body = error;
+                    ctx.body = {
+                        ...error,
+                        updateTime: new Date().getTime()
+                    };
                 } else {
-                    if (typeof error !== 'object') {
-                        error = {
-                            developMsg: error
-                        };
-                    }
+                    ctx.body = {
+                        code: ApiErrorCode.unknown,
+                        error,
+                        updateTime: new Date().getTime()
+                    };
                 }
-                ctx.body = {
-                    code: ApiErrorCode.unknown,
-                    error: error || options.error?.message?.['unknown'] || ApiErrorCodeMessage.unknown,
-                    updateTime: new Date().getTime()
-                };
             }
         };
     }
