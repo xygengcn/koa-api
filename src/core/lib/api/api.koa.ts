@@ -7,6 +7,7 @@ import { ApiBodyMiddleware } from '../middleware/api.body.middleware';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 import { ApiResponseMiddleware } from '../middleware/api.response.middleware';
+import { ApiRequestMiddleware } from '../middleware/api.request.middleware';
 export default class ApiKoa extends Koa {
     /**
      * 拓展中间件
@@ -25,7 +26,7 @@ export default class ApiKoa extends Koa {
     constructor(options?: ApiOptions) {
         super(options);
         Object.assign(this.appDefaultOptions, options || {});
-        this.useMiddleware([ApiErrorMiddleware, ApiResponseMiddleware, ApiBodyMiddleware, ApiRoutesMiddleware]);
+        this.useMiddleware([ApiErrorMiddleware, ApiRequestMiddleware, ApiResponseMiddleware, ApiBodyMiddleware, ApiRoutesMiddleware]);
     }
 
     /**
@@ -34,13 +35,18 @@ export default class ApiKoa extends Koa {
      * @param params
      * @returns
      */
-    public useMiddleware(middlewares: ApiClassMiddleware | Array<ApiClassMiddleware>): ApiKoa {
+    public useMiddleware(middlewares: ApiClassMiddleware | Array<ApiClassMiddleware>, index?: number): ApiKoa {
         if (!(middlewares instanceof Array)) {
             middlewares = [middlewares];
         }
-        middlewares.forEach((middleware) => {
-            this.extendMiddleware.push((middleware as any).call(middleware, this.appDefaultOptions || {}));
+        const funcMiddlewares: Array<ApiFunctionMiddleware> = middlewares.map((middleware) => {
+            return (middleware as any).call(middleware, this.appDefaultOptions || {});
         });
+        if (typeof index === 'number') {
+            this.extendMiddleware.splice(index, 0, ...funcMiddlewares);
+        } else {
+            this.extendMiddleware = this.extendMiddleware.concat(funcMiddlewares);
+        }
         return this;
     }
 
@@ -68,11 +74,15 @@ export default class ApiKoa extends Koa {
     }
 
     /**
-     * 插入
+     * 原生插入
      * @param middleware
      */
-    public pushUseMiddleware(middleware: ApiFunctionMiddleware) {
-        this.extendMiddleware.push(middleware);
+    public pushUseMiddleware(middleware: ApiFunctionMiddleware, index?: number) {
+        if (typeof index === 'number') {
+            this.extendMiddleware.splice(index, 0, middleware);
+        } else {
+            this.extendMiddleware.push(middleware);
+        }
     }
 
     /**

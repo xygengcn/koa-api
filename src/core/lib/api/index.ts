@@ -17,8 +17,8 @@ export default class Api extends ApiServer {
      * 插入中间件
      * @param middleware
      */
-    public use(middleware: ApiFunctionMiddleware) {
-        this.app.pushUseMiddleware(middleware);
+    public use(middleware: ApiFunctionMiddleware, index?: number) {
+        this.app.pushUseMiddleware(middleware, index);
         return this;
     }
 
@@ -32,20 +32,21 @@ export default class Api extends ApiServer {
     }
 
     /**
-     * 插入中间件
+     * 后插入中间件
      * @param middleware
      */
-    public useMiddleware(middleware: ApiClassMiddleware) {
-        this.app.useMiddleware(middleware);
+    public useMiddleware(middleware: ApiClassMiddleware, index?: number) {
+        this.app.useMiddleware(middleware, index);
         return this;
     }
 
     /**
-     * 插入中间件
+     * 前插入中间件
      * @param middleware
      */
     public unshiftUseMiddleware(middleware: ApiClassMiddleware) {
         this.app.unshiftUseMiddleware(middleware);
+        return this;
     }
 
     /**
