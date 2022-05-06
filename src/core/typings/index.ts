@@ -149,7 +149,7 @@ export interface ApiControllerAttributes {
     // 描述
     description?: string;
     // 跨域
-    origin?: string;
+    origin?: string[];
 }
 /**
  * 控制类主要参数
