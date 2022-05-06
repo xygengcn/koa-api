@@ -12,7 +12,7 @@ const api = new Api({
     }
 });
 
-api.unshiftUseMiddleware(OriginMiddleware);
+api.useMiddleware(OriginMiddleware, 1);
 
 api.onError((content) => {
     console.log('错误', content);

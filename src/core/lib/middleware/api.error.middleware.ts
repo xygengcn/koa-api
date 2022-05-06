@@ -25,25 +25,10 @@ export class ApiErrorMiddleware implements ApiMiddleware {
     public ignore?({ ctx }: ApiMiddlewareParams) {
         return ctx.path === '/favicon.ico';
     }
-    /**
-     * 验证方法
-     */
-    private verifyMethod({ stack, ctx, options }: ApiMiddlewareParams) {
-        if (ctx && stack) {
-            if (!stack.methods.includes(ctx.method)) {
-                throw new ApiError({
-                    code: ApiErrorCode.illegalMethod,
-                    error: options.error?.message?.['illegalMethod'] || ApiErrorCodeMessage.illegalMethod,
-                    developMsg: `Please request through ${stack.methods?.join('、')}.`
-                });
-            }
-        }
-    }
 
     public resolve({ stack, route, options }: ApiMiddlewareParams) {
         return async (ctx: Context, next: Next) => {
             try {
-                this.verifyMethod({ stack, route, options, ctx });
                 await next();
                 if (![200, 301, 204].includes(ctx.status)) {
                     this.error({ ctx, stack, route, options });
@@ -59,7 +44,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                         }
                     });
                 }
-                if (error instanceof Error) {
+                if (error instanceof Error && !(error instanceof ApiError)) {
                     error = new ApiError({
                         code: ApiErrorCode.serviceError,
                         error: {

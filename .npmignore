@@ -11,3 +11,4 @@ pm2.json
 tsconfig.json
 .prettierrc
 yarn.lock
+.temp

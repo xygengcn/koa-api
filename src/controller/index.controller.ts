@@ -39,19 +39,42 @@ export default class IndexController {
         };
     }
 
+    /**
+     * 图片测试
+     * @param param0
+     * @returns
+     */
     @Get('/img', { responseType: ApiResponseType.DEFAULT, name: '测试图片预览的接口', description: '这是描述' })
     public showTodayImage({ ctx }: ApiRouteParams) {
         ctx.set('content-type', 'image/jpeg');
         return createReadStream(path.join(__dirname, '../../temp/test.jpeg'));
     }
 
+    /**
+     * 重定向测试
+     * @param param0
+     * @returns
+     */
     @Redirect('/redirect', { name: '重定向接口', description: '可以在直接重定向到其他页面' })
     public redirect({ ctx }: ApiRouteParams) {
         return 'https://baidu.com';
     }
 
+    /**
+     * 空测试
+     * @returns
+     */
     @Get('/nocontent')
     public noContent() {
         return null;
+    }
+
+    /**
+     * 跨域测试
+     * @returns
+     */
+    @Get('/origin', { origin: ['xygeng.cn'] })
+    public origin() {
+        return '11';
     }
 }
