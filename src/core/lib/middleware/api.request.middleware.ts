@@ -1,3 +1,4 @@
+import { ApiRequestMethod } from '@/core';
 import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../index';
 import ApiError from '../../base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
@@ -9,6 +10,9 @@ export class ApiRequestMiddleware implements ApiMiddleware {
          */
         return async (ctx: Context, next: Next) => {
             if (ctx && stack) {
+                if (stack.methods.includes(ApiRequestMethod.ALL)) {
+                    return await next();
+                }
                 if (!stack.methods.includes(ctx.method)) {
                     throw new ApiError({
                         code: ApiErrorCode.illegalMethod,
