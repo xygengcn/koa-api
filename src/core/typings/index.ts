@@ -129,6 +129,7 @@ export enum ApiRequestMethod {
     POST = 'POST',
     ALL = 'ALL',
     DELETE = 'DELETE',
+    OPTIONS = 'OPTIONS',
     PUT = 'PUT',
     HEAD = 'HEAD'
 }
