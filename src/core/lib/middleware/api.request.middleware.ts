@@ -10,10 +10,7 @@ export class ApiRequestMiddleware implements ApiMiddleware {
          */
         return async (ctx: Context, next: Next) => {
             if (ctx && stack) {
-                if (stack.methods.includes(ApiRequestMethod.ALL)) {
-                    return await next();
-                }
-                if (!stack.methods.includes(ctx.method)) {
+                if (!stack.methods.includes(ctx.method) && !stack.methods.includes(ApiRequestMethod.ALL)) {
                     throw new ApiError({
                         code: ApiErrorCode.illegalMethod,
                         error: options.error?.message?.['illegalMethod'] || ApiErrorCodeMessage.illegalMethod,

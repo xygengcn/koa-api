@@ -77,4 +77,12 @@ export default class IndexController {
     public origin() {
         return '11';
     }
+
+    /**
+     * all
+     */
+    @Request({ url: '/all', method: ApiRequestMethod.ALL })
+    public all() {
+        return '这是all';
+    }
 }

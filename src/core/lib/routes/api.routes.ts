@@ -1,3 +1,4 @@
+import { ApiRequestMethod } from '@/core';
 import { ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes } from '../../index';
 import KoaRouter, { Layer } from 'koa-router';
 import ApiRoute from './api.route';
@@ -98,10 +99,12 @@ export default class ApiRoutes extends KoaRouter {
         // 循环当前路由
         if (this.methodRoutes.length && this.target) {
             this.methodRoutes.forEach((route) => {
-                if (route.method.length > 0) {
+                if (route.method.includes(ApiRequestMethod.ALL)) {
+                    this.all(route.name, route.url, route.value(this.target));
+                } else if (route.method.length > 0) {
                     this.register(route.url, route.method, route.value(this.target), { name: route.name });
                 } else {
-                    this[route.method[0].toLocaleLowerCase() || 'get'](route.name, route.url, route.value(this.target));
+                    this.get(route.name, route.url, route.value(this.target));
                 }
             });
         }
