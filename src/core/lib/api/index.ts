@@ -66,17 +66,4 @@ export default class Api extends ApiServer {
         this.startServer(this.app.callback(), callback);
         return this;
     }
-
-    /**
-     * 不启动，获取相关配置
-     * @param callback
-     */
-    public run(callback: (options: ApiRunOptions) => void): void {
-        const server = this.app.callback();
-        callback({
-            server,
-            middlewares: this.app.extendMiddleware,
-            ...this.app.appDefaultOptions
-        });
-    }
 }

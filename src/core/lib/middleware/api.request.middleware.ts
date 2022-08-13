@@ -1,5 +1,4 @@
-import { ApiRequestMethod } from '@/core';
-import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../index';
+import { ApiRequestMethod, Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../typings';
 import ApiError from '../../base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
 @Middleware('ApiRequestMiddleware')

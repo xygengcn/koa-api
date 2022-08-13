@@ -1,19 +1,18 @@
 /**
  * 事件监听
  */
-import { ApiLogEventContent, ApiErrorEventContent, ApiEventContent } from '../index';
 import { EventEmitter } from 'events';
-import { ApiMiddlewareParams } from '../typings';
-export class ApiEvent {
+import { ApiMiddlewareParams, IApiEvent, IApiEventLevel } from '../typings';
+class ApiEvent {
     // 事件监听
     private $event: EventEmitter = new EventEmitter();
     // 前缀
-    private prefix?: string = 'api';
+    private module?: string = 'api';
 
     // 构造函数
-    constructor(opts?: { prefix?: string }) {
-        if (opts?.prefix) {
-            this.prefix = opts?.prefix;
+    constructor(opts?: { module?: string }) {
+        if (opts?.module) {
+            this.module = opts?.module;
         }
     }
 
@@ -22,9 +21,8 @@ export class ApiEvent {
      * @param key 事件名称
      * @param callback 回调
      */
-    public on(key: string, callback: (...args: any[]) => void) {
-        key = `${this.prefix}-${key}`;
-        this.$event.on(key, callback);
+    public on<T, K = ApiMiddlewareParams>(level: IApiEventLevel, callback: (content: IApiEvent<T>, options?: K) => void) {
+        this.$event.on(level, callback);
         return this;
     }
 
@@ -32,80 +30,43 @@ export class ApiEvent {
      * 触发
      * @param key 事件名称
      */
-    public emit(key: string, ...args: any[]) {
-        key = `${this.prefix}-${key}`;
-        return this.$event.emit(key, ...args);
-    }
-
-    /**
-     *  全部日志事件
-     * @param content
-     * @returns
-     */
-    public emitLog(content: ApiLogEventContent | string, options?: any) {
-        let eventContent: ApiEventContent;
-        if (typeof content !== 'object') {
-            eventContent = {
-                type: 'log',
-                content,
-                module: this.prefix
-            };
+    public emit(level: IApiEventLevel | { level?: IApiEventLevel; subType?: string }, content: any, options?: ApiMiddlewareParams) {
+        let type: IApiEventLevel = 'log';
+        let subType: string = 'default';
+        if (typeof level === 'object') {
+            type = level.level || 'log';
+            subType = level.subType || '';
         } else {
-            eventContent = {
-                ...content,
-                type: 'log',
-                module: this.prefix
-            };
+            type = level;
         }
-        return this.emit('log', eventContent, options);
-    }
-
-    /**
-     * 监听日志
-     * @param callback
-     */
-    public onLog<T = any>(callback: (content: ApiLogEventContent, options?: T) => void) {
-        return this.on('log', callback);
-    }
-
-    /**
-     * 监听错误日志
-     * @param callback
-     * @returns
-     */
-    public onError<T = ApiMiddlewareParams>(callback: (content: ApiErrorEventContent, options?: T) => void) {
-        return this.on('error', callback);
-    }
-
-    /**
-     * 错误日志
-     * @param ctx
-     * @param content
-     * @returns
-     */
-    public emitError<T = any>(content: ApiErrorEventContent | string, options?: T) {
-        let eventContent: ApiEventContent;
-        // 错误写入日志
-        if (typeof content !== 'object') {
-            eventContent = {
-                type: 'error',
-                content,
-                module: this.prefix
-            };
-        } else {
-            eventContent = {
-                ...content,
-                type: 'error',
-                module: this.prefix
-            };
-        }
-        return this.emit('error', eventContent, options || {});
+        return this.$event.emit(
+            type,
+            {
+                type,
+                subType,
+                module: this.module,
+                content
+            },
+            options
+        );
     }
 }
 const apiEvent = new ApiEvent();
 
-export const Log = apiEvent.emitLog.bind(apiEvent);
+const Logger = (level: IApiEventLevel | { level?: IApiEventLevel; subType?: string }, content: Object | string | number | Error, options?: ApiMiddlewareParams) => {
+    apiEvent.emit(level, content, options);
+};
 
-export const onLog = apiEvent.onLog.bind(apiEvent);
+Logger.Log = (content: Object | string | number | Error, options?: any) => {
+    apiEvent.emit('log', content, options);
+};
 
-export default apiEvent;
+Logger.on = <T, K = ApiMiddlewareParams>(level: IApiEventLevel, callback: (content: IApiEvent<T>, options?: K) => void) => {
+    apiEvent.on(level, callback);
+};
+
+Logger.onError = <T, K = ApiMiddlewareParams>(callback: (content: IApiEvent<T>, options?: K) => void) => {
+    apiEvent.on('error', callback);
+};
+
+export default Logger;

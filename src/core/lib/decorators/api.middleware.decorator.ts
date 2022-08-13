@@ -1,7 +1,7 @@
 /**
  * 程序装饰器合集
  */
-import { ApiDefaultOptions, ApiFunctionMiddleware, Context, Next, Layer, ApiMiddlewareParams, IApiRoute, ApiRoutesBase } from '../../index';
+import { ApiDefaultOptions, ApiFunctionMiddleware, Context, Next, Layer, ApiMiddlewareParams, IApiRoute, ApiRoutesBase } from '@/core/typings';
 /**
  * 中间件
  * @param name

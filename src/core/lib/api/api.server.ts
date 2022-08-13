@@ -1,6 +1,6 @@
 import http from 'http';
 import { ApiDefaultOptions } from '../../index';
-import event from '../../base/api.event';
+import Logger from '../../base/api.event';
 
 export default class ApiServer {
     /**
@@ -30,13 +30,15 @@ export default class ApiServer {
         server.on('error', this.onServerError);
         // 监听
         server.on('listening', () => {
-            event.emitLog({
-                subType: 'system',
-                content: {
+            this.logger(
+                {
+                    subType: 'system'
+                },
+                {
                     message: `Listening on Port: ${this.options.port || 3000}}`,
                     addr: server.address()
                 }
-            });
+            );
         });
         return server;
     }
@@ -48,32 +50,15 @@ export default class ApiServer {
     private onServerError(error) {
         switch (error.code) {
             case 'EACCES':
-                event.emitError({
-                    subType: 'system',
-                    content: {
-                        message: `Port requires elevated privileges`,
-                        error
-                    }
-                });
+                this.logger({ subType: 'system', level: 'error' }, { message: `Port requires elevated privileges`, error });
                 this.httpServer = null;
                 break;
             case 'EADDRINUSE':
-                event.emitError({
-                    subType: 'system',
-                    content: {
-                        message: `Port: is already in use`,
-                        error
-                    }
-                });
+                this.logger({ subType: 'system', level: 'error' }, { message: `Port: is already in use`, error });
                 this.httpServer = null;
                 break;
             default:
-                event.emitError({
-                    subType: 'system',
-                    content: {
-                        error
-                    }
-                });
+                this.logger({ subType: 'system', level: 'error' }, error);
         }
         process.exit(1);
     }
@@ -95,16 +80,8 @@ export default class ApiServer {
     }
 
     /**
-     *  全部日志事件
-     * @param content
+     * 监听日志
      * @returns
      */
-    public onLog = event.onLog.bind(event);
-
-    /**
-     * 监听错误日志
-     * @param callback
-     * @returns
-     */
-    public onError = event.onError.bind(event);
+    public logger = Logger;
 }

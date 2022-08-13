@@ -1,5 +1,5 @@
 import { ApiErrorMiddleware } from '../middleware/api.error.middleware';
-import { ApiOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../index';
+import { ApiOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../typings';
 import Koa from 'koa';
 import compose from 'koa-compose';
 import ApiRoutesMiddleware from '../middleware/api.routes.middleware';

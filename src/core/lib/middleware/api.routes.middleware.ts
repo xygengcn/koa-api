@@ -2,7 +2,7 @@ import ApiRoutes from '../routes/api.routes';
 import { isDirectory, isFile, readDirSync } from '../utils/file';
 import path from 'path';
 import { Middleware } from '../decorators/api.middleware.decorator';
-import { ApiFunctionMiddleware, ApiDefaultOptions, ApiMiddleware } from '../../index';
+import { ApiFunctionMiddleware, ApiDefaultOptions, ApiMiddleware } from '../../typings';
 import { capitalizeFirstLetter } from '../utils/string';
 
 @Middleware('ApiRoutesMiddleware')

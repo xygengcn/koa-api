@@ -14,10 +14,10 @@ const api = new Api({
 
 api.useMiddleware(OriginMiddleware, 1);
 
-api.onError((content) => {
+api.logger.onError((content) => {
     console.log('错误', content);
 });
-api.onLog((content) => {
+api.logger.on('log', (content) => {
     console.log('日志', content);
 });
 

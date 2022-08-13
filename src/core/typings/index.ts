@@ -5,6 +5,8 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 import { ApiErrorCode } from './error';
 
+export { Layer } from 'koa-router';
+
 export * from './error';
 
 export type Context = KoaContext;
@@ -39,28 +41,16 @@ export interface ApiMiddleware {
     ignore?: (params: ApiMiddlewareParams) => boolean;
 }
 
+export type IApiEventLevel = 'log' | 'warn' | 'info' | 'error';
+
 /**
  * 默认事件主体
  */
-export interface ApiEventContent<T = Object | string | number | Error> {
-    type?: string;
-    subType?: string;
-    content?: T;
-    module?: string;
-}
-
-/**
- * 日志事件
- */
-export interface ApiLogEventContent extends Omit<ApiEventContent, 'type' | 'module'> {
-    type?: 'log';
-}
-
-/**
- * 错误事件
- */
-export interface ApiErrorEventContent extends Omit<ApiEventContent, 'type' | 'module'> {
-    type?: 'error';
+export interface IApiEvent<T = Object | string | number | Error> {
+    type: IApiEventLevel;
+    subType: string;
+    content: T;
+    module: string;
 }
 
 // 类型

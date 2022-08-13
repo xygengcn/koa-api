@@ -1,7 +1,7 @@
-import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '../../index';
-import ApiError from '../../base/api.error';
+import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '@/core/typings';
+import ApiError from '@/core/base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
-import apiEvent from '@/core/base/api.event';
+import Logger from '@/core/base/api.event';
 @Middleware('ApiErrorMiddleware')
 export class ApiErrorMiddleware implements ApiMiddleware {
     private error({ ctx, options }: ApiMiddlewareParams) {
@@ -68,22 +68,22 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                     };
                 }
                 // 日志记录
-                apiEvent.emitError(
+                Logger(
                     {
-                        type: 'error',
-                        subType: 'http',
-                        content: {
-                            error,
-                            updateTime: new Date().getTime(),
-                            request: {
-                                method: ctx.method,
-                                headers: ctx.headers,
-                                url: ctx.url,
-                                routeName: route?.routeName,
-                                querystring: ctx.querystring,
-                                ip: ctx.ip,
-                                ips: ctx.ips
-                            }
+                        level: 'error',
+                        subType: 'http'
+                    },
+                    {
+                        error,
+                        updateTime: new Date().getTime(),
+                        request: {
+                            method: ctx.method,
+                            headers: ctx.headers,
+                            url: ctx.url,
+                            routeName: route?.routeName,
+                            querystring: ctx.querystring,
+                            ip: ctx.ip,
+                            ips: ctx.ips
                         }
                     },
                     {

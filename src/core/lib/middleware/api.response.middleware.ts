@@ -1,4 +1,4 @@
-import { ApiMiddleware, ApiMiddlewareParams, ApiResponseType, Context, Next } from '../../index';
+import { ApiMiddleware, ApiMiddlewareParams, ApiResponseType, Context, Next } from '../../typings';
 import { Middleware } from '../decorators/api.middleware.decorator';
 
 @Middleware('ApiResponseMiddleware')

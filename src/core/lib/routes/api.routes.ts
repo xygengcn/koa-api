@@ -1,5 +1,4 @@
-import { ApiRequestMethod } from '@/core';
-import { ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes } from '../../index';
+import { ApiRequestMethod, ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes } from '@/core/typings';
 import KoaRouter, { Layer } from 'koa-router';
 import ApiRoute from './api.route';
 import path from 'path';

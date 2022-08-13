@@ -1,6 +1,5 @@
-import { ApiResponseType } from '@/core/typings';
+import { ApiResponseType, ApiRequestMethod, IApiRoute } from '@/core/typings';
 import { IMiddleware } from 'koa-router';
-import { ApiRequestMethod, IApiRoute } from '../../index';
 
 /**
  * 单个路由接口

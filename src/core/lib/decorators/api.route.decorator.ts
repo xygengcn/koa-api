@@ -1,4 +1,4 @@
-import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions, ApiControllerOptions, ApiResponseType } from '../../index';
+import { ApiRequestMethod, ApiControllerAttributes, IApiRoute, ApiRequestOptions, ApiRouteParams, Context, Next, ApiGetRequestOptions, ApiPostRequestOptions, ApiControllerOptions, ApiResponseType } from '@/core/typings';
 import ApiRoute from '../routes/api.route';
 import ApiRoutes from '../routes/api.routes';
 

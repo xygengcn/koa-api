@@ -1,5 +1,5 @@
 export { default as KoaRouter, Layer } from 'koa-router';
-export { Log, onLog } from './base/api.event';
+export { default as Logger } from './base/api.event';
 import Api from './lib/api';
 export { default as ApiError } from './base/api.error';
 

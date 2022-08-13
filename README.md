@@ -1,5 +1,4 @@
-# 基于Typescript + KOA 开发的 Restful APi 接口
-
+# 基于 Typescript + KOA 开发的 Restful APi 接口
 
 ## 官网
 
@@ -62,7 +61,6 @@ yarn add @xygengcn/koa-api
 
 > 控制器文件命名规则：index.controller.ts
 
-
 ### 装饰器
 
 -   Controller()装饰器，在类前面使用：@Controller(路由前缀)，默认文件名就是前缀
@@ -79,11 +77,11 @@ yarn add @xygengcn/koa-api
 // index.js
 import { Controller, Get, Post } from '@/core';
 @Controller()
-export default class IndexController{
+export default class IndexController {
     @GET('/test')
     async hello() {
         return {
-            title: 'haha',
+            title: 'haha'
         };
     }
 }
@@ -96,7 +94,7 @@ export default class IndexController {
     @POST('/test')
     async hello() {
         return {
-            title: 'haha',
+            title: 'haha'
         };
     }
 }
@@ -104,68 +102,53 @@ export default class IndexController {
 // 【Post】 /user/test =>{}
 ```
 
-
 ### 详细用例
 
 > 文件：src/controller/index.controller
-
 
 ### 通用函数
 
 #### 日志打印
 
 ```js
-
 import { Log } from '@/core';
 
- Log("日志")
-
+Log('日志');
 ```
 
 #### 日志监听
 
 ```js
-
 import { onLog } from '@/core';
 
- onLog((log)=>{
-     console.error(log)
- })
-
+onLog((log) => {
+    console.error(log);
+});
 ```
-
 
 ### 实例函数
 
 ```js
-
 // koa默认中间件
-use()
+use();
 
 // 前插koa默认中间件
-unshiftUse()
+unshiftUse();
 
 // 装饰器中间件
-useMiddleware()
+useMiddleware();
 
 // 前插装饰器中间件
-unshiftUseMiddleware()
+unshiftUseMiddleware();
 
 // 返回koa 的callback
 
-callback()
+callback();
 
-// 日志监听
-onLog()
+// 日志模块
 
-// 错误监听
-onError()
-
-// 获取配置，可用于实现插件，不启动http服务
-run()
+logger;
 
 // 默认启动服务
-start()
-
-
+start();
 ```

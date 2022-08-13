@@ -1,4 +1,4 @@
-import { ApiError, ApiRequestMethod, ApiResponseType, ApiRouteParams, Controller, Get, Log, Post, Redirect, Request } from '@/core';
+import { ApiError, ApiRequestMethod, ApiResponseType, ApiRouteParams, Controller, Get, Logger, Post, Redirect, Request } from '@/core';
 import { createReadStream } from 'fs';
 import path from 'path';
 @Controller('/', { name: '测试接口', description: '下面是测试一堆实例' })
@@ -12,13 +12,13 @@ export default class IndexController {
     @Get('/get', { name: '测试Get请求的接口', description: '这是描述' })
     public get({ ctx }: ApiRouteParams) {
         console.error('IndexController.get', this, this?.age);
-        Log('测试日志');
+        Logger.Log('测试日志');
         return this.test();
     }
 
     @Get('/log', { name: '测试日志的接口' })
     public log({ ctx }: ApiRouteParams) {
-        Log('测试日志');
+        Logger.Log('测试日志');
         return {
             msg: '测试日志'
         };
