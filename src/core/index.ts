@@ -7,6 +7,8 @@ export { ApiRoutesDecorator as Controller, GetRequestApiRouteDecorator as Get, P
 
 export { Middleware } from './lib/decorators/api.middleware.decorator';
 
+export { transformController } from './lib/utils/controller';
+
 export * from './typings';
 
 export default Api;

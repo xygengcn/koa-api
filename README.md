@@ -152,3 +152,20 @@ logger;
 // 默认启动服务
 start();
 ```
+
+### 打包流程
+
+1、自动加载控制器
+
+直接打包即可
+
+```
+tsc
+```
+
+2、导入控制器打包
+
+> 配置参考 index.ts 文件，打包流程在 gulpfile.ts
+
+先新建 transform 文件，引入默认配置 transform 属性，默认输出[],开发环境不用理会，先 tsc 编译，
+然后使用 transformController 函数生成 transform 文件替换掉刚刚生成的，再使用 rollup 打包即可

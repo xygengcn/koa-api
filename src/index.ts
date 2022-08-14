@@ -1,8 +1,10 @@
 import { join } from 'path';
 import Api from './core';
 import OriginMiddleware from './middleware/origin.middleware';
+import transform from './transform';
 
 const api = new Api({
+    transform,
     controllerPath: join(__dirname, 'controller'),
     // 自定义错误提示
     error: {
@@ -14,7 +16,7 @@ const api = new Api({
 
 api.useMiddleware(OriginMiddleware, 1);
 
-api.logger.onError((content) => {
+api.logger.onError((content, options) => {
     console.log('错误', content);
 });
 api.logger.on('log', (content) => {

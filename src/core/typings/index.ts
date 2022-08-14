@@ -79,9 +79,21 @@ export interface KoaOptions {
 }
 
 /**
+ * 打包生成的引入文件
+ */
+export interface IControllerPathTransformApiRoutes {
+    name: string;
+    type: 'dir' | 'file';
+    absolutePath: string;
+    relativePath: string;
+    controller?: { default: IApiRoutes } | null;
+    children?: IControllerPathTransformApiRoutes[];
+}
+
+/**
  * 入口配置
  */
-export type ApiOptions = Omit<ApiDefaultOptions, 'stack' | 'queue' | 'routeTree'>;
+export interface ApiOptions extends Omit<ApiDefaultOptions, 'stack' | 'queue' | 'routeTree'> {}
 /**
  * 全局配置
  */
@@ -101,6 +113,11 @@ export interface ApiDefaultOptions extends KoaOptions {
     routeTree?: Readonly<ApiRoutesTree>; // 全局路由树
     controllerQueue?: Array<Readonly<ApiRoutesBase>>; // 全局控制器队列
     exts?: any; // 中间件参数
+
+    /**
+     * 打包入口文件
+     */
+    transform?: Array<IControllerPathTransformApiRoutes>;
 }
 
 /**

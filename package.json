@@ -5,9 +5,11 @@
     "main": "dist/index.js",
     "typings": "dist/core/index.d.ts",
     "scripts": {
-        "build": "rm -rf ./dist && rollup -c ./rollup.config.ts",
+        "build": "rm -rf ./dist && rollup -c ./build.core.config.ts",
+        "build:test": "rm -rf ./test && gulp",
         "prepublish": "rm -rf ./dist && npm run build",
         "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
+        "sit": "cross-env NODE_ENV=sit nodemon ./test/index.js",
         "prd": "pm2 start pm2.json",
         "start": "npm run prd"
     },
@@ -32,6 +34,10 @@
         "@rollup/plugin-commonjs": "^22.0.2",
         "cross-env": "^7.0.3",
         "eslint": "^8.4.1",
+        "gulp": "^4.0.2",
+        "gulp-clean": "^0.4.0",
+        "gulp-ts-alias": "^2.0.0",
+        "gulp-typescript": "^6.0.0-alpha.1",
         "nodemon": "^2.0.15",
         "prettier": "^2.5.1",
         "rollup": "^2.77.2",

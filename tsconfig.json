@@ -24,5 +24,5 @@
     },
     "exclude": ["node_modules", "build"],
     "typeRoots": ["src/typings"],
-    "include": ["./src/**/*.ts", "./src/**/*.d.ts"]
+    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "src/fs.js"]
 }

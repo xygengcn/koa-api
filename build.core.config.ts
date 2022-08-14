@@ -19,5 +19,5 @@ export default {
         commonjs({ transformMixedEsModules: true }),
         tscAlias()
     ],
-    external: ['http', 'http2', 'fs', 'path', 'events']
+    external: ['http', 'http2', 'fs', 'path', 'events', 'koa-router', 'koa', 'koa-compose', 'koa-body']
 };
