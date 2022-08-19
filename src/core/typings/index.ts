@@ -3,8 +3,8 @@ import { IMiddleware, Layer, IRouterOptions } from 'koa-router';
 import { Context as KoaContext, Middleware, Next as KoaNext, Request } from 'koa';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
-import { ApiErrorCode } from './error';
-
+import ApiError from '../base/api.error';
+import { IApiError } from './error';
 export { Layer } from 'koa-router';
 
 export * from './error';
@@ -21,6 +21,19 @@ export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middle
 
 // 自定义中间件
 export type ApiClassMiddleware = new (...args: any[]) => ApiMiddleware;
+
+/**
+ * 返回结果
+ */
+
+// 成功返回
+interface IApiSuccessResponse {
+    code: 200;
+    data: any;
+    updateTime: number;
+}
+
+export type IApiResponse = IApiSuccessResponse | IApiError;
 
 /**
  * 中间类的函数参数
@@ -102,12 +115,11 @@ export interface ApiDefaultOptions extends KoaOptions {
     controllerPath?: string;
     koaBody?: IKoaBodyOptions;
     response?: {
-        type: ApiResponseType; // 全局是否按照restful格式返回
+        // 全局是否按照restful格式返回
+        type: ApiResponseType;
     };
-    // 自定义配置错误文案
-    error?: {
-        message: Partial<Record<keyof typeof ApiErrorCode, string>>;
-    };
+    // 自定义处理错误返回
+    errHandle?: (error: any, msg: ApiError) => ApiError;
     stack?: Array<Layer>; // 全局路由
     queue?: Array<Readonly<IApiRoute>>; // 全局路由队列
     routeTree?: Readonly<ApiRoutesTree>; // 全局路由树

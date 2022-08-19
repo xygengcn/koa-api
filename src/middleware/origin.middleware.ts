@@ -27,6 +27,7 @@ export default class OriginMiddleware {
                 if (!check) {
                     throw new ApiError({
                         code: ApiErrorCode.originError,
+                        userMsg: '跨域错误',
                         error: `Access to fetch at ${ctx.path} from origin ${host} has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`
                     });
                 }

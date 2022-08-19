@@ -22,12 +22,18 @@ export default class ApiServer {
     protected httpServer: http.Server | null = null;
 
     /**
+     * 监听日志
+     * @returns
+     */
+    public logger = Logger;
+
+    /**
      * 创建http服务
      * Create HTTP server.
      */
     private createServer(callback: http.RequestListener): http.Server {
         const server = http.createServer(callback);
-        server.on('error', this.onServerError);
+        server.on('error', this.onServerError.bind(this));
         // 监听
         server.on('listening', () => {
             this.logger(
@@ -50,11 +56,8 @@ export default class ApiServer {
     private onServerError(error) {
         switch (error.code) {
             case 'EACCES':
-                this.logger({ subType: 'system', level: 'error' }, { message: `Port requires elevated privileges`, error });
-                this.httpServer = null;
-                break;
             case 'EADDRINUSE':
-                this.logger({ subType: 'system', level: 'error' }, { message: `Port: is already in use`, error });
+                this.logger({ subType: 'system', level: 'error' }, { code: error.code, message: error.message });
                 this.httpServer = null;
                 break;
             default:
@@ -78,10 +81,4 @@ export default class ApiServer {
         }
         return this;
     }
-
-    /**
-     * 监听日志
-     * @returns
-     */
-    public logger = Logger;
 }

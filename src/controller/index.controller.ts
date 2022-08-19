@@ -28,7 +28,7 @@ export default class IndexController {
     public error({ ctx }) {
         throw new ApiError({
             code: 10001,
-            error: 'error报错'
+            userMsg: 'error报错'
         });
     }
 

@@ -2,19 +2,25 @@ import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErr
 import ApiError from '@/core/base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
 import Logger from '@/core/base/api.event';
+import stringify from 'json-stringify-safe';
+import { objectUpper } from '../utils/string';
 @Middleware('ApiErrorMiddleware')
 export class ApiErrorMiddleware implements ApiMiddleware {
+    /**
+     * 对于不同的status处理
+     * @param param0
+     */
     private error({ ctx, options }: ApiMiddlewareParams) {
         switch (ctx.status) {
             case 404:
                 throw new ApiError({
                     code: ApiErrorCode.notFound,
-                    error: options.error?.message['notFound'] || ApiErrorCodeMessage.notFound
+                    userMsg: ApiErrorCodeMessage.notFound
                 });
             default:
                 throw new ApiError({
                     code: ctx.status,
-                    error: ctx.body as any
+                    userMsg: stringify(ctx.body)
                 });
         }
     }
@@ -36,34 +42,55 @@ export class ApiErrorMiddleware implements ApiMiddleware {
             } catch (error) {
                 ctx.status === 200;
                 ctx.set('content-type', 'application/json');
-                if (typeof error === 'string') {
-                    error = new ApiError({
-                        code: ApiErrorCode.serviceError,
-                        error: {
-                            developMsg: `${error}`
-                        }
-                    });
+
+                // 预设
+                let developError = new ApiError({ code: ApiErrorCode.unknown, userMsg: '未知' });
+
+                if (!(error instanceof ApiError)) {
+                    // 处理字符串
+                    if (typeof error === 'string') {
+                        developError = new ApiError({
+                            code: ApiErrorCode.serviceError,
+                            userMsg: error
+                        });
+                    } else if (error instanceof Error) {
+                        // 通用异常处理
+                        developError = new ApiError({
+                            code: ApiErrorCode.serviceError,
+                            error,
+                            userMsg: error.message
+                        });
+                    } else {
+                        developError = new ApiError({
+                            code: ApiErrorCode.unknown,
+                            error: {
+                                developMsg: stringify(error)
+                            },
+                            userMsg: '未知'
+                        });
+                    }
+                } else {
+                    developError = error;
                 }
-                if (error instanceof Error && !(error instanceof ApiError)) {
-                    error = new ApiError({
-                        code: ApiErrorCode.serviceError,
-                        error: {
-                            ...error,
-                            developMsg: `${error}`
-                        }
-                    });
+
+                // 处理用户提供处理函数
+                if (options?.errHandle && typeof options.errHandle === 'function') {
+                    developError = options.errHandle(error, developError) || developError;
                 }
-                if (error instanceof ApiError) {
+
+                // 处理特出错误
+                if (developError instanceof ApiError) {
                     ctx.body = {
-                        ...error,
+                        // 由于数据量问题，避免循环套嵌，只取前四级
+                        ...objectUpper(developError),
                         updateTime: new Date().getTime()
                     };
                 } else {
+                    // 非法格式返回
+                    const errMsg = stringify(developError);
                     ctx.body = {
-                        code: ApiErrorCode.unknown,
-                        error: {
-                            developMsg: error
-                        },
+                        code: ApiErrorCode.parseResponseError,
+                        error: errMsg,
                         updateTime: new Date().getTime()
                     };
                 }

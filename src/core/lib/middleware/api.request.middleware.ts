@@ -12,8 +12,8 @@ export class ApiRequestMiddleware implements ApiMiddleware {
                 if (!stack.methods.includes(ctx.method) && !stack.methods.includes(ApiRequestMethod.ALL)) {
                     throw new ApiError({
                         code: ApiErrorCode.illegalMethod,
-                        error: options.error?.message?.['illegalMethod'] || ApiErrorCodeMessage.illegalMethod,
-                        developMsg: `Please request through ${stack.methods?.join('、')}.`
+                        userMsg: ApiErrorCodeMessage.illegalMethod,
+                        error: `Please request through ${stack.methods?.join('、')}.`
                     });
                 }
             }

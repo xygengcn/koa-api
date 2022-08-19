@@ -1,8 +1,5 @@
-interface IApiError {
-    code?: number;
-    error?: string | Object;
-    developMsg?: any;
-}
+import { IApiError } from '../typings';
+
 export default class ApiError extends Error {
     constructor(msg: IApiError) {
         super();
