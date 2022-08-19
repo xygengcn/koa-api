@@ -4,4 +4,6 @@
 /logs
 /www
 .DS_Store
+/dist-test
 /test
+

@@ -97,7 +97,6 @@ export interface KoaOptions {
 export interface IControllerPathTransformApiRoutes {
     name: string;
     type: 'dir' | 'file';
-    absolutePath: string;
     relativePath: string;
     controller?: { default: IApiRoutes } | null;
     children?: IControllerPathTransformApiRoutes[];

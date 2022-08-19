@@ -1,7 +1,8 @@
 {
     "extends": "./tsconfig.json",
-    "rootDir": "./src/core",
     "compilerOptions": {
+        "rootDir": "./src/core",
         "module": "esnext"
-    }
+    },
+    "include": ["./src/core/*.ts", "./src/core/*.d.ts"]
 }

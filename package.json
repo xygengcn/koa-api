@@ -1,12 +1,12 @@
 {
     "name": "@xygengcn/koa-api",
-    "version": "0.3.25",
+    "version": "0.3.27",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/index.js",
     "typings": "dist/core/index.d.ts",
     "scripts": {
         "build": "rm -rf ./dist && rollup -c ./build.core.config.ts",
-        "build:test": "rm -rf ./test && gulp",
+        "build:test": "gulp",
         "prepublish": "rm -rf ./dist && npm run build",
         "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
         "sit": "cross-env NODE_ENV=sit nodemon ./test/index.js",

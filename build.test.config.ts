@@ -1,8 +1,8 @@
 import commonjs from '@rollup/plugin-commonjs';
 export default {
-    input: './test/tsc/index.js',
+    input: './dist-test/src/index.js',
     output: {
-        file: './test/index.js',
+        file: './dist-test/index.js',
         format: 'cjs',
         exports: 'default'
     },

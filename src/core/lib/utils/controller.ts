@@ -43,7 +43,6 @@ export function controllerPathTransformApiRoutes(absolutePath: string, relativeP
             parent.push({
                 name: file,
                 type: 'file',
-                absolutePath: childAbsolutePath,
                 relativePath: childRelativePath,
                 controller: require(childAbsolutePath),
                 children: []
@@ -52,7 +51,6 @@ export function controllerPathTransformApiRoutes(absolutePath: string, relativeP
             parent.push({
                 name: file,
                 type: 'dir',
-                absolutePath: childAbsolutePath,
                 relativePath: childRelativePath,
                 controller: null,
                 children: controllerPathTransformApiRoutes(childAbsolutePath, childRelativePath)
@@ -72,8 +70,8 @@ export function controllerPathTransformApiRoutes(absolutePath: string, relativeP
  * @param children
  * @returns
  */
-function controllerFileString(file: string, type: string, absolutePath: string, relativePath: string, controller: string | null, children: string) {
-    return `{ name:'${file}',type:'${type}',absolutePath:'${absolutePath}',relativePath:'${relativePath}',controller:${controller},children:${children}}`;
+function controllerFileString(file: string, type: string, relativePath: string, controller: string | null, children: string) {
+    return `{ name:'${file}',type:'${type}',relativePath:'${relativePath}',controller:${controller},children:${children}}`;
 }
 
 /**
@@ -129,11 +127,11 @@ function controllerPathTransformApiRoutesJsString(absolutePath: string, relative
         // 单文件
         if (isFile(childAbsolutePath) && Controller_File_Name_Reg.test(file)) {
             headers.push(importFileString(importName(childRelativePath), childAbsolutePath));
-            content += controllerFileString(file, 'file', childAbsolutePath, childRelativePath, importName(childRelativePath), '[]') + ',';
+            content += controllerFileString(file, 'file', childRelativePath, importName(childRelativePath), '[]') + ',';
         } else if (isDirectory(childAbsolutePath)) {
             const children = controllerPathTransformApiRoutesJsString(childAbsolutePath, childRelativePath);
             headers.push(...children.headers);
-            content += controllerFileString(file, 'dir', childAbsolutePath, childRelativePath, null, children.content) + ',';
+            content += controllerFileString(file, 'dir', childRelativePath, null, children.content) + ',';
         }
     });
     return { headers, content: `[${content}]` };
