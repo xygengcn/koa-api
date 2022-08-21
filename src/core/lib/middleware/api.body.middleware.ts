@@ -4,7 +4,7 @@ import koaBody from 'koa-body';
 import { Middleware } from '../decorators/api.middleware.decorator';
 import ApiError from '../../base/api.error';
 @Middleware('ApiBodyMiddleware')
-export class ApiBodyMiddleware implements ApiMiddleware {
+export default class ApiBodyMiddleware implements ApiMiddleware {
     resolve({ options }: ApiMiddlewareParams) {
         return koaBody({
             multipart: true,

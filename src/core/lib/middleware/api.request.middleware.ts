@@ -2,7 +2,7 @@ import { ApiRequestMethod, Context, Next, ApiMiddleware, ApiMiddlewareParams, Ap
 import ApiError from '../../base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
 @Middleware('ApiRequestMiddleware')
-export class ApiRequestMiddleware implements ApiMiddleware {
+export default class ApiRequestMiddleware implements ApiMiddleware {
     public resolve({ stack, options }: ApiMiddlewareParams) {
         /**
          * 验证方法

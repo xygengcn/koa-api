@@ -7,6 +7,11 @@ import ApiError from '../base/api.error';
 import { IApiError } from './error';
 export { Layer } from 'koa-router';
 
+/**
+ * 可选
+ */
+export type Enumerable<T> = T | Array<T>;
+
 export * from './error';
 
 export type Context = KoaContext;
@@ -16,11 +21,11 @@ export type Next = KoaNext;
 // 默认拓展类型
 export type ApiBaseExtends = Partial<Record<string, string | number | Object | Function>>;
 
-// 默认中间件
+// 默认中间件，函数
 export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middleware;
 
 // 自定义中间件
-export type ApiClassMiddleware = new (...args: any[]) => ApiMiddleware;
+export type ApiClassMiddleware = { new (...args: any[]): ApiMiddleware };
 
 /**
  * 返回结果
@@ -48,7 +53,7 @@ export interface ApiMiddlewareParams {
 
 // 中间件继承类
 export interface ApiMiddleware {
-    init?: (options: ApiDefaultOptions) => void;
+    init?: (options: ApiOptions) => void;
     resolve: (params: ApiMiddlewareParams) => ApiFunctionMiddleware;
     match?: (params: ApiMiddlewareParams) => boolean;
     ignore?: (params: ApiMiddlewareParams) => boolean;
@@ -110,25 +115,37 @@ export interface ApiOptions extends Omit<ApiDefaultOptions, 'stack' | 'queue' | 
  * 全局配置
  */
 export interface ApiDefaultOptions extends KoaOptions {
+    // 端口
     port?: number;
-    controllerPath?: string;
-    koaBody?: IKoaBodyOptions;
-    response?: {
-        // 全局是否按照restful格式返回
-        type: ApiResponseType;
-    };
-    // 自定义处理错误返回
-    errHandle?: (error: any, msg: ApiError) => ApiError;
-    stack?: Array<Layer>; // 全局路由
-    queue?: Array<Readonly<IApiRoute>>; // 全局路由队列
-    routeTree?: Readonly<ApiRoutesTree>; // 全局路由树
-    controllerQueue?: Array<Readonly<ApiRoutesBase>>; // 全局控制器队列
-    exts?: any; // 中间件参数
 
     /**
      * 打包入口文件
      */
     transform?: Array<IControllerPathTransformApiRoutes>;
+    // 控制器文件夹入口
+    controllerPath?: string;
+
+    // koa-body属性
+    koaBody?: IKoaBodyOptions;
+
+    // 返回配置
+    response?: {
+        // 全局是否按照restful格式返回
+        type: ApiResponseType;
+
+        // 返回数据格式， handle => errhandle
+        handle?: (body: any, ctx: Context) => any;
+    };
+    // 自定义处理错误返回
+    errHandle?: (error: any, msg: ApiError) => ApiError;
+    // 全局路由
+    stack?: Array<Layer>;
+    // 全局路由队列
+    queue?: Array<Readonly<IApiRoute>>;
+    // 全局路由树
+    routeTree?: Readonly<ApiRoutesTree>;
+    // 全局控制器队列
+    controllerQueue?: Array<Readonly<ApiRoutesBase>>;
 }
 
 /**

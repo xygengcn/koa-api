@@ -1,6 +1,6 @@
 import ApiServer from './api.server';
 import http from 'http';
-import { ApiClassMiddleware, ApiOptions, ApiFunctionMiddleware, ApiRunOptions } from '../../index';
+import { ApiClassMiddleware, ApiOptions, ApiFunctionMiddleware, ApiRunOptions, Enumerable } from '../../typings';
 import ApiKoa from './api.koa';
 export default class Api extends ApiServer {
     constructor(options?: ApiOptions) {
@@ -17,8 +17,8 @@ export default class Api extends ApiServer {
      * 插入中间件
      * @param middleware
      */
-    public use(middleware: ApiFunctionMiddleware, index?: number) {
-        this.app.pushUseMiddleware(middleware, index);
+    public use(middleware: Enumerable<ApiClassMiddleware | ApiFunctionMiddleware>, index?: number) {
+        this.app.useMiddleware(middleware, index);
         return this;
     }
 
@@ -26,26 +26,8 @@ export default class Api extends ApiServer {
      * 插入中间件
      * @param middleware
      */
-    public unshiftUse(middleware: ApiFunctionMiddleware) {
-        this.app.unshiftUse(middleware);
-        return this;
-    }
-
-    /**
-     * 后插入中间件
-     * @param middleware
-     */
-    public useMiddleware(middleware: ApiClassMiddleware, index?: number) {
-        this.app.useMiddleware(middleware, index);
-        return this;
-    }
-
-    /**
-     * 前插入中间件
-     * @param middleware
-     */
-    public unshiftUseMiddleware(middleware: ApiClassMiddleware) {
-        this.app.unshiftUseMiddleware(middleware);
+    public unshiftUse(middleware: Enumerable<ApiClassMiddleware | ApiFunctionMiddleware>) {
+        this.app.useMiddleware(middleware, 0);
         return this;
     }
 

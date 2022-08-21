@@ -1,13 +1,13 @@
 import { ApiErrorMiddleware } from '../middleware/api.error.middleware';
-import { ApiOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType } from '../../typings';
+import { ApiOptions, ApiClassMiddleware, ApiFunctionMiddleware, ApiResponseType, Enumerable } from '../../typings';
 import Koa from 'koa';
 import compose from 'koa-compose';
 import ApiRoutesMiddleware from '../middleware/api.routes.middleware';
-import { ApiBodyMiddleware } from '../middleware/api.body.middleware';
+import ApiBodyMiddleware from '../middleware/api.body.middleware';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
-import { ApiResponseMiddleware } from '../middleware/api.response.middleware';
-import { ApiRequestMiddleware } from '../middleware/api.request.middleware';
+import ApiResponseMiddleware from '../middleware/api.response.middleware';
+import ApiRequestMiddleware from '../middleware/api.request.middleware';
 export default class ApiKoa extends Koa {
     /**
      * 拓展中间件
@@ -35,13 +35,21 @@ export default class ApiKoa extends Koa {
      * @param params
      * @returns
      */
-    public useMiddleware(middlewares: ApiClassMiddleware | Array<ApiClassMiddleware>, index?: number): ApiKoa {
+    public useMiddleware(middlewares: Enumerable<ApiClassMiddleware | ApiFunctionMiddleware>, index?: number): ApiKoa {
         if (!(middlewares instanceof Array)) {
             middlewares = [middlewares];
         }
+        /**
+         * class 转换成 Function
+         */
         const funcMiddlewares: Array<ApiFunctionMiddleware> = middlewares.map((middleware) => {
-            return (middleware as any).call(middleware, this.appDefaultOptions || {});
+            if (middleware?.name && middleware['middlewareType'] === 'ApiClassMiddleware') {
+                return (middleware as any).call(middleware, this.appDefaultOptions || {});
+            }
+            return middleware;
         });
+
+        // 是否截取
         if (typeof index === 'number') {
             this.extendMiddleware.splice(index, 0, ...funcMiddlewares);
         } else {
@@ -49,42 +57,6 @@ export default class ApiKoa extends Koa {
         }
         return this;
     }
-
-    /**
-     * 前插入
-     * @param middleware
-     */
-    public unshiftUse(middleware: ApiFunctionMiddleware): ApiKoa {
-        this.extendMiddleware.unshift(middleware);
-        return this;
-    }
-
-    /**
-     * 前插入
-     * @param middleware
-     */
-    public unshiftUseMiddleware(middlewares: ApiClassMiddleware | Array<ApiClassMiddleware>): ApiKoa {
-        if (!(middlewares instanceof Array)) {
-            middlewares = [middlewares];
-        }
-        middlewares.forEach((middleware) => {
-            this.extendMiddleware.unshift((middleware as any).call(middleware, this.appDefaultOptions || {}));
-        });
-        return this;
-    }
-
-    /**
-     * 原生插入
-     * @param middleware
-     */
-    public pushUseMiddleware(middleware: ApiFunctionMiddleware, index?: number) {
-        if (typeof index === 'number') {
-            this.extendMiddleware.splice(index, 0, middleware);
-        } else {
-            this.extendMiddleware.push(middleware);
-        }
-    }
-
     /**
      * 装饰器
      * @returns

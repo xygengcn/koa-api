@@ -14,7 +14,7 @@ const api = new Api({
     }
 });
 
-api.useMiddleware(OriginMiddleware, 1);
+api.use(OriginMiddleware, 1);
 
 api.logger.onError((content, options) => {
     console.log('错误', content);
