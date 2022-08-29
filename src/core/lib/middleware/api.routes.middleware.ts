@@ -93,7 +93,7 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         return this.controllers;
     }
 
-    private readControllers(transform: IControllerPathTransformApiRoutes[], relativePath: string = '/'): ApiRoutes | null {
+    private readControllers(transform: IControllerPathTransformApiRoutes[], relativePath: string = '/', middlewares: ApiFunctionMiddleware[] = []): ApiRoutes | null {
         // 该文件夹下主路由
         let parent: ApiRoutes | null = null;
 
@@ -110,17 +110,17 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
             });
             parent.setPath(relativePath);
         }
-        if (transform.length) {
+        if (transform.length && parent) {
             transform.forEach((route) => {
                 if (route.type === 'file' && !route.name.match(Index_Controller_File_Name_Reg)) {
                     // 子文件结构
-                    const childController = this.readController(route);
+                    const childController = this.readController(route, (parent?.middlewares || []).concat(middlewares));
                     // 插入
                     if (childController instanceof ApiRoutes) {
                         parent?.pushChildRoutes(childController);
                     }
                 } else if (route.type === 'dir' && route.children?.length) {
-                    const childControllers = this.readControllers(route.children, route.relativePath);
+                    const childControllers = this.readControllers(route.children, route.relativePath, (parent?.middlewares || []).concat(middlewares));
                     childControllers && parent?.pushChildRoutes(childControllers);
                 }
             });
@@ -129,9 +129,12 @@ export default class ApiRoutesMiddleware implements ApiMiddleware {
         return parent;
     }
 
-    private readController(route: IControllerPathTransformApiRoutes): ApiRoutes | null {
+    private readController(route: IControllerPathTransformApiRoutes, middlewares: ApiFunctionMiddleware[] = []): ApiRoutes | null {
         if (route.controller?.default && route.controller?.default instanceof ApiRoutes) {
             const controller: ApiRoutes = route.controller?.default;
+
+            // 合并父级的中间件
+            controller.concatMiddleware(middlewares);
 
             // index文件
             if (route.name.match(Index_Controller_File_Name_Reg)) {

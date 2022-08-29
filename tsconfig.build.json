@@ -2,7 +2,13 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "rootDir": "./src/core",
-        "module": "esnext"
+        "module": "esnext",
+        "plugins": [
+            {
+                "transform": "@zerollup/ts-transform-paths",
+                "exclude": ["*"]
+            }
+        ]
     },
     "include": ["./src/core/*.ts", "./src/core/*.d.ts"]
 }

@@ -16,4 +16,5 @@ dist-test/
 build.core.config.ts
 build.text.config.ts
 gulpfile.ts
+tsconfig.build.json
 

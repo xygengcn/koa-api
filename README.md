@@ -75,7 +75,7 @@ yarn add @xygengcn/koa-api
 
 ```ts
 // index.js
-import { Controller, Get, Post } from '@/core';
+import { Controller, Get, Post } from '@xygengcn/koa-api';
 @Controller()
 export default class IndexController {
     @GET('/test')
@@ -88,7 +88,7 @@ export default class IndexController {
 // [Get] /test => {}
 
 // user/index.controller.ts
-import { Controller, Get, Post } from '@/core';
+import { Controller, Get, Post } from '@xygengcn/koa-api';
 @Controller()
 export default class IndexController {
     @POST('/test')
@@ -111,7 +111,7 @@ export default class IndexController {
 #### 日志打印
 
 ```js
-import { Log } from '@/core';
+import { Log } from '@xygengcn/koa-api';
 
 Log('日志');
 ```
@@ -119,7 +119,7 @@ Log('日志');
 #### 日志监听
 
 ```js
-import { onLog } from '@/core';
+import { onLog } from '@xygengcn/koa-api';
 
 onLog((log) => {
     console.error(log);

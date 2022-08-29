@@ -241,6 +241,7 @@ export interface IApiRoutes extends IRouterOptions {
     target?: ClassDecorator;
     attributes: ApiControllerAttributes;
     anonymous: boolean;
+    middlewares?: ApiFunctionMiddleware[];
 }
 
 /**
@@ -328,4 +329,9 @@ export interface IApiRoute<T = any, K = ClassType<T>> {
      * @todo 可用于数据校验，预留，未实现，可自定义实现
      */
     request?: IApiRouteRequest<T, K>;
+
+    /**
+     * 中间件
+     */
+    middlewares?: ApiFunctionMiddleware[];
 }

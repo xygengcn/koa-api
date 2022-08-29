@@ -1,4 +1,4 @@
-import { ApiResponseType, ApiRequestMethod, IApiRoute } from '@/core/typings';
+import { ApiResponseType, ApiRequestMethod, IApiRoute, ApiFunctionMiddleware } from '@/core/typings';
 import { IMiddleware } from 'koa-router';
 
 /**
@@ -26,13 +26,18 @@ export default class ApiRoute implements IApiRoute {
     // 描述
     public description?: string;
 
+    /**
+     * 中间件
+     */
+    public middlewares: ApiFunctionMiddleware[] = [];
+
     // 构造函数
-    constructor(target: IApiRoute) {
-        Object.assign(this, target);
+    constructor(options: IApiRoute) {
+        Object.assign(this, options);
     }
 
     // 合并属性
-    public options(target: Partial<IApiRoute>) {
-        target && Object.assign(this, target);
+    public options(options: Partial<IApiRoute>) {
+        options && Object.assign(this, options);
     }
 }

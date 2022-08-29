@@ -1,4 +1,4 @@
-import { ApiRequestMethod, ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes } from '@/core/typings';
+import { ApiRequestMethod, ApiControllerAttributes, ApiRoutesBase, ApiRoutesTree, IApiRoute, IApiRoutes, ApiFunctionMiddleware } from '@/core/typings';
 import KoaRouter, { Layer } from 'koa-router';
 import ApiRoute from './api.route';
 import path from 'path';
@@ -37,9 +37,14 @@ export default class ApiRoutes extends KoaRouter {
     private childRoutes: Array<ApiRoutes> = [];
 
     /**
+     * 中间件
+     */
+    public middlewares: ApiFunctionMiddleware[] = [];
+
+    /**
      * 实现方法
      */
-    private methodRoutes: Array<ApiRoute> = [];
+    public methodRoutes: Array<ApiRoute> = [];
 
     /**
      * 插入
@@ -55,6 +60,14 @@ export default class ApiRoutes extends KoaRouter {
      */
     public pushMethodRoutes(apiRoutes: ApiRoute) {
         this.methodRoutes.push(apiRoutes);
+    }
+
+    /**
+     * 合并父级的中间件
+     * @param middlewares
+     */
+    public concatMiddleware(middlewares: ApiFunctionMiddleware[]) {
+        this.middlewares = this.middlewares.concat(middlewares);
     }
 
     /**
@@ -98,12 +111,13 @@ export default class ApiRoutes extends KoaRouter {
         // 循环当前路由
         if (this.methodRoutes.length && this.target) {
             this.methodRoutes.forEach((route) => {
+                const middlewares: ApiFunctionMiddleware[] = route.middlewares.concat(this.middlewares, [route.value(this.target)]);
                 if (route.method.includes(ApiRequestMethod.ALL)) {
-                    this.all(route.name, route.url, route.value(this.target));
+                    this.all(route.name, route.url, ...middlewares);
                 } else if (route.method.length > 0) {
-                    this.register(route.url, route.method, route.value(this.target), { name: route.name });
+                    this.register(route.url, route.method, middlewares, { name: route.name });
                 } else {
-                    this.get(route.name, route.url, route.value(this.target));
+                    this.get(route.name, route.url, ...middlewares);
                 }
             });
         }

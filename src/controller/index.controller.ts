@@ -6,18 +6,20 @@ export default class IndexController {
     private age = 111;
     private test() {
         this.age = 333;
-        return 2222;
+        return {
+            aget: this.age,
+            msg: '测试Get请求的接口'
+        };
     }
 
     @Get('/get', { name: '测试Get请求的接口', description: '这是描述' })
     public get({ ctx }: ApiRouteParams) {
-        console.error('IndexController.get', this, this?.age);
-        Logger.Log('测试日志');
         return this.test();
     }
 
     @Get('/log', { name: '测试日志的接口' })
     public log({ ctx }: ApiRouteParams) {
+        console.error('IndexController.get', this, this?.age);
         Logger.Log('测试日志');
         return {
             msg: '测试日志'

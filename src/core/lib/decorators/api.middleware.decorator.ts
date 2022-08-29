@@ -8,12 +8,12 @@ import { ApiDefaultOptions, ApiFunctionMiddleware, Context, Next, Layer, ApiMidd
  * @returns
  */
 export function Middleware(name?: string): any {
-    return (target: any) => {
+    return (target: ClassDecorator) => {
         return new Proxy(
             (options: ApiDefaultOptions): ApiFunctionMiddleware => {
                 const controllerMethod = Object.getOwnPropertyDescriptors(target.prototype);
-                const controllerMethodName = Object.getOwnPropertyNames(controllerMethod);
-                const Middleware = new target();
+                const controllerMethodName = Reflect.ownKeys(controllerMethod);
+                const Middleware = Reflect.construct(target, []);
                 // 初始化函数
                 if (controllerMethodName.includes('init') && typeof controllerMethod.init.value === 'function') {
                     controllerMethod.init.value.call(Middleware, options);
