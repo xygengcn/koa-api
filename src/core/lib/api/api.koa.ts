@@ -17,7 +17,7 @@ export default class ApiKoa extends Koa {
     /**
      * 配置
      */
-    public appDefaultOptions: ApiOptions = {
+    public appDefaultOptions: Partial<ApiOptions> = {
         response: {
             type: ApiResponseType.RESTFUL
         }

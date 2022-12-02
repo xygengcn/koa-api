@@ -1,6 +1,7 @@
 import http from 'http';
 import { ApiDefaultOptions } from '../../index';
-import Logger from '../../base/api.event';
+import Logger from '../../base/api.logger';
+import apiEvent from '../../base/api.event';
 
 export default class ApiServer {
     /**
@@ -8,14 +9,18 @@ export default class ApiServer {
      * @param options
      */
     constructor(options?: ApiDefaultOptions) {
-        if (options) {
+        if (options && typeof options === 'object') {
             Object.assign(this.options, options);
+        }
+        // 设置namespace
+        if (options?.namespace) {
+            apiEvent.setNamespace(options.namespace);
         }
     }
     /**
      * 系统配置
      */
-    protected options: ApiDefaultOptions = { port: 3000 };
+    protected options: Partial<ApiDefaultOptions> = {};
     /**
      * http服务
      */
@@ -38,10 +43,10 @@ export default class ApiServer {
         server.on('listening', () => {
             this.logger(
                 {
-                    subType: 'system'
+                    module: 'system'
                 },
                 {
-                    message: `Listening on Port: ${this.options.port || 3000}}`,
+                    message: `Listening on Port: ${this.options?.port || 3000}}`,
                     addr: server.address()
                 }
             );
@@ -57,11 +62,11 @@ export default class ApiServer {
         switch (error.code) {
             case 'EACCES':
             case 'EADDRINUSE':
-                this.logger({ subType: 'system', level: 'error' }, { code: error.code, message: error.message });
+                this.logger({ module: 'system', type: 'error' }, { code: error.code, message: error.message });
                 this.httpServer = null;
                 break;
             default:
-                this.logger({ subType: 'system', level: 'error' }, error);
+                this.logger({ module: 'system', type: 'error' }, error);
         }
         process.exit(1);
     }
@@ -74,7 +79,7 @@ export default class ApiServer {
             this.httpServer = this.createServer(mainServer);
         }
         if (this.httpServer) {
-            this.httpServer.listen(this.options.port || 3000);
+            this.httpServer.listen(this.options?.port || 3000);
             callback.forEach((func) => {
                 this.httpServer && func(this.httpServer);
             });

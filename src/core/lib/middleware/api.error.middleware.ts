@@ -1,7 +1,7 @@
 import { Context, Next, ApiMiddleware, ApiMiddlewareParams, ApiErrorCode, ApiErrorCodeMessage } from '@/core/typings';
 import ApiError from '@/core/base/api.error';
 import { Middleware } from '../decorators/api.middleware.decorator';
-import Logger from '@/core/base/api.event';
+import Logger from '@/core/base/api.logger';
 import stringify from 'json-stringify-safe';
 import { objectUpper } from '../utils/string';
 @Middleware('ApiErrorMiddleware')
@@ -97,8 +97,8 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                 // 日志记录
                 Logger(
                     {
-                        level: 'error',
-                        subType: 'http'
+                        type: 'error',
+                        module: 'http'
                     },
                     {
                         error,

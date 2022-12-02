@@ -4,6 +4,7 @@ import OriginMiddleware from './middleware/origin.middleware';
 import transform from './transform';
 
 const api = new Api({
+    namespace: 'koa-api',
     transform,
     controllerPath: join(__dirname, 'controller'),
     errHandle: (error, msg) => {

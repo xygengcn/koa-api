@@ -59,16 +59,16 @@ export interface ApiMiddleware {
     ignore?: (params: ApiMiddlewareParams) => boolean;
 }
 
-export type IApiEventLevel = 'log' | 'warn' | 'info' | 'error';
+export type IApiEventType = 'log' | 'warn' | 'info' | 'error';
 
 /**
  * 默认事件主体
  */
 export interface IApiEvent<T = Object | string | number | Error> {
-    type: IApiEventLevel;
-    subType: string;
+    type: IApiEventType;
     content: T;
-    module: string;
+    module: string; // 模块
+    namespace: string; // 命名空间
 }
 
 // 类型
@@ -115,6 +115,8 @@ export interface ApiOptions extends Omit<ApiDefaultOptions, 'stack' | 'queue' | 
  * 全局配置
  */
 export interface ApiDefaultOptions extends KoaOptions {
+    // 命名空间
+    namespace: string;
     // 端口
     port?: number;
 

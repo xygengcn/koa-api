@@ -1,5 +1,5 @@
 import KoaRouter, { Layer } from 'koa-router';
-import Logger from './base/api.event';
+import Logger from './base/api.logger';
 import Api from './lib/api';
 import ApiError from './base/api.error';
 

@@ -2,18 +2,17 @@
  * 事件监听
  */
 import { EventEmitter } from 'events';
-import { ApiMiddlewareParams, IApiEvent, IApiEventLevel } from '../typings';
+import { ApiMiddlewareParams, IApiEvent, IApiEventType } from '../typings';
 class ApiEvent {
     // 事件监听
     private $event: EventEmitter = new EventEmitter();
-    // 前缀
-    private module?: string = 'api';
 
-    // 构造函数
-    constructor(opts?: { module?: string }) {
-        if (opts?.module) {
-            this.module = opts?.module;
-        }
+    // namespace
+    private namespace?: string = '';
+
+    // 设置namespace
+    public setNamespace(namespace: string): void {
+        this.namespace = namespace;
     }
 
     /**
@@ -21,8 +20,8 @@ class ApiEvent {
      * @param key 事件名称
      * @param callback 回调
      */
-    public on<T, K = ApiMiddlewareParams>(level: IApiEventLevel, callback: (content: IApiEvent<T>, options?: K) => void) {
-        this.$event.on(level, callback);
+    public on<T, K = ApiMiddlewareParams>(type: IApiEventType, callback: (content: IApiEvent<T>, options?: K) => void) {
+        this.$event.on(type, callback);
         return this;
     }
 
@@ -30,21 +29,21 @@ class ApiEvent {
      * 触发
      * @param key 事件名称
      */
-    public emit(level: IApiEventLevel | { level?: IApiEventLevel; subType?: string }, content: any, options?: ApiMiddlewareParams) {
-        let type: IApiEventLevel = 'log';
-        let subType: string = 'default';
-        if (typeof level === 'object') {
-            type = level.level || 'log';
-            subType = level.subType || '';
+    public emit(event: IApiEventType | { type?: IApiEventType; module?: string }, content: any, options?: ApiMiddlewareParams) {
+        let type: IApiEventType = 'log';
+        let module: string = 'default';
+        if (typeof event === 'object') {
+            type = event.type || 'log';
+            module = event.module || 'default';
         } else {
-            type = level;
+            type = event;
         }
         return this.$event.emit(
             type,
             {
                 type,
-                subType,
-                module: this.module,
+                module,
+                namespace: this.namespace,
                 content
             },
             options
@@ -53,20 +52,4 @@ class ApiEvent {
 }
 const apiEvent = new ApiEvent();
 
-const Logger = (level: IApiEventLevel | { level?: IApiEventLevel; subType?: string }, content: Object | string | number | Error, options?: ApiMiddlewareParams) => {
-    apiEvent.emit(level, content, options);
-};
-
-Logger.Log = (content: Object | string | number | Error, options?: any) => {
-    apiEvent.emit('log', content, options);
-};
-
-Logger.on = <T, K = ApiMiddlewareParams>(level: IApiEventLevel, callback: (content: IApiEvent<T>, options?: K) => void) => {
-    apiEvent.on(level, callback);
-};
-
-Logger.onError = <T, K = ApiMiddlewareParams>(callback: (content: IApiEvent<T>, options?: K) => void) => {
-    apiEvent.on('error', callback);
-};
-
-export default Logger;
+export default apiEvent;
