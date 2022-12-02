@@ -4,8 +4,8 @@ export default {
     output: {
         file: './dist-test/index.js',
         format: 'cjs',
-        exports: 'default'
+        exports: 'named'
     },
     plugins: [commonjs({ transformMixedEsModules: true })],
-    external: ['http', 'http2', 'fs', 'path', 'events', 'koa-router', 'koa', 'koa-compose', 'koa-body']
+    external: ['http', 'http2', 'fs', 'path', 'events', 'koa-router', 'koa', 'koa-compose', 'koa-body', 'json-stringify-safe']
 };

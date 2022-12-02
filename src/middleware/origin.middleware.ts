@@ -6,6 +6,15 @@ import { ApiMiddlewareParams, Context, Middleware, Next, ApiError, ApiErrorCode 
 @Middleware()
 export default class OriginMiddleware {
     /**
+     * 检测来源
+     */
+    private checkOrigin(ctx: Context, routeOrigin: string[]) {
+        const host = ctx.header.origin || '';
+        return routeOrigin.some((origin) => {
+            return host?.match(origin);
+        });
+    }
+    /**
      * 过滤favicon.ico
      */
     public ignore?({ ctx }: ApiMiddlewareParams) {
@@ -21,9 +30,7 @@ export default class OriginMiddleware {
             // 自己的路由配置
             const routeOrigin = route?.origin || [];
             if (routeOrigin.length) {
-                const check = routeOrigin.some((origin) => {
-                    return host?.match(origin);
-                });
+                const check = this.checkOrigin(ctx, routeOrigin);
                 if (!check) {
                     throw new ApiError({
                         code: ApiErrorCode.originError,

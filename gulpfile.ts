@@ -18,7 +18,7 @@ gulp.task('tsc', () => {
     const tsProject = typescript.createProject('tsconfig.json');
     return tsProject
         .src()
-        .pipe(alias({ config: 'tsconfig.json' }))
+        .pipe(alias({ config: 'tsconfig.json' }) as any)
         .pipe(tsProject())
         .js.pipe(gulp.dest('dist-test'));
 });
@@ -34,7 +34,8 @@ gulp.task('build', async () => {
     const subTask = await rollup(config as any);
     await subTask.write({
         dir: 'dist-test',
-        format: 'cjs'
+        format: 'cjs',
+        exports: 'named'
     });
 });
 
@@ -43,4 +44,4 @@ gulp.task('clean-tsc', async () => {
     return gulp.src('dist-test/src', { read: false, allowEmpty: true }).pipe(gulpClean('dist-test/src'));
 });
 
-gulp.task('default', gulp.series(gulp.parallel('clean-old'), gulp.parallel('tsc'), gulp.parallel('tranform'), gulp.parallel('build'), gulp.parallel('clean-tsc')));
+gulp.task('default', gulp.series(gulp.parallel('clean-old'), gulp.parallel('tsc'), gulp.parallel('tranform'), gulp.parallel('build')));
