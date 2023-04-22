@@ -1,6 +1,6 @@
-import { IKoaBodyOptions } from 'koa-body';
+import { KoaBodyMiddlewareOptions } from 'koa-body';
 import { IMiddleware, Layer, IRouterOptions } from 'koa-router';
-import { Context as KoaContext, Middleware, Next as KoaNext, Request } from 'koa';
+import { Context as KoaContext, Next as KoaNext, Request } from 'koa';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 import ApiError from '../base/api.error';
@@ -22,7 +22,7 @@ export type Next = KoaNext;
 export type ApiBaseExtends = Partial<Record<string, string | number | Object | Function>>;
 
 // 默认中间件，函数
-export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K> | Middleware;
+export type ApiFunctionMiddleware<T = any, K = any> = IMiddleware<T, K>;
 
 // 自定义中间件
 export type ApiClassMiddleware = { new (...args: any[]): ApiMiddleware };
@@ -32,9 +32,9 @@ export type ApiClassMiddleware = { new (...args: any[]): ApiMiddleware };
  */
 
 // 成功返回
-interface IApiSuccessResponse {
+interface IApiSuccessResponse<T = any> {
     code: 200;
-    data: any;
+    data: T;
     updateTime: number;
 }
 
@@ -128,7 +128,7 @@ export interface ApiDefaultOptions extends KoaOptions {
     controllerPath?: string;
 
     // koa-body属性
-    koaBody?: IKoaBodyOptions;
+    koaBody?: Partial<KoaBodyMiddlewareOptions>;
 
     // 返回配置
     response?: {

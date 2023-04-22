@@ -40,6 +40,7 @@ export class ApiErrorMiddleware implements ApiMiddleware {
                     this.error({ ctx, stack, route, options });
                 }
             } catch (error) {
+                console.log(111, error);
                 ctx.status === 200;
                 ctx.set('content-type', 'application/json');
 

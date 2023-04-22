@@ -70,7 +70,7 @@ export default class ApiKoa extends Koa {
      * Return a request handler callback
      * for node's native http/http2 server.
      */
-    public callback(): (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => void {
+    public callback(): (req: IncomingMessage | Http2ServerRequest, res: ServerResponse | Http2ServerResponse) => Promise<void> {
         this.initUseMiddleware();
         return super.callback();
     }

@@ -34,6 +34,24 @@ export default class IndexController {
         });
     }
 
+    @Request({ url: '/error2', method: [ApiRequestMethod.GET, ApiRequestMethod.POST, ApiRequestMethod.PUT], name: '测试错误请求的接口', description: '这是描述' })
+    public error2({ ctx }) {
+        return new ApiError({
+            code: 10001,
+            userMsg: 'error报错'
+        });
+    }
+
+    @Request({ url: '/reject', method: [ApiRequestMethod.GET, ApiRequestMethod.POST, ApiRequestMethod.PUT], name: '测试错误请求的接口', description: '这是描述' })
+    public reject({ ctx }) {
+        return Promise.reject(
+            new ApiError({
+                code: 10001,
+                userMsg: 'error报错'
+            })
+        );
+    }
+
     @Post('/post', { name: '测试Post请求的接口', description: '这是描述' })
     public post({ body }: ApiRouteParams) {
         return {

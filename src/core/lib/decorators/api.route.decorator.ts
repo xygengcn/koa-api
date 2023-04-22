@@ -61,7 +61,7 @@ function ApiRouteDecorator(options: Partial<IApiRoute>) {
             const url: string = (options && options.url) || `/${name}`;
 
             // 路由执行函数
-            const value = function (_this: ClassDecorator) {
+            const value: any = function (_this: ClassDecorator) {
                 return async (ctx: Context, next: Next) => {
                     // url请求参数
                     const query: Object = Object.assign({}, ctx.query || {});
