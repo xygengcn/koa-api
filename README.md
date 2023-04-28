@@ -1,8 +1,8 @@
 # 基于 Typescript + KOA 开发的 Restful APi 接口
 
-## 官网
+## 测试网站
 
-[网站 api.xygeng.cn](https://api.xygeng.cn)
+[测试网站 api.xygeng.cn](https://api.xygeng.cn)
 
 ## 特点
 
@@ -33,18 +33,6 @@ yarn run dev
 
 ```
 yarn run build
-```
-
--   生产环境运行命令
-
-```
-yarn run prd
-```
-
--   测试环境运行命令
-
-```
-yarn run sit
 ```
 
 -   生产环境
@@ -104,53 +92,83 @@ export default class IndexController {
 
 ### 详细用例
 
-> 文件：src/controller/index.controller
+> 文件：[完整查看例子源码](./examples/full/index.ts)
 
-### 通用函数
+### hello-world 例子
 
-#### 日志打印
+```ts
+//
+import Api, { Controller, Get, Logger, Param, Post, ApiLogger } from '../../src';
 
-```js
-import { Log } from '@xygengcn/koa-api';
+type User = {
+    id: number;
+    name: {
+        firstName: string;
+        lastname: string;
+    };
+};
 
-Log('日志');
-```
+@Controller()
+export class GetController {
+    @Get('/get')
+    // 获取query参数
+    public get(@Param.Query<User>('id') id: number) {
+        if (id) {
+            return {
+                id
+            };
+        }
+        return null;
+    }
+}
 
-#### 日志监听
+@Controller('/post')
+export class PostController {
+    // 定义日志
+    @Logger()
+    private logger!: ApiLogger;
+    @Post('/')
+    // 获取body参数
+    public post(@Param.Body<User>('id') id: number, @Param.Body<User>('name.firstName') firstName: string) {
+        this.logger.log('post测试:', { id, firstName });
+        if (id && firstName) {
+            return {
+                id,
+                firstName
+            };
+        }
+        return null;
+    }
+}
 
-```js
-import { onLog } from '@xygengcn/koa-api';
+// 创建实例
+const api = new Api();
 
-onLog((log) => {
-    console.error(log);
+api.on('log', (...args) => {
+    console.log('[log]', ...args);
 });
+api.on('start', () => {
+    console.log('[start]');
+});
+
+api.on('error', (e) => {
+    console.log(e);
+});
+
+// 启动
+api.start();
 ```
 
 ### 实例函数
 
 ```js
+// 事件监听
+app.on();
 // koa默认中间件
-use();
-
-// 前插koa默认中间件
-unshiftUse();
-
-// 装饰器中间件
-useMiddleware();
-
-// 前插装饰器中间件
-unshiftUseMiddleware();
-
-// 返回koa 的callback
-
-callback();
-
-// 日志模块
-
-logger;
+app.use();
 
 // 默认启动服务
-start();
+app.start();
 ```
 
 ### 打包流程
@@ -158,14 +176,3 @@ start();
 1、自动加载控制器
 
 直接打包即可
-
-```
-tsc
-```
-
-2、导入控制器打包
-
-> 配置参考 index.ts 文件，打包流程在 gulpfile.ts
-
-先新建 transform 文件，引入默认配置 transform 属性，默认输出[],开发环境不用理会，先 tsc 编译，
-然后使用 transformController 函数生成 transform 文件替换掉刚刚生成的，再使用 rollup 打包即可

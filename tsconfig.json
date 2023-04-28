@@ -14,15 +14,17 @@
         "noUnusedLocals": true,
         "removeComments": true,
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "resolveJsonModule": true,
         "declaration": true,
         "lib": ["esnext"],
-        "types": ["node"],
+        "types": ["node", "reflect-metadata"],
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@src/*": ["./src/*"]
         }
     },
-    "exclude": ["node_modules"],
+    "exclude": ["node_modules", "build"],
     "typeRoots": ["src/typings"],
-    "include": ["./src/**/*.ts", "./src/**/*.d.ts"]
+    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "examples/**/*.ts", "examples/**/*.d.ts"]
 }
