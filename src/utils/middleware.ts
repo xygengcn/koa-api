@@ -1,5 +1,5 @@
 import { API_INVERSIFY_KEY } from '@/keys/inversify';
-import container from '@/inversify';
+import container from '@/container';
 import { ApiFunctionMiddleware, IApiClassMiddleware } from '@/typings/middleware';
 import { isClass, isFunction } from '@/utils';
 import { Context, Next } from 'koa';
@@ -9,7 +9,7 @@ import { Context, Next } from 'koa';
  * @param middlewareInstance
  * @returns
  */
-export const convertClassToMiddleware = (middlewareInstance: IApiClassMiddleware): ApiFunctionMiddleware => {
+const convertClassToMiddleware = (middlewareInstance: IApiClassMiddleware): ApiFunctionMiddleware => {
     // 先初始化函数
     if (middlewareInstance?.init && isFunction(middlewareInstance?.init)) {
         middlewareInstance.init();
@@ -41,26 +41,17 @@ export const convertClassToMiddleware = (middlewareInstance: IApiClassMiddleware
 };
 
 /**
- * 是不是类中间件
- *
- * @param middle
- */
-export function isClassMiddleware(middleware: any): false | ApiFunctionMiddleware {
-    if (middleware.name && container && isClass(middleware)) {
-        const middlewareClass: IApiClassMiddleware = container.getNamed(API_INVERSIFY_KEY.MIDDLEWARE_CLASS_KEY, middleware.name);
-        if (middlewareClass) {
-            return convertClassToMiddleware(middlewareClass);
-        }
-    }
-    return false;
-}
-
-/**
  * 转换中间件
  */
 export function convertMiddleware(middleware: any): ApiFunctionMiddleware | null {
     if (isFunction(middleware)) {
-        return isClassMiddleware(middleware) || middleware;
+        if (middleware.name && container && isClass(middleware)) {
+            const middlewareClass: IApiClassMiddleware = container.getNamed(API_INVERSIFY_KEY.MIDDLEWARE_CLASS_KEY, middleware.name);
+            if (middlewareClass) {
+                return convertClassToMiddleware(middlewareClass);
+            }
+        }
+        return middleware;
     }
     return null;
 }

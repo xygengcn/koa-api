@@ -12,7 +12,7 @@ api.on('start', () => {
 });
 
 api.on('error', (e) => {
-    console.log(e);
+    console.error('[error]', e);
 });
 
 api.start();

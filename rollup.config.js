@@ -7,15 +7,13 @@ const tscAlias = require('rollup-plugin-tsc-alias');
 const resolve = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
 const { join } = require('path');
-
 module.exports = [
     {
         input: './src/index.ts',
         output: [
             {
                 file: './dist/index.js',
-                format: 'cjs',
-                exports: 'named'
+                format: 'cjs'
             },
             {
                 file: './dist/index.esm.js',
@@ -23,13 +21,13 @@ module.exports = [
             }
         ],
         plugins: [
-            tscAlias(),
-            json(),
-            commonjs({ transformMixedEsModules: true }),
-            resolve({ preferBuiltins: true }),
             typescript({
                 tsconfig: './tsconfig.build.json'
-            })
+            }),
+            tscAlias(),
+            json(),
+            commonjs(),
+            resolve()
         ]
     },
     {

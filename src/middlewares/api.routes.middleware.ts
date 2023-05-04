@@ -3,13 +3,14 @@ import { IApiClassMiddleware } from '@/typings/middleware';
 import { autoBindLoadControllers, convertControllerFileToControllerPath, removeTrailingSlash } from '@/utils/file';
 import path from 'path';
 import KoaRouter from 'koa-router';
-import container from '@/inversify';
+import container from '@/container';
 import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
 import { Logger } from '@/decorators';
 import ApiLogger from '@/logger';
 import { Context, Next } from 'koa';
 import { ApiRouteParam, ApiRouteParamName } from '@/typings';
 import { objectGet } from '@/utils';
+import { IncomingHttpHeaders } from 'http';
 
 @Middleware()
 export default class ApiRoutesMiddleware implements IApiClassMiddleware {
@@ -32,8 +33,12 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
         this.router = new KoaRouter();
 
         // 获取控制器
-        const list: object[] = container.getAll(API_INVERSIFY_KEY.CONTROLLER_CLASS_KEY) || [];
+        let list: object[] = [];
+        try {
+            list = container.getAll(API_INVERSIFY_KEY.CONTROLLER_CLASS_KEY) || [];
+        } catch (error) {}
 
+        // 循环加载路由
         list.forEach((target: object) => {
             const prefix = Reflect.getMetadata(API_METADATA_KEY.CONTROLLER_PREFIX, target);
             // 获取控制器文件读取到的数据
@@ -53,6 +58,9 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                         const routeMethods = Reflect.getMetadata(API_METADATA_KEY.ROUTER_METHOD, target, name);
                         // 文件路由地址
                         const routePath = Reflect.getMetadata(API_METADATA_KEY.ROUTER_PATH, target, name) || '';
+
+                        // 路由头部
+                        const routeHeaders: IncomingHttpHeaders = Reflect.getMetadata(API_METADATA_KEY.ROUTER_HEADERS, target, name) || { 'content-type': 'application/json' };
 
                         // 路由参数
                         const routeParams: ApiRouteParam[] = Reflect.getMetadata(API_METADATA_KEY.ROUTER_PARAMS, target.constructor.prototype, name) || [];
@@ -92,6 +100,11 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                                 }
 
                                 return ctx;
+                            });
+
+                            // 处理头部
+                            Object.entries(routeHeaders).forEach(([key, value]) => {
+                                value && ctx.set(key, value);
                             });
                             ctx.body = await target[name].call(target, ...params, ctx, next);
                             await next();

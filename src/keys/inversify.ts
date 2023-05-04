@@ -17,5 +17,6 @@ export const API_METADATA_KEY = {
     ROUTRE_MIDDLEWARE: Symbol.for('ROUTRE_MIDDLEWARE'), // 路由引用中间件
     ROUTER_PATH: Symbol.for('ROUTER_PATH'), // 路由方法
     ROUTER_METHOD: Symbol.for('ROUTER_METHOD'), // 路由路径
-    ROUTER_PARAMS: Symbol.for('ROUTER_PARAMS') // 路由函数参数
+    ROUTER_PARAMS: Symbol.for('ROUTER_PARAMS'), // 路由函数参数
+    ROUTER_HEADERS: Symbol.for('ROUTER_HEADERS') // 路由头部
 };

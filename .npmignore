@@ -9,6 +9,10 @@ logs/
 nodemon.json
 pm2.json
 tsconfig.json
+tsconfig.build.json
 .prettierrc
 yarn.lock
 test
+examples/
+.husky/
+.env.js

@@ -3,7 +3,7 @@ import path from 'path';
 import readdirSync from 'klaw-sync';
 import { CONTROLLER_FILE_NAME_REG } from '@/utils/reg';
 import fs from 'fs';
-import container from '@/inversify';
+import container from '@/container';
 import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
 
 /**

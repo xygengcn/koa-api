@@ -20,15 +20,21 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 if (ctx.status === 204) {
                     ctx.status = 200;
                 }
-                ctx.body = {
-                    code: 200,
-                    data: ctx.body || null,
-                    userMsg: undefined,
-                    updateTime: Date.now()
-                };
+
+                // 设置头部
+                const contentType: string = ctx.response.headers?.['content-type'] as string;
+                if (contentType?.indexOf('application/json') > -1 || !contentType) {
+                    ctx.body = {
+                        code: 200,
+                        data: ctx.body || null,
+                        userMsg: undefined,
+                        updateTime: Date.now()
+                    };
+                }
             } catch (error) {
-                this.logger.log(error);
+                error && this.logger.log(error);
                 const errorJson = stringifyError(error);
+                ctx.set('content-type', 'application/json');
                 ctx.body = {
                     code: errorJson?._code || typeof errorJson?.code === 'number' ? errorJson?.code : ctx.status || 500,
                     error: error instanceof Error ? errorJson : null,

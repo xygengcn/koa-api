@@ -1,10 +1,11 @@
 import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
-import container, { injectable } from '@/inversify';
+import container, { injectable } from '@/container';
 import ApiLogger from '@/logger';
 import { ApiRouteParamDecorator, Constructor } from '@/typings';
 import { ApiClassMiddleware, ApiFunctionMiddleware } from '@/typings/middleware';
 import { Enumerable } from '@/typings/type';
 import { convertMiddleware } from '@/utils/middleware';
+import { IncomingHttpHeaders } from 'http';
 
 /**
  * 控制器装饰器
@@ -73,6 +74,19 @@ export const Logger = (prefix?: string) => {
             }
         );
         Reflect.set(target, propertyKey, prefix ? loggerProxy : logger);
+    };
+};
+
+/**
+ * 设置返回头部
+ * @param key
+ * @returns
+ */
+export const Headers = (key: keyof IncomingHttpHeaders, value: Enumerable<string>) => {
+    return (target: any, name: string) => {
+        const headers = Reflect.getMetadata(API_METADATA_KEY.ROUTER_HEADERS, target, name) || { 'content-type': 'application/json' };
+        Object.assign(headers, { [key]: value });
+        Reflect.defineMetadata(API_METADATA_KEY.ROUTER_HEADERS, headers, target, name);
     };
 };
 
