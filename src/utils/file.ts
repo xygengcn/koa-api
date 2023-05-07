@@ -5,6 +5,7 @@ import { CONTROLLER_FILE_NAME_REG } from '@/utils/reg';
 import fs from 'fs';
 import container from '@/container';
 import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
+import { isString } from '.';
 
 /**
  * 去掉末尾的斜杠
@@ -19,10 +20,23 @@ export function removeTrailingSlash(str: string) {
 }
 
 /**
+ * 是不是文件夹
+ * @param rootDir
+ * @returns
+ */
+export function isDir(rootDir: unknown): boolean {
+    if (rootDir && isString(rootDir)) {
+        return isDirectory.sync(rootDir);
+    }
+
+    return false;
+}
+
+/**
  * 把控制器文件路径转换成控制器路由
  */
 export function convertControllerFileToControllerPath(rootDir: string): { file: string; path: string; prefix: string }[] {
-    if (isDirectory.sync(rootDir)) {
+    if (isDir(rootDir)) {
         // 读取目录
         const dirFiles = readdirSync(rootDir, {
             traverseAll: true,

@@ -1,3 +1,5 @@
+import { Options } from '@/decorators';
+import ApiKoaBodyMiddleware from '@/middlewares/api.koabody.middleware';
 import ApiResponseMiddleware from '@/middlewares/api.response.middleware';
 import ApiRoutesMiddleware from '@/middlewares/api.routes.middleware';
 import { IOptions } from '@/typings';
@@ -6,8 +8,8 @@ import { convertMiddleware } from '@/utils/middleware';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Http2ServerRequest, Http2ServerResponse } from 'http2';
 import Koa from 'koa';
-import bodyParser from 'koa-body';
 import compose from 'koa-compose';
+import ApiOptions from './api.options';
 export default class ApiKoa extends Koa {
     /**
      * 拓展中间件
@@ -17,18 +19,16 @@ export default class ApiKoa extends Koa {
     /**
      * 配置
      */
-    public appDefaultOptions: Partial<IOptions> = {};
+    @Options()
+    public readonly appDefaultOptions!: ApiOptions;
 
     constructor(options: Partial<IOptions>) {
         super(options);
-        Object.assign(this.appDefaultOptions, options || {});
-        this.useMiddleware(
-            bodyParser({
-                multipart: true
-            }),
-            ApiResponseMiddleware,
-            ApiRoutesMiddleware
-        );
+
+        // 初始化配置
+        this.appDefaultOptions.merge(options || {});
+        // 初始化中间件
+        this.useMiddleware(ApiKoaBodyMiddleware, ApiResponseMiddleware, ApiRoutesMiddleware);
     }
 
     /**

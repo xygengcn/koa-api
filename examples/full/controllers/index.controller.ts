@@ -5,6 +5,6 @@ import { Controller } from '../../../src';
 export default class IndexController {
     @Get()
     public test() {
-        return '这是测试接口';
+        return 'hello world';
     }
 }

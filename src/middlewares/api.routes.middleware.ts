@@ -1,6 +1,6 @@
-import { Middleware } from '@/decorators';
+import { Middleware, Options } from '@/decorators';
 import { IApiClassMiddleware } from '@/typings/middleware';
-import { autoBindLoadControllers, convertControllerFileToControllerPath, removeTrailingSlash } from '@/utils/file';
+import { autoBindLoadControllers, convertControllerFileToControllerPath, isDir, removeTrailingSlash } from '@/utils/file';
 import path from 'path';
 import KoaRouter from 'koa-router';
 import container from '@/container';
@@ -8,7 +8,7 @@ import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
 import { Logger } from '@/decorators';
 import ApiLogger from '@/logger';
 import { Context, Next } from 'koa';
-import { ApiRouteParam, ApiRouteParamName } from '@/typings';
+import { ApiRouteParam, ApiRouteParamName, IOptions } from '@/typings';
 import { objectGet } from '@/utils';
 import { IncomingHttpHeaders } from 'http';
 
@@ -16,6 +16,9 @@ import { IncomingHttpHeaders } from 'http';
 export default class ApiRoutesMiddleware implements IApiClassMiddleware {
     @Logger()
     private readonly logger!: ApiLogger;
+
+    @Options()
+    private readonly options!: IOptions;
     /**
      * 路由
      */
@@ -23,13 +26,14 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
 
     // 初始化
     public init(): void {
-        const dir = path.join(require.main?.path || '', './controllers');
+        if (this.options?.baseUrl && isDir(this.options?.baseUrl)) {
+            const dir = path.join(this.options?.baseUrl);
+            const controllers = convertControllerFileToControllerPath(dir);
+            // 自动加载控制器
+            autoBindLoadControllers(controllers);
+        }
 
-        const controllers = convertControllerFileToControllerPath(dir);
-
-        // 加载控制器
-        autoBindLoadControllers(controllers);
-
+        // 创建路由
         this.router = new KoaRouter();
 
         // 获取控制器
@@ -70,7 +74,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                         this.logger.log('route', routeMethods, route);
                         // 方法实现
                         const routeMiddleware = async (ctx: Context, next: Next) => {
-                            this.logger.log('http', ctx.method, ctx.url);
+                            this.logger.log('http', ctx.method, ctx.path);
 
                             // 处理参数
                             const params = routeParams.map((param) => {
@@ -95,6 +99,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                                     return files;
                                 }
 
+                                // 默认
                                 if (param.name === ApiRouteParamName.ctx) {
                                     return param.key ? objectGet(ctx, param.key) : ctx;
                                 }
@@ -109,8 +114,11 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                             ctx.body = await target[name].call(target, ...params, ctx, next);
                             await next();
                         };
-                        const middlewares = Reflect.getMetadata(API_METADATA_KEY.ROUTRE_MIDDLEWARE, target, name) || [];
-                        this.router.register(route, routeMethods, [...middlewares, routeMiddleware], { name });
+                        // 路由中间件
+                        const routeMiddlewares = Reflect.getMetadata(API_METADATA_KEY.ROUTRE_MIDDLEWARE, target, name) || [];
+                        // 控制器中间件
+                        const controllerMiddlewares = Reflect.getMetadata(API_METADATA_KEY.CONTROLLER_MIDDLEWARE, target) || [];
+                        this.router.register(route, routeMethods, [...routeMiddlewares, ...controllerMiddlewares, routeMiddleware], { name });
                     }
                 }
             });

@@ -1,9 +1,10 @@
-import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
 import container, { injectable } from '@/container';
+import { API_INVERSIFY_KEY, API_METADATA_KEY } from '@/keys/inversify';
 import ApiLogger from '@/logger';
 import { ApiRouteParamDecorator, Constructor } from '@/typings';
 import { ApiClassMiddleware, ApiFunctionMiddleware } from '@/typings/middleware';
 import { Enumerable } from '@/typings/type';
+import { isFunction } from '@/utils';
 import { convertMiddleware } from '@/utils/middleware';
 import { IncomingHttpHeaders } from 'http';
 
@@ -116,27 +117,61 @@ export const Param: ApiRouteParamDecorator = new Proxy({} as any, {
  * @param name
  * @return
  */
-export function Middleware(name?: string): (target: Constructor) => void;
-export function Middleware(middleware: ApiClassMiddleware | ApiFunctionMiddleware): (target: any, name: string) => void;
-export function Middleware(arg) {
-    // 类装饰器  新建中间件
-    if (!arg || typeof arg === 'string') {
-        return (target: Constructor) => {
-            injectable()(target);
-            container.bind(API_INVERSIFY_KEY.MIDDLEWARE_CLASS_KEY).to(target).whenTargetNamed(target.name);
-        };
-    }
-    // 方法装饰器 注入到路由
-    if (arg) {
-        const middleware = convertMiddleware(arg);
-        if (middleware) {
-            return (target: Constructor, name: string) => {
+export function Middleware(name?: string): (target: Constructor) => void; // 定义中间件装饰器
+export function Middleware(middleware: ApiClassMiddleware | ApiFunctionMiddleware): (target: Object, name?: string) => void; // 使用装饰器
+export function Middleware(arg: any) {
+    return (target: Constructor, name: string) => {
+        const isController = container.isBoundNamed(API_INVERSIFY_KEY.CONTROLLER_CLASS_KEY, target.name);
+
+        // 方法装饰器 注入中间件
+        if (name) {
+            const isRouter = Reflect.hasMetadata(API_METADATA_KEY.ROUTER_METHOD, target, name);
+            // 不是路由
+            if (!isRouter) return;
+            const middleware = convertMiddleware(arg);
+            if (middleware) {
                 const middlewares = Reflect.getMetadata(API_METADATA_KEY.ROUTRE_MIDDLEWARE, target, name) || [];
                 middlewares.push(middleware);
                 Reflect.defineMetadata(API_METADATA_KEY.ROUTRE_MIDDLEWARE, middlewares, target, name);
-            };
+            }
+            return;
         }
-    }
 
-    return () => {};
+        /**
+         * 类装饰器中的 新建中间件
+         *
+         * 不传参数，或者参数是string
+         */
+        if ((!arg || typeof arg === 'string') && !name && !isController) {
+            injectable()(target);
+            container.bind(API_INVERSIFY_KEY.MIDDLEWARE_CLASS_KEY).to(target).whenTargetNamed(target.name);
+            return;
+        }
+
+        /**
+         * 控制器，注入中间件
+         */
+
+        if (isController && isFunction(arg)) {
+            const middleware = convertMiddleware(arg);
+            if (middleware) {
+                const middlewares = Reflect.getMetadata(API_METADATA_KEY.CONTROLLER_MIDDLEWARE, target.prototype) || [];
+                middlewares.push(middleware);
+                Reflect.defineMetadata(API_METADATA_KEY.CONTROLLER_MIDDLEWARE, middlewares, target.prototype);
+            }
+            return;
+        }
+    };
 }
+
+/**
+ * 返回配置
+ * @param key
+ * @returns
+ */
+export const Options = () => {
+    return (target: any, propertyKey: string) => {
+        const options: ApiLogger = container.get(API_INVERSIFY_KEY.API_OPTIONS);
+        Reflect.set(target, propertyKey, options);
+    };
+};

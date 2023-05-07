@@ -1,12 +1,13 @@
 import 'reflect-metadata';
-export * from '@/decorators';
 import Api from '@/app';
-export { Context, Next } from 'koa';
+import ApiError from './error';
+import Koa, { Context, Next } from 'koa';
+import ApiLogger from '@/logger';
+import type ApiOptions from './app/api.options';
 
+export * from '@/decorators';
 export * from '@/typings';
 
-export { default as ApiLogger } from '@/logger';
+export { ApiLogger, ApiError, Context, Next, Api, Koa, ApiOptions };
 
 export default Api;
-
-export { default as ApiError } from './error';
