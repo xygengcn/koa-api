@@ -16,14 +16,10 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 if (ctx.body instanceof Error || ![200, 301, 204].includes(ctx.status)) {
                     throw ctx.body;
                 }
-                // status转换
-                if (ctx.status === 204) {
-                    ctx.status = 200;
-                }
-
                 // 设置头部
                 const contentType: string = ctx.response.headers?.['content-type'] as string;
-                if (contentType?.indexOf('application/json') > -1 || !contentType) {
+                if (contentType?.indexOf('application/json') > -1 || !contentType || ctx.body === null) {
+                    ctx.status = 200;
                     ctx.body = {
                         code: 200,
                         data: ctx.body || null,
@@ -36,9 +32,9 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 const errorJson = stringifyError(error);
                 ctx.set('content-type', 'application/json');
                 ctx.body = {
-                    code: errorJson?._code || typeof errorJson?.code === 'number' ? errorJson?.code : ctx.status || 500,
+                    code: errorJson?._code || (typeof errorJson?.code === 'number' ? errorJson?.code : ctx.status || 500),
                     error: error instanceof Error ? errorJson : null,
-                    userMsg: typeof errorJson === 'string' ? errorJson : errorJson?.userMsg || errorJson?.message || null,
+                    userMsg: (typeof errorJson === 'string' ? errorJson : errorJson?.userMsg) || errorJson?.message || null,
                     updateTime: Date.now()
                 };
             }
