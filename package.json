@@ -1,5 +1,5 @@
 {
-    "name": "@xygengcn/koa-api",
+    "name": "koa-api-plus",
     "version": "1.0.0-beta.2",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/index.js",
