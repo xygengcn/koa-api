@@ -14,4 +14,19 @@ export default class MiddlewareController {
     public testClassMiddle() {
         return 'hello world';
     }
+
+    @Get('/test3')
+    public testAsyncMiddle() {
+        const sleep = () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve('hello world');
+                }, 500);
+            });
+        };
+        return sleep().then((result) => {
+            console.log('[GlobalLogMiddleware] middle');
+            return result;
+        });
+    }
 }

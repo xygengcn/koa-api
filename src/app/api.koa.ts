@@ -39,7 +39,7 @@ export default class ApiKoa extends Koa {
      */
 
     public useMiddleware(...middlewares: Array<ApiClassMiddleware | ApiFunctionMiddleware>): ApiKoa {
-        this.extendMiddleware = this.extendMiddleware.concat(middlewares);
+        this.extendMiddleware = middlewares.concat(this.extendMiddleware);
         return this;
     }
     /**

@@ -23,6 +23,7 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                     ctx.body = {
                         code: 200,
                         data: ctx.body || null,
+                        error: null,
                         userMsg: undefined,
                         updateTime: Date.now()
                     };
@@ -33,6 +34,7 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 ctx.set('content-type', 'application/json');
                 ctx.body = {
                     code: errorJson?._code || (typeof errorJson?.code === 'number' ? errorJson?.code : ctx.status || 500),
+                    data: null,
                     error: error instanceof Error ? errorJson : null,
                     userMsg: (typeof errorJson === 'string' ? errorJson : errorJson?.userMsg) || errorJson?.message || null,
                     updateTime: Date.now()

@@ -19,10 +19,23 @@ export class TestStringMiddleware implements IApiClassMiddleware {
 @Middleware()
 export class TestNumberMiddleware implements IApiClassMiddleware {
     resolve(): ApiFunctionMiddleware<any, any> {
-        return (ctx: Context) => {
+        return async (ctx: Context, next) => {
+            await next();
             ctx.body = {
                 text: 222
             };
+        };
+    }
+}
+
+@Middleware()
+export class GlobalLogMiddleware implements IApiClassMiddleware {
+    resolve(): ApiFunctionMiddleware<any, any> {
+        console.log('[GlobalLogMiddleware] init');
+        return async (ctx: Context, next) => {
+            console.log('[GlobalLogMiddleware] start');
+            await next();
+            console.log('[GlobalLogMiddleware] end');
         };
     }
 }
