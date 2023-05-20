@@ -34,9 +34,6 @@ const convertClassToMiddleware = (middlewareInstance: IApiClassMiddleware): ApiF
         if (middlewareInstance?.resolve && isFunction(middlewareInstance?.resolve)) {
             return middlewareInstance.resolve()(context, next);
         }
-
-        // 正常执行
-        next();
     };
 };
 
@@ -48,7 +45,10 @@ export function convertMiddleware(middleware: any): ApiFunctionMiddleware | null
         if (middleware.name && container && isClass(middleware)) {
             const middlewareClass: IApiClassMiddleware = container.getNamed(API_INVERSIFY_KEY.MIDDLEWARE_CLASS_KEY, middleware.name);
             if (middlewareClass) {
-                return convertClassToMiddleware(middlewareClass);
+                if (middlewareClass?.resolve && isFunction(middlewareClass?.resolve)) {
+                    return convertClassToMiddleware(middlewareClass);
+                }
+                return null;
             }
         }
         return middleware;
