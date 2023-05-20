@@ -27,8 +27,6 @@ export default class ApiKoa extends Koa {
 
         // 初始化配置
         this.appDefaultOptions.merge(options || {});
-        // 初始化中间件
-        this.useMiddleware(ApiKoaBodyMiddleware, ApiResponseMiddleware, ApiRoutesMiddleware);
     }
 
     /**
@@ -39,7 +37,7 @@ export default class ApiKoa extends Koa {
      */
 
     public useMiddleware(...middlewares: Array<ApiClassMiddleware | ApiFunctionMiddleware>): ApiKoa {
-        this.extendMiddleware = middlewares.concat(this.extendMiddleware);
+        this.extendMiddleware.push(...middlewares);
         return this;
     }
     /**
@@ -47,6 +45,7 @@ export default class ApiKoa extends Koa {
      * @returns
      */
     private initUseMiddleware(): ApiKoa {
+        this.useMiddleware(ApiKoaBodyMiddleware, ApiResponseMiddleware, ApiRoutesMiddleware);
         const middlewares: ApiFunctionMiddleware[] = this.extendMiddleware.reduce((list, middleware, index) => {
             const koaMiddleware = convertMiddleware(middleware);
             if (koaMiddleware) {

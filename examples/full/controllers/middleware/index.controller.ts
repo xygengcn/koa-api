@@ -4,17 +4,29 @@ import { TestStringMiddleware, TestNumberMiddleware } from 'examples/full/middle
 @Middleware(TestNumberMiddleware)
 @Controller()
 export default class MiddlewareController {
+    /**
+     * 测试路由中间件
+     * @returns
+     */
     @Middleware(TestStringMiddleware)
     @Get('/test')
     public testRouteMiddle() {
-        return 'hello world';
+        return 'result is hello world';
     }
 
+    /**
+     * 测试控制器中间件
+     * @returns
+     */
     @Get('/test2')
     public testClassMiddle() {
-        return 'hello world';
+        return 'result is hello world2';
     }
 
+    /**
+     * 测试异步中间件
+     * @returns
+     */
     @Get('/test3')
     public testAsyncMiddle() {
         const sleep = () => {

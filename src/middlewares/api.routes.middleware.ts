@@ -25,7 +25,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
     private router!: KoaRouter;
 
     // 初始化
-    public init(): void {
+    public created(): void {
         if (this.options?.baseUrl && isDir(this.options?.baseUrl)) {
             const dir = path.join(this.options?.baseUrl);
             const controllers = convertControllerFileToControllerPath(dir);

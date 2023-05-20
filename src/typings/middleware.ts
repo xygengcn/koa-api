@@ -7,7 +7,7 @@ export type ApiFunctionMiddleware<T = any, K = any> = Middleware<T, K>;
 export type ApiClassMiddleware<T = any> = { new (...args: any[]): T };
 // 中间件继承类
 export interface IApiClassMiddleware {
-    init?(): void;
+    created?(): void;
     resolve: () => ApiFunctionMiddleware;
     match?(ctx: Context): boolean;
     ignore?(ctx: Context): boolean;

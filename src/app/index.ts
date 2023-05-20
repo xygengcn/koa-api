@@ -17,6 +17,9 @@ export default class Api extends ApiServer {
 
     /**
      * 插入中间件
+     *
+     * 先插入，先执行
+     *
      * @param middleware
      */
     public use(...middlewares: Array<ApiClassMiddleware | ApiFunctionMiddleware>) {

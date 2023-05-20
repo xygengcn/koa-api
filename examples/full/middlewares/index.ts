@@ -22,7 +22,7 @@ export class TestNumberMiddleware implements IApiClassMiddleware {
         return async (ctx: Context, next) => {
             await next();
             ctx.body = {
-                text: 222
+                text: 123456789
             };
         };
     }
@@ -36,6 +36,18 @@ export class GlobalLogMiddleware implements IApiClassMiddleware {
             console.log('[GlobalLogMiddleware] start');
             await next();
             console.log('[GlobalLogMiddleware] end');
+        };
+    }
+}
+
+@Middleware()
+export class GlobalLogMiddleware2 implements IApiClassMiddleware {
+    resolve(): ApiFunctionMiddleware<any, any> {
+        console.log('[GlobalLogMiddleware2] init');
+        return async (ctx: Context, next) => {
+            console.log('[GlobalLogMiddleware2] start');
+            await next();
+            console.log('[GlobalLogMiddleware2] end');
         };
     }
 }

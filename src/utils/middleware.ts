@@ -11,8 +11,8 @@ import { Context, Next } from 'koa';
  */
 const convertClassToMiddleware = (middlewareInstance: IApiClassMiddleware): ApiFunctionMiddleware => {
     // 先初始化函数
-    if (middlewareInstance?.init && isFunction(middlewareInstance?.init)) {
-        middlewareInstance.init();
+    if (middlewareInstance?.created && isFunction(middlewareInstance?.created)) {
+        middlewareInstance.created();
     }
     // 先执行，
     return async (context: Context, next: Next) => {
