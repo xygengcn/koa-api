@@ -1,6 +1,6 @@
 {
     "name": "@xygengcn/koa-api",
-    "version": "0.3.31",
+    "version": "0.3.32",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
