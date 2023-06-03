@@ -1,7 +1,7 @@
 {
     "restartable": "rs",
-    "ignore": [".git", "node_modules/", "dist/", ".vscode/", "./api/", "./logs", "./wwww"],
-    "watch": ["src/"],
+    "ignore": [".git", "node_modules/", "dist/", ".vscode/"],
+    "watch": ["src/", "examples/"],
     "script": "./src/index.ts",
     "execMap": {
         "ts": "node --inspect=7000 -r tsconfig-paths/register -r ts-node/register"

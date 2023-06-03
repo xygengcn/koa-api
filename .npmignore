@@ -9,12 +9,10 @@ logs/
 nodemon.json
 pm2.json
 tsconfig.json
+tsconfig.build.json
 .prettierrc
 yarn.lock
-temp
-dist-test/
-build.core.config.ts
-build.text.config.ts
-gulpfile.ts
-tsconfig.build.json
-
+test
+examples/
+.husky/
+.env.js

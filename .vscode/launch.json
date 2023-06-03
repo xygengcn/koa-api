@@ -6,6 +6,12 @@
             "name": "Run Dev",
             "request": "launch",
             "type": "node-terminal"
+        },
+        {
+            "command": "npm run dev:simple",
+            "name": "Run Simple",
+            "request": "launch",
+            "type": "node-terminal"
         }
     ]
 }

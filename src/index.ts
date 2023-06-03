@@ -1,27 +1,13 @@
-import { join } from 'path';
-import Api, { ApiError } from './core';
-import OriginMiddleware from './middleware/origin.middleware';
-import transform from './transform';
+import 'reflect-metadata';
+import Api from '@/app';
+import ApiError from './error';
+import Koa, { Context, Next } from 'koa';
+import ApiLogger from '@/logger';
+import type ApiOptions from './app/api.options';
 
-const api = new Api({
-    namespace: 'koa-api',
-    transform,
-    controllerPath: join(__dirname, 'controller'),
-    errHandle: (error, msg) => {
-        return new ApiError({
-            code: '2323',
-            userMsg: '111'
-        });
-    }
-});
+export * from '@/decorators';
+export * from '@/typings';
 
-api.use(OriginMiddleware, 1);
+export { ApiLogger, ApiError, Context, Next, Api, Koa, ApiOptions };
 
-api.logger.onError((content, options) => {
-    console.log('错误', content);
-});
-api.logger.on('log', (content) => {
-    console.log('日志', content);
-});
-
-api.start();
+export default Api;
