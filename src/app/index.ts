@@ -18,7 +18,7 @@ export default class Api extends ApiServer {
     /**
      * 插入中间件
      *
-     * 先插入，先执行
+     * 先插入，在最外层洋葱结构
      *
      * @param middleware
      */

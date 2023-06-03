@@ -38,7 +38,7 @@ yarn run build
 -   生产环境
 
 ```
-yarn add @xygengcn/koa-api
+yarn add koa-api-plus
 ```
 
 ## 控制器（重点）
@@ -63,7 +63,7 @@ yarn add @xygengcn/koa-api
 
 ```ts
 // index.js
-import { Controller, Get, Post } from '@xygengcn/koa-api';
+import { Controller, Get, Post } from 'koa-api-plus';
 @Controller()
 export default class IndexController {
     @GET('/test')
@@ -76,7 +76,7 @@ export default class IndexController {
 // [Get] /test => {}
 
 // user/index.controller.ts
-import { Controller, Get, Post } from '@xygengcn/koa-api';
+import { Controller, Get, Post } from 'koa-api-plus';
 @Controller()
 export default class IndexController {
     @POST('/test')
