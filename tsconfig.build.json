@@ -1,31 +1,17 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "target": "es6",
+        "target": "esnext",
         "module": "esnext",
-        "allowJs": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "watch": false,
-        "noImplicitAny": false,
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "baseUrl": "./",
-        "noUnusedLocals": true,
-        "removeComments": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "resolveJsonModule": true,
-        "declaration": true,
-        "lib": ["esnext"],
-        "types": ["node", "reflect-metadata"],
+        "moduleResolution": "node",
         "paths": {
-            "@/*": ["./src/*"],
-            "@src/*": ["./src/*"]
+            "@/*": [
+                "./src/*"
+            ],
+            "@src/*": [
+                "./src/*"
+            ]
         }
-    },
-    "exclude": ["node_modules", "build"],
-    "typeRoots": ["src/typings"],
-    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "examples/**/*.ts", "examples/**/*.d.ts"]
+    }
 }

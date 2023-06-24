@@ -29,7 +29,7 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                     };
                 }
             } catch (error) {
-                error && this.logger.log(error);
+                error && this.logger.log(`[http] ${ctx.path}`, error);
                 const errorJson = stringifyError(error);
                 ctx.set('content-type', 'application/json');
                 ctx.body = {

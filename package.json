@@ -1,6 +1,6 @@
 {
     "name": "koa-api-plus",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",

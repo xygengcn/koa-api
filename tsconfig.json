@@ -1,12 +1,11 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "esnext",
         "module": "commonjs",
         "allowJs": true,
         "outDir": "./dist",
         "rootDir": "./",
         "strict": true,
-        "watch": false,
         "noImplicitAny": false,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
@@ -16,15 +15,34 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "resolveJsonModule": true,
-        "declaration": true,
-        "lib": ["esnext"],
-        "types": ["node", "reflect-metadata"],
+        "declaration": false,
+        "lib": [
+            "esnext"
+        ],
+        "types": [
+            "node",
+            "reflect-metadata"
+        ],
         "paths": {
-            "@/*": ["./src/*"],
-            "@src/*": ["./src/*"]
+            "@/*": [
+                "./src/*"
+            ],
+            "@src/*": [
+                "./src/*"
+            ]
         }
     },
-    "exclude": ["node_modules", "build"],
-    "typeRoots": ["src/typings"],
-    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "examples/**/*.ts", "examples/**/*.d.ts"]
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
+    "typeRoots": [
+        "src/typings"
+    ],
+    "include": [
+        "./src/**/*.ts",
+        "./src/**/*.d.ts",
+        "examples/**/*.ts",
+        "examples/**/*.d.ts"
+    ]
 }

@@ -26,33 +26,16 @@ module.exports = [
             }),
             tscAlias(),
             json(),
-            commonjs(),
-            resolve()
+            commonjs()
         ]
     },
     {
-        input: './dist/index.d.ts',
+        input: './src/index.ts',
         output: [{ file: 'dist/index.d.ts', format: 'esm' }],
         plugins: [
             dts.default({
-                compilerOptions: {
-                    baseUrl: './src',
-                    paths: ts.readConfigFile('./tsconfig.build.json', (p) => readFileSync(p, 'utf8')).config.compilerOptions.paths
-                }
-            }),
-            {
-                name: 'delete',
-                buildEnd: async () => {
-                    const files = readdirSync('./dist/');
-                    files.forEach((file) => {
-                        const dir = join('./dist/', file);
-                        const stat = statSync(dir);
-                        if (stat.isDirectory()) {
-                            rmdirSync(dir, { recursive: true });
-                        }
-                    });
-                }
-            }
+                tsconfig: './tsconfig.build.json'
+            })
         ]
     }
 ];
