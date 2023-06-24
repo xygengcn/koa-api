@@ -78,7 +78,11 @@ export default class ApiServer {
      * @param event
      * @param listeners
      */
-    public on(event: string, listeners: (...args: any[]) => void) {
+    public on(event: 'log', listeners: (prefix: string, ...args: any[]) => void): void;
+    public on(event: 'start', listeners: () => void): void;
+    public on(event: 'error', listeners: (e: Error) => void): void;
+    public on(event: string, listeners: (...args: any[]) => void);
+    public on(event, listeners) {
         if (isFunction(listeners)) {
             this.logger.on(event, listeners);
         }

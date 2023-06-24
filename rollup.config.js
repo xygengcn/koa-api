@@ -9,7 +9,8 @@ module.exports = [
         output: [
             {
                 file: './dist/index.js',
-                format: 'cjs'
+                format: 'cjs',
+                exports: 'named'
             },
             {
                 file: './dist/index.esm.js',

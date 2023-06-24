@@ -44,6 +44,10 @@ export class PostController {
 // 创建实例
 const api = new Api();
 
+api.on('http', (...args) => {
+    console.log('[http]', ...args);
+});
+
 api.on('log', (...args) => {
     console.log('[log]', ...args);
 });

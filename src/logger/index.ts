@@ -1,11 +1,15 @@
-// import { EventEmitter } from 'events';
 import { Events } from '@/typings';
 import EventEmitter from 'events';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 
+export interface IApiLogger {
+    log: (...args: any[]) => void;
+    error: (e: Error) => void;
+}
+
 @injectable()
-export default class ApiLogger<E extends Events = Events> {
+export default class ApiLogger<E extends Events = Events> implements IApiLogger {
     private events = new EventEmitter();
     /**
      * 构造函数
@@ -18,8 +22,17 @@ export default class ApiLogger<E extends Events = Events> {
      * @param args
      */
     public log(...args: any[]) {
-        const prefix = args.shift();
-        return this.emit(typeof prefix === 'string' ? prefix : 'log', ...args);
+        this.emit('log', ...args);
+        return;
+    }
+
+    /**
+     * 日志
+     * @param args
+     */
+    public error(...args: any[]) {
+        this.emit('error', args);
+        return;
     }
 
     /**
@@ -29,8 +42,8 @@ export default class ApiLogger<E extends Events = Events> {
      */
     public on<K extends keyof E>(type: K, callback: E[K]);
     public on(type: string, callback: (...args: any) => void);
-    public on(type, callback) {
-        this.events.on(type as any, callback);
+    public on(type, callback: (...args: any) => void) {
+        this.events.on(type, callback);
         return this;
     }
 

@@ -68,14 +68,18 @@ export const Logger = (prefix?: string) => {
         const loggerProxy = new Proxy(
             {},
             {
-                get(target, name) {
+                get(target, name: string) {
                     return (...args: any[]) => {
-                        logger[name](prefix, ...args);
+                        if (prefix && name === 'log') {
+                            logger.emit(prefix, ...args);
+                        } else {
+                            logger[name](...args);
+                        }
                     };
                 }
             }
         );
-        Reflect.set(target, propertyKey, prefix ? loggerProxy : logger);
+        Reflect.set(target, propertyKey, loggerProxy);
     };
 };
 

@@ -12,6 +12,10 @@ api.on('http', (...args) => {
     console.log('[http]', ...args);
 });
 
+api.on('log', (...args) => {
+    console.log('[log]', ...args);
+});
+
 api.on('start', () => {
     console.log('[start]');
 });

@@ -6,7 +6,7 @@ import { Logger } from '@/decorators';
 import { stringifyError } from '@/utils';
 @Middleware('ApiResponseMiddleware')
 export default class ApiResponseMiddleware implements IApiClassMiddleware {
-    @Logger('error')
+    @Logger()
     private readonly logger!: ApiLogger;
     resolve() {
         return async (ctx: Context, next: Next) => {
@@ -29,7 +29,7 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                     };
                 }
             } catch (error) {
-                error && this.logger.log(`[http] ${ctx.path}`, error);
+                error && this.logger.error(`[http] ${ctx.path}`, error);
                 const errorJson = stringifyError(error);
                 ctx.set('content-type', 'application/json');
                 ctx.body = {

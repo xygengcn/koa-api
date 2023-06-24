@@ -14,7 +14,7 @@ import { IncomingHttpHeaders } from 'http';
 
 @Middleware()
 export default class ApiRoutesMiddleware implements IApiClassMiddleware {
-    @Logger()
+    @Logger('http')
     private readonly logger!: ApiLogger;
 
     @Options()
