@@ -1,7 +1,7 @@
+import 'reflect-metadata';
 import { API_INVERSIFY_KEY } from '@/keys/inversify';
 import ApiLogger from '@/logger';
 import { Container, injectable } from 'inversify';
-import 'reflect-metadata';
 import ApiOptions from '../app/api.options';
 const container = new Container();
 

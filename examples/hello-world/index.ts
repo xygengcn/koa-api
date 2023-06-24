@@ -1,4 +1,4 @@
-import Api, { Controller, Get, Logger, Param, Post, ApiLogger } from '../../src';
+import Api, { Controller, Get, Logger, Param, Post, ApiLogger } from '../../dist';
 
 type User = {
     id: number;

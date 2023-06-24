@@ -7,6 +7,7 @@ import { Enumerable } from '@/typings/type';
 import { isFunction } from '@/utils';
 import { convertMiddleware } from '@/utils/middleware';
 import { IncomingHttpHeaders } from 'http';
+import ApiOptions from '@/app/api.options';
 
 /**
  * 控制器装饰器
@@ -169,9 +170,9 @@ export function Middleware(arg: any) {
  * @param key
  * @returns
  */
-export const Options = () => {
-    return (target: any, propertyKey: string) => {
-        const options: ApiLogger = container.get(API_INVERSIFY_KEY.API_OPTIONS);
-        Reflect.set(target, propertyKey, options);
+export function Options() {
+    return (target: Object, propertyKey: string) => {
+        const options: ApiOptions = container.get(API_INVERSIFY_KEY.API_OPTIONS);
+        Reflect.set(target, propertyKey, options || {});
     };
-};
+}

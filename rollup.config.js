@@ -1,12 +1,8 @@
 const typescript = require('@rollup/plugin-typescript');
 const commonjs = require('@rollup/plugin-commonjs');
 const dts = require('rollup-plugin-dts');
-const ts = require('typescript');
-const { readFileSync, readdirSync, statSync, rmdirSync } = require('fs');
 const tscAlias = require('rollup-plugin-tsc-alias');
-const resolve = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
-const { join } = require('path');
 module.exports = [
     {
         input: './src/index.ts',
