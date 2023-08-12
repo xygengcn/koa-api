@@ -1,7 +1,6 @@
 import { FlattenObjectKeys } from '@/typings/type';
 import { KoaOptions } from './koa';
 import { KoaBodyMiddlewareOptions } from 'koa-body';
-import { ErrorObject } from 'serialize-error';
 
 /**
  * 总入口配置
@@ -16,13 +15,6 @@ export interface IOptions extends KoaOptions {
  * 事件类型
  */
 export type Events = { [key: string]: (...args: any) => void };
-
-/**
- * 错误类型
- */
-export interface IApiError extends ErrorObject {
-    _code: number;
-}
 
 /**
  * 路由参数类型

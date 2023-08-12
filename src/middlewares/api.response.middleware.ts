@@ -33,10 +33,10 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 const errorJson = stringifyError(error);
                 ctx.set('content-type', 'application/json');
                 ctx.body = {
-                    code: errorJson?._code || (typeof errorJson?.code === 'number' ? errorJson?.code : ctx.status || 500),
+                    code: errorJson?.code || 500,
                     data: null,
-                    error: error instanceof Error ? errorJson : null,
-                    userMsg: (typeof errorJson === 'string' ? errorJson : errorJson?.userMsg) || errorJson?.message || null,
+                    error: error instanceof Error ? errorJson.stack : null,
+                    userMsg: typeof errorJson === 'string' ? errorJson : errorJson?.userMsg || errorJson?.message || errorJson?.name || null,
                     updateTime: Date.now()
                 };
             }

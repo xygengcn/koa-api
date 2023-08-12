@@ -100,7 +100,7 @@ export function autoBindLoadControllers(dirs: { file: string; path: string; pref
                     Reflect.defineMetadata(API_METADATA_KEY.CONTROLLER_FILE_PATH, controllerModule, controller.prototype);
                 }
             } catch (error) {
-                return;
+                throw error;
             }
         }
         return;

@@ -1,4 +1,3 @@
-import { IApiError } from '@/typings';
 import { serializeError } from 'serialize-error';
 
 /**
@@ -24,7 +23,7 @@ export function isFunction(func: any): boolean {
  * @param error
  * @returns
  */
-export function stringifyError(error: any, maxDepth: number = 3): IApiError {
+export function stringifyError(error: any, maxDepth: number = 3) {
     return serializeError(error, { maxDepth });
 }
 
