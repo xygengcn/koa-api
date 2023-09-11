@@ -16,7 +16,7 @@ export function removeTrailingSlash(str: string) {
     if (str === '/') {
         return str;
     }
-    return str.replace(/\/$/, '');
+    return str.replace('/\\/ig', '/').replace(/\/$/, '');
 }
 
 /**
