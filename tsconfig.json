@@ -16,33 +16,14 @@
         "emitDecoratorMetadata": true,
         "resolveJsonModule": true,
         "declaration": false,
-        "lib": [
-            "esnext"
-        ],
-        "types": [
-            "node",
-            "reflect-metadata"
-        ],
+        "lib": ["esnext"],
+        "types": ["node", "reflect-metadata"],
         "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-            "@src/*": [
-                "./src/*"
-            ]
+            "@/*": ["./src/*"],
+            "@src/*": ["./src/*"]
         }
     },
-    "exclude": [
-        "node_modules",
-        "build"
-    ],
-    "typeRoots": [
-        "src/typings"
-    ],
-    "include": [
-        "./src/**/*.ts",
-        "./src/**/*.d.ts",
-        "examples/**/*.ts",
-        "examples/**/*.d.ts"
-    ]
+    "exclude": ["node_modules", "build"],
+    "typeRoots": ["src/typings"],
+    "include": ["./src/**/*.ts", "./*.d.ts", "./src/**/*.d.ts", "examples/**/*.ts", "examples/**/*.d.ts", "env.d.ts"]
 }

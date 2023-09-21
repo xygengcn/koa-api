@@ -11,6 +11,9 @@ import { Context, Next } from 'koa';
 import { ApiRouteParam, ApiRouteParamName, IOptions } from '@/typings';
 import { objectGet } from '@/utils';
 import { IncomingHttpHeaders } from 'http';
+import { PassThrough } from 'stream';
+import onFinished from 'on-finished';
+import destroy from 'destroy';
 
 @Middleware()
 export default class ApiRoutesMiddleware implements IApiClassMiddleware {
@@ -44,6 +47,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
 
         // 循环加载路由
         list.forEach((target: object) => {
+            // 前缀
             const prefix = Reflect.getMetadata(API_METADATA_KEY.CONTROLLER_PREFIX, target);
             // 获取控制器文件读取到的数据
             const controllerFile: { file: string; path: string; prefix: string } = Reflect.getMetadata(API_METADATA_KEY.CONTROLLER_FILE_PATH, target);
@@ -59,7 +63,7 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                     const isRoute = Reflect.hasMetadata(API_METADATA_KEY.ROUTER_METHOD, target, name);
                     if (isRoute) {
                         // 路由方法
-                        const routeMethods = Reflect.getMetadata(API_METADATA_KEY.ROUTER_METHOD, target, name);
+                        const routeMethods: string[] = Reflect.getMetadata(API_METADATA_KEY.ROUTER_METHOD, target, name);
                         // 文件路由地址
                         const routePath = Reflect.getMetadata(API_METADATA_KEY.ROUTER_PATH, target, name) || '';
 
@@ -72,9 +76,26 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                         const route = removeTrailingSlash(path.join(controllerRoute, routePath));
 
                         this.logger.log('route', routeMethods, route);
+
+                        // 流
+                        const eventStream = Reflect.getMetadata(API_METADATA_KEY.EVENTSTREAM, target, name);
+
                         // 方法实现
                         const routeMiddleware = async (ctx: Context, next: Next) => {
                             this.logger.log('http', ctx.method, ctx.path);
+
+                            // 是否开启流
+                            if (eventStream) {
+                                ctx.status = 200;
+                                ctx.request.socket.setTimeout(0);
+                                ctx.req.socket.setNoDelay(true);
+                                ctx.req.socket.setKeepAlive(true);
+                                const stream = new PassThrough();
+                                ctx.body = stream;
+                                onFinished(ctx.res, () => {
+                                    destroy(stream);
+                                });
+                            }
 
                             // 处理参数
                             const params = routeParams.map((param) => {
@@ -104,14 +125,23 @@ export default class ApiRoutesMiddleware implements IApiClassMiddleware {
                                     return param.key ? objectGet(ctx, param.key) : ctx;
                                 }
 
+                                // 流
+                                if (param.name === ApiRouteParamName.stream) {
+                                    return ctx.body;
+                                }
+
                                 return ctx;
                             });
-
                             // 处理头部
                             Object.entries(routeHeaders).forEach(([key, value]) => {
                                 value && ctx.set(key, value);
                             });
-                            ctx.body = await target[name].call(target, ...params, ctx, next);
+                            // 是否开启流
+                            if (eventStream) {
+                                target[name].call(target, ...params, ctx, next);
+                            } else {
+                                ctx.body = await target[name].call(target, ...params, ctx, next);
+                            }
                             await next();
                         };
                         // 路由中间件

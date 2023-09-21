@@ -41,6 +41,8 @@
         "@types/koa-compose": "^3.2.5",
         "@types/koa-router": "^7.4.4",
         "@types/node": "^16.11.12",
+        "@types/on-finished": "^2.3.2",
+        "@types/destroy": "^1.0.0",
         "env-cmd": "^10.1.0",
         "eslint": "^8.4.1",
         "husky": "^8.0.3",
@@ -56,6 +58,7 @@
         "typescript": "^4.5.3"
     },
     "dependencies": {
+        "destroy": "^1.2.0",
         "inversify": "6.0.1",
         "is-directory": "0.3.1",
         "klaw-sync": "^6.0.0",
@@ -63,6 +66,7 @@
         "koa-body": "^6.0.1",
         "koa-compose": "^4.1.0",
         "koa-router": "^12.0.0",
+        "on-finished": "^2.4.1",
         "reflect-metadata": "^0.1.13",
         "serialize-error": "8.1.0"
     }

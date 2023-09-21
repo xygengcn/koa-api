@@ -24,7 +24,8 @@ export enum ApiRouteParamName {
     ctx = 'Context',
     body = 'Body',
     next = 'Next',
-    file = 'Files'
+    file = 'Files',
+    stream = 'Stream'
 }
 
 /**

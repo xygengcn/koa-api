@@ -97,6 +97,20 @@ export const Headers = (key: keyof IncomingHttpHeaders, value: Enumerable<string
 };
 
 /**
+ * 这是Stream
+ * @param key
+ * @returns
+ */
+export const EventStream = () => {
+    return (target: any, name: string) => {
+        const headers = Reflect.getMetadata(API_METADATA_KEY.ROUTER_HEADERS, target, name) || { 'content-type': 'application/json' };
+        Object.assign(headers, { 'Content-Type': 'text/event-stream;charset=utf-8', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
+        Reflect.defineMetadata(API_METADATA_KEY.ROUTER_HEADERS, headers, target, name);
+        Reflect.defineMetadata(API_METADATA_KEY.EVENTSTREAM, true, target, name);
+    };
+};
+
+/**
  * 获取参数
  * @returns
  */

@@ -12,12 +12,19 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
         return async (ctx: Context, next: Next) => {
             try {
                 await next();
+
+                // 设置头部
+                const contentType: string = ctx.response.headers?.['content-type'] as string;
+
+                // 跳过eventStream
+                if (contentType?.indexOf('text/event-stream') > -1) {
+                    return;
+                }
                 // 返回错误和重定向问题
                 if (ctx.body instanceof Error || ![200, 301, 204].includes(ctx.status)) {
                     throw ctx.body;
                 }
-                // 设置头部
-                const contentType: string = ctx.response.headers?.['content-type'] as string;
+
                 if (contentType?.indexOf('application/json') > -1 || !contentType || ctx.body === null) {
                     ctx.status = 200;
                     ctx.body = {

@@ -34,6 +34,7 @@ export class GlobalLogMiddleware implements IApiClassMiddleware {
         console.log('[GlobalLogMiddleware] init');
         return async (ctx: Context, next) => {
             console.log('[GlobalLogMiddleware] start');
+            ctx.set('Access-Control-Allow-Origin', '*');
             await next();
             console.log('[GlobalLogMiddleware] end');
         };
