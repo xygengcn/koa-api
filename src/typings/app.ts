@@ -1,5 +1,6 @@
 import { FlattenObjectKeys } from '@/typings/type';
 import { KoaOptions } from './koa';
+import { Context } from 'koa';
 import { KoaBodyMiddlewareOptions } from 'koa-body';
 
 /**
@@ -9,6 +10,12 @@ export interface IOptions extends KoaOptions {
     baseUrl?: string; // 控制器存放的位置
     port?: number; // 端口
     koaBody?: Partial<KoaBodyMiddlewareOptions>;
+    responseOptions?: {
+        // 允许返回错误的status code
+        allowErrorStatusCode?: boolean;
+        // 错误处理
+        handler?: (ctx: Context, error: Error) => void;
+    };
 }
 
 /**

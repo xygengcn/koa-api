@@ -2,12 +2,16 @@ import { Middleware } from '@/decorators';
 import ApiLogger from '@/logger';
 import { IApiClassMiddleware } from '@/typings/middleware';
 import { Context, Next } from 'koa';
-import { Logger } from '@/decorators';
-import { stringifyError } from '@/utils';
+import { Logger, Options } from '@/decorators';
+import { stringifyError, isFunction } from '@/utils';
+import { IOptions } from '@/typings';
 @Middleware('ApiResponseMiddleware')
 export default class ApiResponseMiddleware implements IApiClassMiddleware {
     @Logger()
     private readonly logger!: ApiLogger;
+
+    @Options()
+    private readonly options!: IOptions;
     resolve() {
         return async (ctx: Context, next: Next) => {
             try {
@@ -27,6 +31,7 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
 
                 if (contentType?.indexOf('application/json') > -1 || !contentType || ctx.body === null) {
                     ctx.status = 200;
+                    ctx.message = 'OK';
                     ctx.body = {
                         code: 200,
                         data: ctx.body || null,
@@ -37,8 +42,18 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
                 }
             } catch (error) {
                 error && this.logger.error(`[http] ${ctx.path}`, error);
+                // 存在错误处理
+                if (isFunction(this.options.responseOptions?.handler)) {
+                    return this.options.responseOptions?.handler?.(ctx, error as Error);
+                }
+                // 默认执行
                 const errorJson = stringifyError(error);
                 ctx.set('content-type', 'application/json');
+                // 返回错误
+                if (this.options.responseOptions?.allowErrorStatusCode) {
+                    ctx.status = 500;
+                    ctx.message = ctx.message || 'Request Fail';
+                }
                 ctx.body = {
                     code: errorJson?.code || 500,
                     data: null,
