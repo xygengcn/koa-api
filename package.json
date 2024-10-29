@@ -1,12 +1,13 @@
 {
     "name": "koa-api-plus",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "基于Typescript + KOA 开发的 Restful APi 接口",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
     "types": "dist/index.d.ts",
     "scripts": {
         "dev": "env-cmd -r .env.js -e development nodemon ./examples/full/index.ts",
+        "dev:upload": "env-cmd -r .env.js -e development nodemon ./examples/upload/index.ts",
         "dev:simple": "env-cmd -r .env.js -e development nodemon ./examples/hello-world/index.ts",
         "prepare": "husky install",
         "husky": "husky add .husky/commit-msg \"npx --no-install commitlint --edit \"$1\"\"",
