@@ -15,9 +15,7 @@ export default class ApiKoaBodyMiddleware implements IApiClassMiddleware {
                 await koaBody({
                     multipart: true,
                     ...this.options.koaBody,
-                    onError: (error) => {
-                        throw error;
-                    }
+                    onError: undefined
                 })(ctx, next);
             } catch (e) {
                 if (isFunction(this.options.koaBody?.onError)) {

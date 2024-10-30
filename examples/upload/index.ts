@@ -6,6 +6,7 @@ import Api, { Controller, Param, Post } from '../../dist';
 export class PostController {
     @Post('/form')
     public form(@Param.Files() files) {
+        console.log('[api] form');
         return {
             file: files.file
         };
