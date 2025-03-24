@@ -8,6 +8,7 @@ import { KoaBodyMiddlewareOptions } from 'koa-body';
  */
 export interface IOptions extends KoaOptions {
     baseUrl?: string; // 控制器存放的位置
+    prefix?: string | RegExp; // 路由api前缀，只做判断不做拼接
     port?: number; // 端口
     koaBody?: Partial<Omit<KoaBodyMiddlewareOptions, 'onError'>> & { onError?: (error: Error, ctx: Context, next: Next) => void };
     responseOptions?: {

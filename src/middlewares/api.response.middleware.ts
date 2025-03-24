@@ -12,6 +12,19 @@ export default class ApiResponseMiddleware implements IApiClassMiddleware {
 
     @Options()
     private readonly options!: IOptions;
+
+    /**
+     * 匹配
+     * @param ctx
+     * @returns
+     */
+    match(ctx: Context) {
+        if (this.options.prefix) {
+            const prefix = typeof this.options.prefix === 'string' ? new RegExp(`^${this.options.prefix}`, 'ig') : this.options.prefix;
+            return prefix.test(ctx.url);
+        }
+        return true;
+    }
     resolve() {
         return async (ctx: Context, next: Next) => {
             try {
